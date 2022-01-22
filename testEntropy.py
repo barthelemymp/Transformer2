@@ -119,7 +119,7 @@ for alpha in alphalist:
     ).to(device)
     
     #whyyy 'cpu?'
-    wandb.init(project="Transformer Simple large Fam", entity="barthelemymp")
+    wandb.init(project="Transformer test Entropy", entity="barthelemymp")
     config_dict = {
       "num_layers": num_encoder_layers,
       "embedding":embedding_size,
