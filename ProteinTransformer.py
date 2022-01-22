@@ -730,11 +730,11 @@ class Transformer(nn.Module):
         if self.onehot:
             sos = inp[0,0,:]
             eos = inp[-1,0,:]
-            inp_repeted = inp[:,0,:].unsqueeze(1).repeat(1, nsample, 1)
+            #inp_repeted = inp[:,0,:].unsqueeze(1).repeat(1, nsample, 1)
         else:
             sos = inp[0,0]
             eos = inp[-1,0]
-            inp_repeted = inp[:,0,:].unsqueeze(1).repeat(1, nsample)
+            #inp_repeted = inp[:,0].unsqueeze(1).repeat(1, nsample)
             
         
 
