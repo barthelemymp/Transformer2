@@ -727,9 +727,16 @@ class Transformer(nn.Module):
             return outputs
         
     def pseudosample(self, inp, target, nsample=1, method="simple"):
-        sos = inp[0,0,:]
-        eos = inp[-1,0,:]
-        inp_repeted = inp[:,0,:].unsqueeze(1).repeat(1, nsample, 1)
+        if self.onehot:
+            sos = inp[0,0,:]
+            eos = inp[-1,0,:]
+            inp_repeted = inp[:,0,:].unsqueeze(1).repeat(1, nsample, 1)
+        else:
+            sos = inp[0,0]
+            eos = inp[-1,0]
+            inp_repeted = inp[:,0,:].unsqueeze(1).repeat(1, nsample)
+            
+        
 
         if method=="simple":
             if self.onehot:
@@ -751,14 +758,21 @@ class Transformer(nn.Module):
                 
             
         if method=="gumbel":
-
-            outputs = torch.zeros(target.shape[0], nsample, target.shape[2]).to(self.device)
-            outputs[0,:,:] = sos.unsqueeze(0).repeat(nsample, 1)
-
-            output = self.forward(inp, target[:-1, :])
-            best_guess = torch.nn.functional.gumbel_softmax(output, hard=True, dim=2)
-            outputs[1:,:,:]= best_guess
-            outputs[-1,:,:] = eos.unsqueeze(0).repeat(nsample, 1)
+            if self.onehot:
+                outputs = torch.zeros(target.shape[0], nsample, target.shape[2]).to(self.device)
+                outputs[0,:,:] = sos.unsqueeze(0).repeat(nsample, 1)
+    
+                output = self.forward(inp, target[:-1, :])
+                best_guess = torch.nn.functional.gumbel_softmax(output, hard=True, dim=2)
+                outputs[1:,:,:]= best_guess
+                outputs[-1,:,:] = eos.unsqueeze(0).repeat(nsample, 1)
+            else:
+                outputs = torch.zeros(target.shape[0], nsample, target.shape[2]).to(self.device)
+                outputs[0,:,:] = sos.unsqueeze(0).repeat(nsample, 1)
+                output = self.forward(inp, target[:-1, :])
+                best_guess = torch.nn.functional.gumbel_softmax(output, hard=True, dim=2)
+                outputs[1:,:,:]= best_guess
+                outputs[-1,:,:] = eos.unsqueeze(0).repeat(nsample, 1)
 
             return outputs
             
