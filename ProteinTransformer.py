@@ -601,6 +601,7 @@ class Transformer(nn.Module):
             dropout,
         )
         self.fc_out = nn.Linear(embedding_size, trg_vocab_size)
+        self.trg_vocab_size =trg_vocab_size
         self.dropout = nn.Dropout(dropout)
         self.src_pad_idx = src_pad_idx
 
@@ -767,7 +768,7 @@ class Transformer(nn.Module):
                 outputs[1:,:,:]= best_guess
                 outputs[-1,:,:] = eos.unsqueeze(0).repeat(nsample, 1)
             else:
-                outputs = torch.zeros(target.shape[0], nsample, target.shape[2]).to(self.device)
+                outputs = torch.zeros(target.shape[0], nsample, self.trg_vocab_size).to(self.device)
                 outputs[0,:,:] = sos.unsqueeze(0).repeat(nsample, 1)
                 output = self.forward(inp, target[:-1, :])
                 best_guess = torch.nn.functional.gumbel_softmax(output, hard=True, dim=2)
