@@ -426,6 +426,7 @@ def ConditioalEntropyMatchingLoss(batch,
 
     inp_data, target, idx_list = batch[0], batch[1], batch[2]
     output = model(inp_data, target[:-1, :])
+    acc = accuracy(batch, output, onehot=model.onehot).item()
     output = output.reshape(-1, output.shape[2])#keep last dimension
     if model.onehot:
         _, targets_Original = target.max(dim=2)
@@ -434,7 +435,7 @@ def ConditioalEntropyMatchingLoss(batch,
     
     targets_Original = targets_Original[1:].reshape(-1)
     lossCE = CCL_mean(output, targets_Original)
-    acc = accuracy(batch, output, onehot=model.onehot).item()
+    
     
     ## Entropic 
     samples = model.pseudosample(inp_data, target, nsample=1, method="gumbel")
