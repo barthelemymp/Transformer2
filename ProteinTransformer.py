@@ -733,9 +733,17 @@ class Transformer(nn.Module):
             eos = inp[-1,0,:]
             #inp_repeted = inp[:,0,:].unsqueeze(1).repeat(1, nsample, 1)
         else:
-            sos = inp[0,0]
-            eos = inp[-1,0]
+            sos = torch.nn.functional.one_hot(inp[0,0], num_classes=25)
+            eos = torch.nn.functional.one_hot(inp[-1,0], num_classes=25)
             #inp_repeted = inp[:,0].unsqueeze(1).repeat(1, nsample)
+        if inp.shape[1]!=1:
+            nsamples=inp.shape[1]
+        else:
+            if self.onehot:
+                inp_repeted = inp[:,0,:].unsqueeze(1).repeat(1, nsample, 1)
+            else:
+                inp_repeted = inp[:,0].unsqueeze(1).repeat(1, nsample)
+                
             
         
 
@@ -772,7 +780,7 @@ class Transformer(nn.Module):
                 outputs[0,:,:] = sos.unsqueeze(0).repeat(nsample, 1)
                 output = self.forward(inp, target[:-1, :])
                 best_guess = torch.nn.functional.gumbel_softmax(output, hard=True, dim=2)
-                outputs[1:,:,:]= best_guess
+                outputs[1:,:,:] = best_guess
                 outputs[-1,:,:] = eos.unsqueeze(0).repeat(nsample, 1)
 
             return outputs
