@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 from ProteinsDataset import *
 import scipy.optimize
-
+from utils import *
 def makesquaredLoss(batch, model, criterion, criterionMatching, device, accumulate=False, alpha=0.0):
     inp_data, target= batch[0], batch[1]
     bs = inp_data.shape[1]
