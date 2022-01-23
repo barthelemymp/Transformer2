@@ -679,33 +679,54 @@ class Transformer(nn.Module):
         return out
     
     def sample(self, inp, max_len, nsample=1, method="simple"):
-        sos = inp[0,0,:]
-        eos = inp[-1,0,:]
-        if inp.shape[1]==1:
-            inp_repeted = inp[:,0,:].unsqueeze(1).repeat(1, nsample, 1)
+        
+        if self.onehot:
+            sos = inp[0,0,:]
+            eos = inp[-1,0,:]
+            #inp_repeted = inp[:,0,:].unsqueeze(1).repeat(1, nsample, 1)
         else:
+            sos = torch.nn.functional.one_hot(inp[0,0], num_classes=25)
+            eos = torch.nn.functional.one_hot(inp[-1,0], num_classes=25)
+            #inp_repeted = inp[:,0].unsqueeze(1).repeat(1, nsample)
+        if inp.shape[1]!=1:
+            nsample=inp.shape[1]
             inp_repeted = inp
-            nsample = inp.shape[1]
+        else:
+            if self.onehot:
+                inp_repeted = inp[:,0,:].unsqueeze(1).repeat(1, nsample, 1)
+            else:
+                inp_repeted = inp[:,0].unsqueeze(1).repeat(1, nsample)
+                
+            
+        
+        
+        # sos = inp[0,0,:]
+        # eos = inp[-1,0,:]
+        # if inp.shape[1]==1:
+        #     inp_repeted = inp[:,0,:].unsqueeze(1).repeat(1, nsample, 1)
+        # else:
+        #     inp_repeted = inp
+        #     nsample = inp.shape[1]
         
         if method=="simple":
-
-            outputs = torch.zeros(max_len, nsample, inp.shape[2]).to(self.device)
+            outputs = torch.zeros(max_len, nsample, self.trg_vocab_size).to(self.device)
             outputs[0,:,:] = sos.unsqueeze(0).repeat(nsample, 1)
             for i in range(1,max_len):
                 output = self.forward(inp_repeted, outputs[:i])
                 prob = torch.nn.functional.softmax(output.clone().detach(),dim=2).reshape(-1,inp.shape[2])
                 best_guess = torch.multinomial(prob, nsample, replacement=True)
-                if self.onehot:
-                    best_guess = torch.nn.functional.one_hot(best_guess, num_classes=25).reshape(-1,nsample,25)
+                best_guess = torch.nn.functional.one_hot(best_guess, num_classes=25).reshape(-1,nsample,25)
                 outputs[i,:,:]= best_guess[-1,:,:]
 
             outputs[-1,:,:] = eos.unsqueeze(0).repeat(nsample, 1)
+
             return outputs
+
 
                 
             
         if method=="gumbel":
-            outputs = torch.zeros(max_len, nsample, inp.shape[2]).to(self.device)
+            outputs = torch.zeros(max_len, nsample, self.trg_vocab_size).to(self.device)
             outputs[0,:,:] = sos.unsqueeze(0).repeat(nsample, 1)
             for i in range(1,max_len):
                 output = self.forward(inp_repeted, outputs[:i])
@@ -716,7 +737,7 @@ class Transformer(nn.Module):
             return outputs
             
         if method=="bestguess":
-            outputs = torch.zeros(max_len, nsample, inp.shape[2]).to(self.device)
+            outputs = torch.zeros(max_len, nsample, self.trg_vocab_size).to(self.device)
             outputs[0,:,:] = sos.unsqueeze(0).repeat(nsample, 1)
             for i in range(1,max_len):
                 with torch.no_grad():
@@ -780,7 +801,7 @@ class Transformer(nn.Module):
                 outputs[0,:,:] = sos.unsqueeze(0).repeat(nsample, 1)
                 output = self.forward(inp, target[:-1, :])
                 best_guess = torch.nn.functional.gumbel_softmax(output, hard=True, dim=2)
-                print("outputs shape", outputs.shape, "bg", best_guess.shape)
+                #print("outputs shape", outputs.shape, "bg", best_guess.shape)
                 outputs[1:,:,:] = best_guess
                 outputs[-1,:,:] = eos.unsqueeze(0).repeat(nsample, 1)
 
