@@ -250,10 +250,10 @@ def ConditionalEntropyEstimator(pds_val, model, batchs=100):
                 output = output.reshape(-1, output.shape[2])
                 targets_Original = sampled.max(dim=2)[1]#listout[:,batch]
                 targets_Original = targets_Original[1:].reshape(-1)
-                Entropy = criterionE(output, targets_Original).reshape(-1,len(batch)).mean(dim=0)
-                entropylist.append(Entropy)
+                Entropy = criterionE(output, targets_Original).reshape(-1,len(batch)).mean()
+                entropylist.append(Entropy.item())
         print(entropylist)
-        meanEntropy = torch.mean(entropylist)#sum(entropylist)/len(entropylist)
+        meanEntropy = sum(entropylist)/len(entropylist)
     return meanEntropy
 
         
