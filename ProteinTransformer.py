@@ -780,6 +780,7 @@ class Transformer(nn.Module):
                 outputs[0,:,:] = sos.unsqueeze(0).repeat(nsample, 1)
                 output = self.forward(inp, target[:-1, :])
                 best_guess = torch.nn.functional.gumbel_softmax(output, hard=True, dim=2)
+                print("outputs shape", outputs.shape, "bg", best_guess.shape)
                 outputs[1:,:,:] = best_guess
                 outputs[-1,:,:] = eos.unsqueeze(0).repeat(nsample, 1)
 
