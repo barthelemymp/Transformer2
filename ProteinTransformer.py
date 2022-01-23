@@ -713,7 +713,7 @@ class Transformer(nn.Module):
             outputs[0,:,:] = sos.unsqueeze(0).repeat(nsample, 1)
             for i in range(1,max_len):
                 output = self.forward(inp_repeted, outputs[:i])
-                prob = torch.nn.functional.softmax(output.clone().detach(),dim=2).reshape(-1,inp.shape[2])
+                prob = torch.nn.functional.softmax(output.clone().detach(),dim=2).reshape(-1,self.trg_vocab_size)
                 best_guess = torch.multinomial(prob, nsample, replacement=True)
                 best_guess = torch.nn.functional.one_hot(best_guess, num_classes=25).reshape(-1,nsample,25)
                 outputs[i,:,:]= best_guess[-1,:,:]

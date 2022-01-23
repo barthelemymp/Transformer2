@@ -53,7 +53,7 @@ wd=0.0
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-i=17
+i=69
 
 for alpha in alphalist:
 
