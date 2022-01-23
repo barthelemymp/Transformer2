@@ -248,7 +248,8 @@ def ConditionalEntropyEstimator(pds_val, model, batchs=100):
                 sampled = model.sample(listin[:,batch], max_len, nsample=1, method="simple")
                 output = model(listin[:,batch], sampled[:-1, :])
                 output = output.reshape(-1, output.shape[2])
-                targets_Original = listout[:,batch]
+                targets_Original = sampled.max(dim=2)[1]#listout[:,batch]
+                targets_Original = targets_Original[1:].reshape(-1)
                 Entropy = criterionE(output, targets_Original).reshape(-1,len(batch)).mean(dim=0)
                 entropylist.append(Entropy)
         meanEntropy = sum(entropylist)/len(entropylist)
