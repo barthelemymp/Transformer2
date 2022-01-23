@@ -737,7 +737,7 @@ class Transformer(nn.Module):
             eos = torch.nn.functional.one_hot(inp[-1,0], num_classes=25)
             #inp_repeted = inp[:,0].unsqueeze(1).repeat(1, nsample)
         if inp.shape[1]!=1:
-            nsamples=inp.shape[1]
+            nsample=inp.shape[1]
         else:
             if self.onehot:
                 inp_repeted = inp[:,0,:].unsqueeze(1).repeat(1, nsample, 1)
