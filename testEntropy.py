@@ -27,7 +27,7 @@ from utils import *
 from ardca import *
 print("import done")
 #torch.functional.one_hot
-pathtoFolder = "/home/Datasets/DomainsInter/processed/"
+pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
 #pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 count = 0
 # Model hyperparameters--> CAN BE CHANGED
