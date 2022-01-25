@@ -235,6 +235,7 @@ def ConditionalEntropyEstimator(pds_val, model, batchs=100):
     batchIndex = makebatchList(tot, batchs)
     with torch.no_grad():
         entropylist =[]
+        acc = 0
         for batch in tqdm(batchIndex):
             if model.onehot:
                 sampled = model.sample(listin[:,batch], max_len, nsample=1, method="simple")
@@ -248,12 +249,14 @@ def ConditionalEntropyEstimator(pds_val, model, batchs=100):
                 # inp_repeted = listin[:,j,:].unsqueeze(1).repeat(1,len(batch),1)
             else:
                 sampled = model.sample(listin[:,batch], max_len, nsample=1, method="simple")
+                acc+=accuracy(pds_val[batch], sampled).item()
                 output = model(listin[:,batch], sampled[:-1, :])
                 output = output.reshape(-1, output.shape[2])
                 targets_Original = sampled.max(dim=2)[1]#listout[:,batch]
                 targets_Original = targets_Original[1:].reshape(-1)
-                Entropy = criterionE(output, targets_Original).reshape(-1,len(batch)).mean()
-                entropylist.append(Entropy.item())
+                Entropy = criterionE(output, targets_Original).reshape(-1,len(batch)).mean(dim=0)
+                entropylist+=[Entropy[i] for i in range(len(Entropy))]
+        print(acc/len(pds_val))
         meanEntropy = sum(entropylist)/len(entropylist)
     return meanEntropy
 

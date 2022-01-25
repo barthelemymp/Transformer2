@@ -735,7 +735,7 @@ class Transformer(nn.Module):
             for i in range(1,max_len):
                 output = self.forward(inp_repeted, outputs[:i])
                 best_guess = torch.nn.functional.gumbel_softmax(output, hard=True, dim=2)
-                outputs[i,:,:]= best_guess
+                outputs[i,:,:]= best_guess[-1,:,:]
 
             outputs[-1,:,:] = eos.unsqueeze(0).repeat(nsample, 1)
             return outputs

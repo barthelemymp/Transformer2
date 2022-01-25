@@ -53,7 +53,9 @@ wd=0.0
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-i=17
+import sys
+family = str(sys.argv[1])
+i = int(family)
 
 for alpha in alphalist:
 
@@ -269,5 +271,11 @@ for alpha in alphalist:
 # print("score", )
 # print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
 
- 
+    
+    
+
+
+
+
+
 
