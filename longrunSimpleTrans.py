@@ -27,7 +27,7 @@ from utils import *
 from ardca import *
 print("import done")
 #torch.functional.one_hot
-pathtoFolder = "/home/Datasets/DomainsInter/processed/"
+pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
 #pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 count = 0
 # Model hyperparameters--> CAN BE CHANGED
@@ -57,7 +57,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 ilist = []
 
-for i in range(1500):
+for i in range(300,1500):
     pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
     if os.path.isfile(pathTofile)==True:
         print(i)
@@ -262,8 +262,7 @@ for i in ilist:
             wandb.log({ "scoreMatching Val": scoreMatchingVal, "scoreMatchingValClose": scoreMatchingValClose, "scoreMatchingVal Far": scoreMatchingValFar,"epoch":epoch})
     wandb.finish()
         
-        
-        
+
 
 # i = "hk"
 # pathTofile = 'train_real.csv'
@@ -290,3 +289,4 @@ for i in ilist:
 # print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
 
  
+
