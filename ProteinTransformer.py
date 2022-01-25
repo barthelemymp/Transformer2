@@ -679,7 +679,11 @@ class Transformer(nn.Module):
         return out
     
     def sample(self, inp, max_len, nsample=1, method="simple"):
-        
+        """ sample output protein given input proteins:
+                -nsample only relevant if inp consist of one sample.
+                -method = simple means that the output is sampled using conditional distrib but we can not backpropagate trough the samples
+                -method = gumbel: the sample are backpropagable.
+            return samples sequence in the onehot format in very case"""
         if self.onehot:
             sos = inp[0,0,:]
             eos = inp[-1,0,:]
