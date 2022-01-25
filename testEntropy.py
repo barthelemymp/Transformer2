@@ -4,6 +4,7 @@ Created on Thu Dec  2 17:24:37 2021
 
 @author: bartm
 """
+
 import scipy.optimize
 import torch
 import torch.nn as nn
@@ -25,6 +26,7 @@ from ProteinsDataset import *
 from MatchingLoss import *
 from utils import *
 from ardca import *
+torch.set_num_threads(16)
 print("import done")
 #torch.functional.one_hot
 pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
