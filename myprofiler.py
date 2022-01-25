@@ -81,13 +81,7 @@ pds_val = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,fil
 ntrain = len(pds_train)
 nval = len(pds_val)
 ntest = len(pds_test)
-dval1,dval2 = distanceTrainVal(pds_train, pds_val)
-print("median", (dval1+dval2).min(dim=0)[0].median())
-maskValclose = (dval1+dval2).min(dim=0)[0]<(dval1+dval2).min(dim=0)[0].median()
-maskValclose = maskValclose.cpu().numpy()
-maskValfar = (dval1+dval2).min(dim=0)[0]>=(dval1+dval2).min(dim=0)[0].median()
-maskValfar = maskValfar.cpu().numpy()
-# ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
+
 # print("score", i)
 # print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
 
@@ -121,25 +115,7 @@ model = Transformer(
     onehot=onehot,
 ).to(device)
 
-#whyyy 'cpu?'
-wandb.init(project="Transformer test Entropy", entity="barthelemymp")
-config_dict = {
-  "num_layers": num_encoder_layers,
-  "embedding":embedding_size,
-  "forward_expansion": forward_expansion,
-  "batch_size": batch_size,
-  "Encoder": "Positional",
-  "Family":i,
-  "dropout":dropout,
-  "len input":len_input,
-  "len output":len_output,
-  "sizetrain": len(pds_train),
-  "sizeval": len(pds_val),
-  "num_heads": num_heads,
-  "loss": "CE",
-  "alpha":alpha,
-}
-wandb.config.update(config_dict) 
+
 
 step = 0
 step_ev = 0
