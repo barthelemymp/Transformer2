@@ -481,16 +481,16 @@ class PositionalEncoding(nn.Module):
         super(PositionalEncoding, self).__init__()
         self.dropout = nn.Dropout(p=dropout)
         self.device = device
-
-        pe = torch.zeros(max_len, d_model+1).to(device)
+        pe = torch.zeros(max_len, d_model).to(device)
         position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
         div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))
-        pe[:, 0::2] = torch.sin(position * div_term)
-        pe[:, 1::2] = torch.cos(position * div_term)
-        pe = pe[:,:-1] #this step is not really smart, needed when d_model is odd. 
-        pe = pe.unsqueeze(0).transpose(0, 1)
+        pe[:, 0::2] = torch.sin(position * div_term)[:,:pe[:, 0::2].shape[1]]
+        pe[:, 1::2] = torch.cos(position * div_term)[:,:pe[:, 1::2].shape[1]]
+        #pe = pe[:,:-1] #this step is not really smart, needed when d_model is odd. 
+        pe = pe.unsqueeze(0)#.transpose(0, 1)
         self.register_buffer('pe', pe)
         print(self.pe.device)
+
         
     def forward(self, x):
         r"""Inputs of forward function
