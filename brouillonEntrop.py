@@ -139,12 +139,12 @@ for epoch in range(num_epochs+1):
 #test on first
 ntest = 0
 inp, target = pds_train[0][0].unsqueeze(1), pds_train[0][1].unsqueeze(1)
-targets = target.repeat(1,5*5*5*5)
+targets = target.repeat(1,8*8*8*8)
 count=0
-for a1 in range(5):
-    for a2 in range(5):
-        for a3 in range(5):
-            for a4 in range(5):
+for a1 in range(8):
+    for a2 in range(8):
+        for a3 in range(8):
+            for a4 in range(8):
                 targets[1,count] = a1
                 targets[2,count] = a2
                 targets[3,count] = a3
@@ -153,7 +153,7 @@ for a1 in range(5):
                 
                 
 print(targets)
-inps = target.repeat(1,5*5*5*5)
+inps = target.repeat(1,8*8*8*8)
 
 
 criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
