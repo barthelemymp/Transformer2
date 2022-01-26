@@ -165,6 +165,6 @@ with torch.no_grad():
     targets_Original = targets_Original[1:].reshape(-1)
     loss =criterionE(output, targets_Original).reshape(-1,targets.shape[1]).mean(dim=0)
 
-loss.shape
+print(loss.shape)
 
-#sampled = model.sample(listin[:,batch], max_len, nsample=1, method="simple")
+sampled = model.sample(inps, targets.shape[0], nsample=1, method="simple")
