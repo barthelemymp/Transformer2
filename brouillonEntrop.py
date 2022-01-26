@@ -159,10 +159,10 @@ inps = target.repeat(1,5*5*5*5)
 criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
 model.eval()
 with torch.no_grad():
-    output = model(inps, targets[:-1, :])
+    output = model(inps, targets[:-1, :])[:-1]
     output = output.reshape(-1, output.shape[2])#keep last dimension
     targets_Original= targets
-    targets_Original = targets_Original[1:].reshape(-1)
+    targets_Original = targets_Original[1:-1].reshape(-1)
     loss =criterionE(output, targets_Original).reshape(-1,targets.shape[1])
 
 print(loss.shape)
