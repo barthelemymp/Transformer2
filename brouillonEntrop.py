@@ -118,7 +118,7 @@ pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
 criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
 for epoch in range(num_epochs+1):
     print(f"[Epoch {epoch} / {num_epochs}]")
-    model.train()
+    _ = model.train()
     lossesCE = []
     accuracyTrain = 0
     for batch_idx, batch in enumerate(train_iterator):
@@ -150,21 +150,22 @@ for a1 in range(5):
                 targets[3,count] = a3
                 targets[4,count] = a4
                 count+=1
+                
+                
 print(targets)
 inps = target.repeat(1,5*5*5*5)
 
 
-criterionE = nn.CrossEntropyLoss(ignore_index=pds_val.SymbolMap["<pad>"], reduction='none')
+criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
 
 with torch.no_grad():
     output = model(inps, targets[:-1, :])
     accuracyTrain += accuracy(batch, output, onehot=False).item()
     output = output.reshape(-1, output.shape[2])#keep last dimension
-
     targets_Original= targets
     targets_Original = targets_Original[1:].reshape(-1)
-
     loss =criterionE(output, targets_Original).reshape(-1,targets.shape[1]).mean(dim=0)
 
+loss.shape
 
-
+sampled = model.sample(listin[:,batch], max_len, nsample=1, method="simple")
