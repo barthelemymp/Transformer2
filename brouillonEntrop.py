@@ -129,7 +129,7 @@ for a1 in range(8):
                 
                 
 print(targets)
-inps = target.repeat(1,8*8*8*8)
+inps = inp.repeat(1,8*8*8*8)
 
 
 
@@ -154,14 +154,14 @@ def exactEntropy(inps, targets, model):
 optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
 pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
 criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
+alpha=0
 for epoch in range(num_epochs+1):
-    
     model.train()
     lossesCE = []
     accuracyTrain = 0
     for batch_idx, batch in enumerate(train_iterator):
         optimizer.zero_grad()
-        lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=5)
+        lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=1)
         accuracyTrain += acc
         lossesCE.append(lossCE.item())
         loss = lossCE + alpha * lossEntropy
