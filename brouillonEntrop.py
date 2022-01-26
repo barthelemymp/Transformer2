@@ -149,6 +149,7 @@ for a1 in range(5):
                 targets[2,count] = a2
                 targets[3,count] = a3
                 targets[4,count] = a4
+                count+=1
 print(targets)
 inps = target.repeat(1,5*5*5*5)
 
