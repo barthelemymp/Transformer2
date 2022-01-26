@@ -67,7 +67,7 @@ train_path = pathtoFolder
 #add 2 for start and end token 
 len_input = inputsize + 2
 len_output =outputsize + 2
-pds_train = ProteinTranslationDataset(train_path, mapstring = "ABCDE",device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
+pds_train = ProteinTranslationDataset(train_path, mapstring = "ABCDE",device=device, Unalign=Unalign,filteringOption='or', returnIndex=True,onehot=onehot)
 ntrain = len(pds_train)
 
 # ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
@@ -170,7 +170,7 @@ print(loss.shape)
 sampled = model.sample(inps, targets.shape[0], nsample=1, method="simple")
 
 freq = sampled.mean(dim=1)
-probseq = torch.exp(loss).view(1,-1,1)
+probseq = torch.exp(-1*loss).view(1,-1,1)
 weighted = torch.nn.functional.one_hot(targets, num_classes=sampled.shape[2])
 weighted = weighted * probseq
 weighted = weighted.mean(dim=1)
