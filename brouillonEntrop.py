@@ -184,5 +184,6 @@ print(weighted)
 print(freq)
 
 
-entropy = (-1*loss)*torch.exp(-1*loss)
+entropy = (loss)*torch.exp(-1*loss)
 entropy = torch.sum(entropy)
+print(entropy)
