@@ -138,7 +138,7 @@ optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
 pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
 criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
 for epoch in range(num_epochs+1):
-    print(f"[Epoch {epoch} / {num_epochs}]")
+    
     _ = model.train()
     lossesCE = []
     accuracyTrain = 0
@@ -151,8 +151,10 @@ for epoch in range(num_epochs+1):
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1) 
         optimizer.step()
-    entropytest = ConditionalEntropyEstimatorGivenInp(pds_train[0][0], model, pds_train.SymbolMap["<pad>"], targets.shape[0],nseq=1000, batchs=100, returnAcc=False)
-    print(sum(lossesCE)/len(lossesCE), entropytest)
+    if epoch%100==0:
+        entropytest = ConditionalEntropyEstimatorGivenInp(pds_train[0][0], model, pds_train.SymbolMap["<pad>"], targets.shape[0],nseq=1000, batchs=100, returnAcc=False)
+        print(f"[Epoch {epoch} / {num_epochs}]", entropytest, sum(lossesCE)/len(lossesCE))
+
     
     
     
