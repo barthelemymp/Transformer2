@@ -134,6 +134,8 @@ for epoch in range(num_epochs+1):
     
     
     
+
+    
 #test on first
 ntest = 0
 inp, target = pds_train[0][0].unsqueeze(1), pds_train[0][1].unsqueeze(1)
@@ -151,7 +153,17 @@ print(targets)
 inps = target.repeat(1,5*5*5*5)
 
 
-                
+criterionE = nn.CrossEntropyLoss(ignore_index=pds_val.SymbolMap["<pad>"], reduction='none')
+
+with torch.no_grad():
+    output = model(inps, targets[:-1, :])
+    accuracyTrain += accuracy(batch, output, onehot=False).item()
+    output = output.reshape(-1, output.shape[2])#keep last dimension
+
+    targets_Original= targets
+    targets_Original = targets_Original[1:].reshape(-1)
+
+    loss =criterionE(output, targets_Original).reshape(-1,targets.shape[1]).mean(dim=0)
 
 
 
