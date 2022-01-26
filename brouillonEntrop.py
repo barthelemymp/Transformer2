@@ -167,7 +167,7 @@ with torch.no_grad():
 
 print(loss.shape)
 loss = loss.sum(dim=0)
-sampled = model.sample(inps, targets.shape[0], nsample=1, method="simple")
+sampled = model.sample(inps.repeat(1,10), targets.shape[0], nsample=1, method="simple")
 
 freq = sampled.mean(dim=1)
 probseq = torch.exp(-1*loss).view(1,-1,1)
