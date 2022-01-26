@@ -160,7 +160,6 @@ criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], redu
 
 with torch.no_grad():
     output = model(inps, targets[:-1, :])
-    accuracyTrain += accuracy(batch, output, onehot=False).item()
     output = output.reshape(-1, output.shape[2])#keep last dimension
     targets_Original= targets
     targets_Original = targets_Original[1:].reshape(-1)
@@ -168,4 +167,4 @@ with torch.no_grad():
 
 loss.shape
 
-sampled = model.sample(listin[:,batch], max_len, nsample=1, method="simple")
+#sampled = model.sample(listin[:,batch], max_len, nsample=1, method="simple")
