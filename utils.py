@@ -225,7 +225,7 @@ def accuracy(batch, output, onehot=False):
     
 
         
-def ConditionalEntropyEstimator(pds_val, model, batchs=100):
+def ConditionalEntropyEstimator(pds_val, model, batchs=100, returnAcc=False):
     model.eval()
     criterionE = nn.CrossEntropyLoss(ignore_index=pds_val.SymbolMap["<pad>"], reduction='none')
     data = getPreciseBatch(pds_val, torch.tensor(range(len(pds_val))))
@@ -250,15 +250,60 @@ def ConditionalEntropyEstimator(pds_val, model, batchs=100):
             else:
                 sampled = model.sample(listin[:,batch], max_len, nsample=1, method="simple")
                 acc+=accuracy(pds_val[batch], sampled[1:]).item()
-                output = model(listin[:,batch], sampled[:-1, :])
+                output = model(listin[:,batch], sampled[:-1, :])[:-1]
                 output = output.reshape(-1, output.shape[2])
                 targets_Original = sampled.max(dim=2)[1]#listout[:,batch]
-                targets_Original = targets_Original[1:].reshape(-1)
-                Entropy = criterionE(output, targets_Original).reshape(-1,len(batch)).mean(dim=0)
+                targets_Original = targets_Original[1:-1].reshape(-1)
+                Entropy = criterionE(output, targets_Original).reshape(-1,len(batch)).sum(dim=0)
                 entropylist+=[Entropy[i] for i in range(len(Entropy))]
         print(acc/len(pds_val))
         meanEntropy = sum(entropylist)/len(entropylist)
-    return meanEntropy
+    if returnAcc:
+        return meanEntropy, acc/len(pds_val)
+    else:
+        return meanEntropy
+    
+    
+   
+def ConditionalEntropyEstimatorGivenInp(inp, model, pad, max_len,nseq=1000, batchs=100, returnAcc=False):
+    model.eval()
+    criterionE = nn.CrossEntropyLoss(ignore_index=pad, reduction='none')
+    # data = getPreciseBatch(pds_val, torch.tensor(range(len(pds_val))))
+    # listin, listout = data[0], data[1]
+    listin = inp.unsqueeze(1).repeat(1,nseq)
+    tot = listin.shape[1]
+    # max_len = listout.shape[0]
+    batchIndex = makebatchList(tot, batchs)
+    with torch.no_grad():
+        entropylist =[]
+        acc = 0
+        for batch in tqdm(batchIndex):
+            if model.onehot:
+                sampled = model.sample(listin[:,batch], max_len, nsample=1, method="simple")
+                output = model(listin[:,batch], sampled[:-1, :])
+                output = output.reshape(-1, output.shape[2])
+                #_, targets_Original = listout[:,batch].max(dim=2)
+                targets_Original = sampled.max(dim=2)[1]
+                targets_Original = targets_Original[1:].reshape(-1)
+                Entropy = criterionE(output, targets_Original).reshape(-1,len(batch)).mean()
+                entropylist.append(Entropy)
+                # inp_repeted = listin[:,j,:].unsqueeze(1).repeat(1,len(batch),1)
+            else:
+                sampled = model.sample(listin[:,batch], max_len, nsample=1, method="simple")
+                acc+=accuracy(pds_val[batch], sampled[1:]).item()
+                output = model(listin[:,batch], sampled[:-1, :])[:-1]
+                output = output.reshape(-1, output.shape[2])
+                targets_Original = sampled.max(dim=2)[1]#listout[:,batch]
+                targets_Original = targets_Original[1:-1].reshape(-1)
+                Entropy = criterionE(output, targets_Original).reshape(-1,len(batch)).sum(dim=0)
+                entropylist+=[Entropy[i] for i in range(len(Entropy))]
+        print(acc/len(pds_val))
+        meanEntropy = sum(entropylist)/len(entropylist)
+    if returnAcc:
+        return meanEntropy, acc/len(pds_val)
+    else:
+        return meanEntropy
+    
 
         
         
