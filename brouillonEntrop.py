@@ -41,7 +41,7 @@ embedding_size = 10#len(protein.vocab) #it should be 25. 21 amino, 2 start and e
 
 repartition = [0.7, 0.15, 0.15]
 #EPOCHS 
-num_epochs =1000
+num_epochs =100
 Unalign = False
 
 wd_list = [0.0]#, 0.00005]
@@ -163,8 +163,17 @@ with torch.no_grad():
     output = output.reshape(-1, output.shape[2])#keep last dimension
     targets_Original= targets
     targets_Original = targets_Original[1:].reshape(-1)
-    loss =criterionE(output, targets_Original).reshape(-1,targets.shape[1]).mean(dim=0)
+    loss =criterionE(output, targets_Original).reshape(-1,targets.shape[1]).sum(dim=0)
 
 print(loss.shape)
 
 sampled = model.sample(inps, targets.shape[0], nsample=1, method="simple")
+
+freq = sampled.mean(dim=1)
+probseq = torch.exp(loss).view(1,-1,1)
+weighted = torch.nn.functional.one_hot(targets, num_classes=sampled.shape[2])
+weighted = weighted * probseq
+weighted = weighted.mean(dim=1)
+
+print(weighted)
+print(freq)
