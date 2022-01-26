@@ -133,6 +133,23 @@ inps = target.repeat(1,8*8*8*8)
 
 
 
+def exactEntropy(inps, targets, model):
+    criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
+    model.eval()
+    with torch.no_grad():
+        output = model(inps, targets[:-1, :])[:-1]
+        output = output.reshape(-1, output.shape[2])#keep last dimension
+        targets_Original= targets
+        targets_Original = targets_Original[1:-1].reshape(-1)
+        loss =criterionE(output, targets_Original).reshape(-1,targets.shape[1])
+    loss = loss.sum(dim=0)
+    probseq = torch.exp(-1*loss).view(1,-1,1)
+    entropy = (loss)*torch.exp(-1*loss)
+    entropy = torch.sum(entropy)
+    return entropy
+
+
+
         
 optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
 pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
@@ -151,9 +168,9 @@ for epoch in range(num_epochs+1):
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1) 
         optimizer.step()
-    if epoch%100==0:
+    if epoch%500==0:
         entropytest = ConditionalEntropyEstimatorGivenInp(pds_train[0][0], model, pds_train.SymbolMap["<pad>"], targets.shape[0],nseq=1000, batchs=100, returnAcc=False)
-        print(f"[Epoch {epoch} / {num_epochs}]", entropytest, sum(lossesCE)/len(lossesCE))
+        print(f"[Epoch {epoch} / {num_epochs}]", entropytest, exactEntropy(inps, targets, model), sum(lossesCE)/len(lossesCE))
 
     
     
