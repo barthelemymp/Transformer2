@@ -170,7 +170,7 @@ for epoch in range(num_epochs+1):
         optimizer.step()
     if epoch%500==0:
         model.eval()
-        entropytest = ConditionalEntropyEstimatorGivenInp(pds_train[0][0], model, pds_train.SymbolMap["<pad>"], targets.shape[0],nseq=1000, batchs=300, returnAcc=False)
+        entropytest = ConditionalEntropyEstimatorGivenInp(pds_train[0][0], model, pds_train.SymbolMap["<pad>"], targets.shape[0],nseq=100000, batchs=300, returnAcc=False)
         print(f"[Epoch {epoch} / {num_epochs}]", entropytest, exactEntropy(inps, targets, model), sum(lossesCE)/len(lossesCE))
 
     
