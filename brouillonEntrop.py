@@ -99,7 +99,7 @@ model = Transformer(
     onehot=onehot,
 ).to(device)
 
-alpha = -0.05
+alpha = -0.3
 
 step = 0
 step_ev = 0
@@ -156,7 +156,7 @@ pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
 criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
 for epoch in range(num_epochs+1):
     
-    _ = model.train()
+    model.train()
     lossesCE = []
     accuracyTrain = 0
     for batch_idx, batch in enumerate(train_iterator):
@@ -169,6 +169,7 @@ for epoch in range(num_epochs+1):
         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1) 
         optimizer.step()
     if epoch%500==0:
+        model.eval()
         entropytest = ConditionalEntropyEstimatorGivenInp(pds_train[0][0], model, pds_train.SymbolMap["<pad>"], targets.shape[0],nseq=100000, batchs=300, returnAcc=False)
         print(f"[Epoch {epoch} / {num_epochs}]", entropytest, exactEntropy(inps, targets, model), sum(lossesCE)/len(lossesCE))
 
