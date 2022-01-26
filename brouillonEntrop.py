@@ -111,7 +111,28 @@ for p in model.parameters():
     if p.dim() > 1:
         nn.init.xavier_normal_(p)
         
-        
+
+
+ntest = 0
+inp, target = pds_train[0][0].unsqueeze(1), pds_train[0][1].unsqueeze(1)
+targets = target.repeat(1,8*8*8*8)
+count=0
+for a1 in range(8):
+    for a2 in range(8):
+        for a3 in range(8):
+            for a4 in range(8):
+                targets[1,count] = a1
+                targets[2,count] = a2
+                targets[3,count] = a3
+                targets[4,count] = a4
+                count+=1
+                
+                
+print(targets)
+inps = target.repeat(1,8*8*8*8)
+
+
+
         
 optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
 pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
@@ -138,23 +159,6 @@ for epoch in range(num_epochs+1):
 
     
 #test on first
-ntest = 0
-inp, target = pds_train[0][0].unsqueeze(1), pds_train[0][1].unsqueeze(1)
-targets = target.repeat(1,8*8*8*8)
-count=0
-for a1 in range(8):
-    for a2 in range(8):
-        for a3 in range(8):
-            for a4 in range(8):
-                targets[1,count] = a1
-                targets[2,count] = a2
-                targets[3,count] = a3
-                targets[4,count] = a4
-                count+=1
-                
-                
-print(targets)
-inps = target.repeat(1,8*8*8*8)
 
 
 criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
