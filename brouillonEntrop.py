@@ -99,7 +99,7 @@ model = Transformer(
     onehot=onehot,
 ).to(device)
 
-alpha = 0.0
+alpha = -0.05
 
 step = 0
 step_ev = 0

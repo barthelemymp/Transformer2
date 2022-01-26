@@ -422,7 +422,8 @@ def SamplerContrastiveMatchingLoss(batch,
 def ConditioalEntropyMatchingLoss(batch,
                                   model,
                                   CCL_mean,
-                                  device):
+                                  device,
+                                  samplingMultiple=1):
 
     inp_data, target, idx_list = batch[0], batch[1], batch[2]
     output = model(inp_data, target[:-1, :])
@@ -444,7 +445,17 @@ def ConditioalEntropyMatchingLoss(batch,
 
     _, samples_Original = samples.max(dim=2)
     samples_Original = samples_Original[1:].reshape(-1)
-    lossEntropy = -1*CCL_mean(output, samples_Original)
+    lossEntropy = CCL_mean(output, samples_Original)
+    for i in range(samplingMultiple-1):
+        samples = model.pseudosample(inp_data, target, nsample=1, method="gumbel")
+        output = model(inp_data, samples[:-1, :])
+        output = output.reshape(-1, output.shape[2])
+
+        _, samples_Original = samples.max(dim=2)
+        samples_Original = samples_Original[1:].reshape(-1)
+        lossEntropy += CCL_mean(output, samples_Original)
+    
+    lossEntropy = lossEntropy/samplingMultiple  
 
     
     return lossCE, lossEntropy, acc
