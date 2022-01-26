@@ -171,7 +171,7 @@ sampled = model.sample(inps, targets.shape[0], nsample=1, method="simple")
 
 freq = sampled.mean(dim=1)
 probseq = torch.exp(-1*loss).view(1,-1,1)
-print(probseq)
+print(sum(probseq))
 weighted = torch.nn.functional.one_hot(targets, num_classes=sampled.shape[2])
 weighted = weighted * probseq
 weighted = weighted.mean(dim=1)
