@@ -41,7 +41,7 @@ embedding_size = 10#len(protein.vocab) #it should be 25. 21 amino, 2 start and e
 
 repartition = [0.7, 0.15, 0.15]
 #EPOCHS 
-num_epochs =300
+num_epochs =5000
 Unalign = False
 
 wd_list = [0.0]#, 0.00005]
@@ -130,7 +130,8 @@ for epoch in range(num_epochs+1):
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1) 
         optimizer.step()
-    print(sum(lossesCE)/len(lossesCE))
+    entropytest = ConditionalEntropyEstimatorGivenInp(pds_train[0][0], model, pds_train.SymbolMap["<pad>"], targets.shape[0],nseq=1000, batchs=100, returnAcc=False)
+    print(sum(lossesCE)/len(lossesCE), entropytest)
     
     
     
