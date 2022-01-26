@@ -22,7 +22,7 @@ from ProteinsDataset import *
 from MatchingLoss import *
 from utils import *
 from ardca import *
-torch.set_num_threads(16)
+torch.set_num_threads(6)
 print("import done")
 #torch.functional.one_hot
 pathtoFolder = "testFakedata.csv"
@@ -99,7 +99,7 @@ model = Transformer(
     onehot=onehot,
 ).to(device)
 
-alpha = -0.0
+alpha = -0.5
 
 step = 0
 step_ev = 0
@@ -161,7 +161,7 @@ for epoch in range(num_epochs+1):
     accuracyTrain = 0
     for batch_idx, batch in enumerate(train_iterator):
         optimizer.zero_grad()
-        lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device)
+        lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=5)
         accuracyTrain += acc
         lossesCE.append(lossCE.item())
         loss = lossCE + alpha * lossEntropy
