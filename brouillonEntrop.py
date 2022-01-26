@@ -163,10 +163,10 @@ with torch.no_grad():
     output = output.reshape(-1, output.shape[2])#keep last dimension
     targets_Original= targets
     targets_Original = targets_Original[1:-2].reshape(-1)
-    loss =criterionE(output, targets_Original).reshape(-1,targets.shape[1]).sum(dim=0)
+    loss =criterionE(output, targets_Original).reshape(-1,targets.shape[1])
 
 print(loss.shape)
-
+loss = loss.sum(dim=0)
 sampled = model.sample(inps, targets.shape[0], nsample=1, method="simple")
 
 freq = sampled.mean(dim=1)
@@ -174,7 +174,7 @@ probseq = torch.exp(-1*loss).view(1,-1,1)
 print(torch.sum(probseq))
 weighted = torch.nn.functional.one_hot(targets, num_classes=sampled.shape[2])
 weighted = weighted * probseq
-weighted = weighted.mean(dim=1)
+weighted = weighted.sum(dim=1)
 
 print(weighted)
 print(freq)
