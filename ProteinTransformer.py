@@ -487,7 +487,7 @@ class PositionalEncoding(nn.Module):
         pe[:, 0::2] = torch.sin(position * div_term)[:,:pe[:, 0::2].shape[1]]
         pe[:, 1::2] = torch.cos(position * div_term)[:,:pe[:, 1::2].shape[1]]
         #pe = pe[:,:-1] #this step is not really smart, needed when d_model is odd. 
-        pe = pe.unsqueeze(0)#.transpose(0, 1)
+        pe = pe.unsqueeze(0).transpose(0, 1)
         self.register_buffer('pe', pe)
         print(self.pe.device)
         print(self.pe.device)
