@@ -98,8 +98,8 @@ class ProteinTranslationDataset(torch.utils.data.Dataset):
         self.inputsize = len(df.iloc[1][0].split(" "))+2
         self.outputsize = len(df.iloc[1][1].split(" "))+2
         self.gap = "-"
-        self.tensorIN=torch.zeros(self.inputsize,len(df), 25)
-        self.tensorOUT=torch.zeros(self.outputsize,len(df), 25)
+        self.tensorIN=torch.zeros(self.inputsize,len(df), len(self.SymbolMap))
+        self.tensorOUT=torch.zeros(self.outputsize,len(df), len(self.SymbolMap))
         self.device = device
         self.transform = transform
         self.batch_first = batch_first
@@ -110,8 +110,8 @@ class ProteinTranslationDataset(torch.utils.data.Dataset):
             for i in range(len(df)):
                 inp = [self.SymbolMap[self.init_token]]+[self.SymbolMap[k] for k in df[0][i].split(" ")]+[self.SymbolMap[self.eos_token]]
                 out = [self.SymbolMap[self.init_token]]+[self.SymbolMap[k] for k in df[1][i].split(" ")]+[self.SymbolMap[self.eos_token]]
-                self.tensorIN[:,i,:] = torch.nn.functional.one_hot(torch.tensor(inp), num_classes=25)
-                self.tensorOUT[:,i,:] = torch.nn.functional.one_hot(torch.tensor(out), num_classes=25)
+                self.tensorIN[:,i,:] = torch.nn.functional.one_hot(torch.tensor(inp), num_classes=len(self.SymbolMap))
+                self.tensorOUT[:,i,:] = torch.nn.functional.one_hot(torch.tensor(out), num_classes=len(self.SymbolMap))
         else:
             print("Unaligning and Padding")
             for i in range(len(df)):
@@ -119,8 +119,8 @@ class ProteinTranslationDataset(torch.utils.data.Dataset):
                 out = [self.SymbolMap[self.init_token]]+[self.SymbolMap[k] for k in df[1][i].split(" ") if k!=self.gap]+[self.SymbolMap[self.eos_token]]
                 inp += [self.SymbolMap[self.pad_token]]*(self.inputsize - len(inp))
                 out += [self.SymbolMap[self.pad_token]]*(self.outputsize - len(out))
-                self.tensorIN[:,i,:] = torch.nn.functional.one_hot(torch.tensor(inp), num_classes=25)
-                self.tensorOUT[:,i,:] = torch.nn.functional.one_hot(torch.tensor(out), num_classes=25)
+                self.tensorIN[:,i,:] = torch.nn.functional.one_hot(torch.tensor(inp), num_classes=len(self.SymbolMap))
+                self.tensorOUT[:,i,:] = torch.nn.functional.one_hot(torch.tensor(out), num_classes=len(self.SymbolMap))
                 
         if filteringOption == "in":
             a = getUnique(self.tensorIN)[1]
@@ -197,34 +197,34 @@ class ProteinTranslationDataset(torch.utils.data.Dataset):
         if self.onehot:
             if self.inputsize < pds.inputsize:
                 dif = pds.inputsize - self.inputsize
-                padIN = torch.zeros(dif, len(self), 25).to(self.device, non_blocking=True)
+                padIN = torch.zeros(dif, len(self), len(self.SymbolMap)).to(self.device, non_blocking=True)
                 for i in range(len(self)):
                     inp = [self.SymbolMap[self.pad_token]]*dif
-                    padIN[:,i,:] = torch.nn.functional.one_hot(torch.tensor(inp), num_classes=25)
+                    padIN[:,i,:] = torch.nn.functional.one_hot(torch.tensor(inp), num_classes=len(self.SymbolMap))
                 self.tensorIN = torch.cat([torch.cat([self.tensorIN, padIN],dim=0), pds.tensorIN], dim=1)
                 self.inputsize = pds.inputsize
             elif self.inputsize > pds.inputsize:
                 dif = self.inputsize - pds.inputsize
-                padIN = torch.zeros(dif, len(pds), 25).to(self.device, non_blocking=True)
+                padIN = torch.zeros(dif, len(pds), len(self.SymbolMap)).to(self.device, non_blocking=True)
                 for i in range(len(pds)):
                     inp = [self.SymbolMap[self.pad_token]] * dif
-                    padIN[:,i,:] = torch.nn.functional.one_hot(torch.tensor(inp), num_classes=25)
+                    padIN[:,i,:] = torch.nn.functional.one_hot(torch.tensor(inp), num_classes=len(self.SymbolMap))
                 self.tensorIN = torch.cat([self.tensorIN, torch.cat([pds.tensorIN, padIN],dim=0)], dim=1)
                 pds.inputsize = self.inputsize
             if self.outputsize < pds.outputsize:
                 dif = pds.outputsize - self.outputsize
-                padOUT = torch.zeros(dif, self.tensorOUT.shape[1], 25).to(self.device, non_blocking=True)
+                padOUT = torch.zeros(dif, self.tensorOUT.shape[1], len(self.SymbolMap)).to(self.device, non_blocking=True)
                 for i in range(self.tensorOUT.shape[1]):
                     inp = [self.SymbolMap[self.pad_token]]*dif
-                    padOUT[:,i,:] = torch.nn.functional.one_hot(torch.tensor(inp), num_classes=25)
+                    padOUT[:,i,:] = torch.nn.functional.one_hot(torch.tensor(inp), num_classes=len(self.SymbolMap))
                 self.tensorOUT = torch.cat([torch.cat([self.tensorOUT, padOUT],dim=0), pds.tensorOUT], dim=1)
                 self.outputsize = pds.outputsize
             elif self.outputsize > pds.outputsize:
                 dif = self.outputsize - pds.outputsize
-                padOUT = torch.zeros(dif, pds.tensorOUT.shape[1], 25).to(self.device, non_blocking=True)
+                padOUT = torch.zeros(dif, pds.tensorOUT.shape[1], len(self.SymbolMap)).to(self.device, non_blocking=True)
                 for i in range(pds.tensorOUT.shape[1]):
                     inp = [self.SymbolMap[self.pad_token]] * dif
-                    padOUT[:,i,:] = torch.nn.functional.one_hot(torch.tensor(inp), num_classes=25)
+                    padOUT[:,i,:] = torch.nn.functional.one_hot(torch.tensor(inp), num_classes=len(self.SymbolMap))
                 self.tensorOUT = torch.cat([self.tensorOUT, torch.cat([pds.tensorOUT, padOUT],dim=0)], dim=1)
                 pds.outputsize = self.outputsize
         else:
@@ -270,14 +270,14 @@ def getPreciseBatch(pds, idxToget):
     return batch
 
 
-def OneHot(in_tensor):
-    seq_length, N = in_tensor.shape
-    out_one_hot = torch.zeros((in_tensor.shape[0], in_tensor.shape[1],25))
-    for i in range(seq_length):
-        for j in range(N):
-            c = in_tensor[i,j]
-            out_one_hot[i,j,c] = 1
-    return out_one_hot
+# def OneHot(in_tensor):
+#     seq_length, N = in_tensor.shape
+#     out_one_hot = torch.zeros((in_tensor.shape[0], in_tensor.shape[1],len(self.SymbolMap)))
+#     for i in range(seq_length):
+#         for j in range(N):
+#             c = in_tensor[i,j]
+#             out_one_hot[i,j,c] = 1
+#     return out_one_hot
 
 
 

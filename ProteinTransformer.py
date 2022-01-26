@@ -689,8 +689,8 @@ class Transformer(nn.Module):
             eos = inp[-1,0,:]
             #inp_repeted = inp[:,0,:].unsqueeze(1).repeat(1, nsample, 1)
         else:
-            sos = torch.nn.functional.one_hot(inp[0,0], num_classes=25)
-            eos = torch.nn.functional.one_hot(inp[-1,0], num_classes=25)
+            sos = torch.nn.functional.one_hot(inp[0,0], num_classes=self.trg_vocab_size)
+            eos = torch.nn.functional.one_hot(inp[-1,0], num_classes=self.trg_vocab_size)
             #inp_repeted = inp[:,0].unsqueeze(1).repeat(1, nsample)
         if inp.shape[1]!=1:
             nsample=inp.shape[1]
@@ -719,7 +719,7 @@ class Transformer(nn.Module):
                 output = self.forward(inp_repeted, outputs[:i])
                 prob = torch.nn.functional.softmax(output.clone().detach(),dim=2).reshape(-1,self.trg_vocab_size)
                 best_guess = torch.multinomial(prob, nsample, replacement=True)
-                best_guess = torch.nn.functional.one_hot(best_guess, num_classes=25).reshape(-1,nsample,25)
+                best_guess = torch.nn.functional.one_hot(best_guess, num_classes=self.trg_vocab_size).reshape(-1,nsample,self.trg_vocab_size)
                 outputs[i,:,:]= best_guess[-1,:,:]
 
             outputs[-1,:,:] = eos.unsqueeze(0).repeat(nsample, 1)
@@ -747,7 +747,7 @@ class Transformer(nn.Module):
                 with torch.no_grad():
                     output = self.forward(inp_repeted, outputs[:i,:,:])
                 best_guess = output.argmax(2)[-1, :].item()
-                outputs[i,:,:]= torch.nn.functional.one_hot(best_guess, num_classes=25)
+                outputs[i,:,:]= torch.nn.functional.one_hot(best_guess, num_classes=self.trg_vocab_size)
 
             outputs[-1,:,:] = eos.unsqueeze(0).repeat(nsample, 1)
             return outputs
@@ -758,8 +758,8 @@ class Transformer(nn.Module):
             eos = inp[-1,0,:]
             #inp_repeted = inp[:,0,:].unsqueeze(1).repeat(1, nsample, 1)
         else:
-            sos = torch.nn.functional.one_hot(inp[0,0], num_classes=25)
-            eos = torch.nn.functional.one_hot(inp[-1,0], num_classes=25)
+            sos = torch.nn.functional.one_hot(inp[0,0], num_classes=self.trg_vocab_size)
+            eos = torch.nn.functional.one_hot(inp[-1,0], num_classes=self.trg_vocab_size)
             #inp_repeted = inp[:,0].unsqueeze(1).repeat(1, nsample)
         if inp.shape[1]!=1:
             nsample=inp.shape[1]
@@ -780,7 +780,7 @@ class Transformer(nn.Module):
                 output = self.forward(inp, target[:-1, :])
                 prob = torch.nn.functional.softmax(output.clone().detach(),dim=2).reshape(-1,inp.shape[2])
                 best_guess = torch.multinomial(prob, nsample, replacement=True)
-                best_guess = torch.nn.functional.one_hot(best_guess, num_classes=25).reshape(-1,nsample,25)
+                best_guess = torch.nn.functional.one_hot(best_guess, num_classes=self.trg_vocab_size).reshape(-1,nsample,self.trg_vocab_size)
                 #print(best_guess.shape, target.shape)
                 outputs[1:,:,:]= best_guess
     
@@ -818,7 +818,7 @@ class Transformer(nn.Module):
             with torch.no_grad():
                 output = self.forward(inp_repeted, target[:-1, :])
             best_guess = output.argmax(2)[-1, :].item()
-            outputs[1:,:,:]= torch.nn.functional.one_hot(best_guess, num_classes=25)
+            outputs[1:,:,:]= torch.nn.functional.one_hot(best_guess, num_classes=self.trg_vocab_size)
 
             outputs[-1,:,:] = eos.unsqueeze(0).repeat(nsample, 1)
             return outputs
