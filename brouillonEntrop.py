@@ -41,7 +41,7 @@ embedding_size = 10#len(protein.vocab) #it should be 25. 21 amino, 2 start and e
 
 repartition = [0.7, 0.15, 0.15]
 #EPOCHS 
-num_epochs =5000
+num_epochs =500
 Unalign = False
 
 wd_list = [0.0]#, 0.00005]
@@ -99,7 +99,7 @@ model = Transformer(
     onehot=onehot,
 ).to(device)
 
-alpha = -0.5
+alpha = -0.0
 
 step = 0
 step_ev = 0
@@ -154,7 +154,7 @@ def exactEntropy(inps, targets, model):
 optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
 pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
 criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
-alpha=0
+
 for epoch in range(num_epochs+1):
     model.train()
     lossesCE = []
@@ -168,10 +168,10 @@ for epoch in range(num_epochs+1):
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1) 
         optimizer.step()
-    if epoch%500==0:
-        model.eval()
-        entropytest = ConditionalEntropyEstimatorGivenInp(pds_train[0][0], model, pds_train.SymbolMap["<pad>"], targets.shape[0],nseq=5000000, batchs=300, returnAcc=False)
-        print(f"[Epoch {epoch} / {num_epochs}]", entropytest, exactEntropy(inps, targets, model), sum(lossesCE)/len(lossesCE))
+    # if epoch%500==0:
+    #     model.eval()
+    #     entropytest = ConditionalEntropyEstimatorGivenInp(pds_train[0][0], model, pds_train.SymbolMap["<pad>"], targets.shape[0],nseq=5000000, batchs=300, returnAcc=False)
+    #     print(f"[Epoch {epoch} / {num_epochs}]", entropytest, exactEntropy(inps, targets, model), sum(lossesCE)/len(lossesCE))
 
     
     
@@ -212,5 +212,5 @@ print(freq)
 entropy = (loss)*torch.exp(-1*loss)
 entropy = torch.sum(entropy)
 print(entropy)
-entropytest = ConditionalEntropyEstimatorGivenInp(pds_train[0][0], model, pds_train.SymbolMap["<pad>"], targets.shape[0],nseq=1000, batchs=100, returnAcc=False)
+entropytest = ConditionalEntropyEstimatorGivenInp(pds_train[0][0], model, pds_train.SymbolMap["<pad>"], targets.shape[0],nseq=100000, batchs=100, returnAcc=False)
 print(entropytest)
