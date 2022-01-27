@@ -57,7 +57,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
 
 
-
+save_model = True
 alpha = 0.0
 ##### Training simple 
 pathTofile = "train_real.csv"
