@@ -258,7 +258,7 @@ for alpha in alphalist:
             # scoreHungarianTrain = HungarianMatchingBS(pds_train, model,100)
             # scoHTrain = scipy.optimize.linear_sum_assignment(scoreHungarianTrain)
             # scoreMatchingTrain = sum(scoHTrain[0]==scoHTrain[1])
-            Entropy = ConditionalEntropyEstimatorGivenInp(pds_val[0][0].unsqueeze(1), model, pds_train.SymbolMap["<pad>"], len_output,nseq=100000, batchs=1000, returnAcc=False)
+            Entropy = ConditionalEntropyEstimatorGivenInp(pds_val[0][0], model, pds_train.SymbolMap["<pad>"], len_output,nseq=100000, batchs=1000, returnAcc=False)
             
             wandb.log({ "scoreMatching Val": scoreMatchingVal, "scoreMatchingValClose": scoreMatchingValClose, "scoreMatchingVal Far": scoreMatchingValFar, "Entropy":Entropy, "epoch":epoch})
     wandb.finish()
