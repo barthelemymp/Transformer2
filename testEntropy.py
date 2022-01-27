@@ -47,7 +47,7 @@ repartition = [0.7, 0.15, 0.15]
 #EPOCHS 
 num_epochs =5000
 Unalign = False
-alphalist=[0.0, 0.1, -0.1]
+alphalist=[-0.1,0.0, 0.1]
 wd_list = [0.0]#, 0.00005]
 # ilist = [46, 69, 71,157,160,251, 258, 17]
 onehot=False
@@ -153,6 +153,7 @@ for alpha in alphalist:
             nn.init.xavier_normal_(p)
             
     optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
+    sparseoptim = torch.optim.SparseAdam(model.parameters(), lr=5e-6, weight_decay=0.0)
     pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
     criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
     for epoch in range(num_epochs+1):
@@ -161,16 +162,32 @@ for alpha in alphalist:
         lossesCE = []
         accuracyTrain = 0
         for batch_idx, batch in enumerate(train_iterator):
-            
-            optimizer.zero_grad()
-            lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device)
-            accuracyTrain += acc
-            lossesCE.append(lossCE.item())
-            loss = lossCE + alpha * lossEntropy
-            loss.backward()
-            
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1) 
-            optimizer.step()
+            if epoch<3000:
+                inp_data, target= batch[0], batch[1]
+                output = model(inp_data, target[:-1, :])
+                accuracyTrain += accuracy(batch, output, onehot=False).item()
+                output = output.reshape(-1, output.shape[2])#keep last dimension
+                if onehot:
+                    _, targets_Original = target.max(dim=2)
+                else:
+                    targets_Original= target
+                targets_Original = targets_Original[1:].reshape(-1)
+                optimizer.zero_grad()
+                loss = criterion(output, targets_Original)
+                lossesCE.append(loss.item())
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1) 
+                optimizer.step()
+            else:
+                optimizer.zero_grad()
+                lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10)
+                accuracyTrain += acc
+                lossesCE.append(lossCE.item())
+                loss = lossCE + alpha * lossEntropy
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1) 
+                
+                sparseoptim.step()
             
             
         mean_lossCETrain = sum(lossesCE) / len(lossesCE)
@@ -241,7 +258,7 @@ for alpha in alphalist:
             # scoreHungarianTrain = HungarianMatchingBS(pds_train, model,100)
             # scoHTrain = scipy.optimize.linear_sum_assignment(scoreHungarianTrain)
             # scoreMatchingTrain = sum(scoHTrain[0]==scoHTrain[1])
-            Entropy = ConditionalEntropyEstimator(pds_val, model, batchs=100)
+            Entropy = ConditionalEntropyEstimatorGivenInp(pds_val[0][0].unsqueeze(1), model, pds_train.SymbolMap["<pad>"], len_output,nseq=1000, batchs=1000, returnAcc=False)
             
             wandb.log({ "scoreMatching Val": scoreMatchingVal, "scoreMatchingValClose": scoreMatchingValClose, "scoreMatchingVal Far": scoreMatchingValFar, "Entropy":Entropy, "epoch":epoch})
     wandb.finish()
