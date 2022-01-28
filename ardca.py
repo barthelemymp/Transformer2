@@ -21,8 +21,11 @@ def back2seq(seq, mapstring, unk="-"):
     seq_Original = seq.max(dim=1)[1].cpu().numpy()
     seqout = ""
     for i in range(seq_Original.shape[0]):
-        if seq_Original[i]<=len(mapstring)+1:
+        if seq_Original[i]<=len(mapstring):
             seqout+=BackSymbolMap[seq_Original[i]]
+        else:
+            print(seq_Original[i])
+            seqout+=unk
     return seqout
     
 
