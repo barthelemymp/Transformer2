@@ -279,7 +279,7 @@ def ConditionalEntropyEstimatorGivenInp(inp, model, pad, max_len,nseq=1000, batc
         acc = 0
         for batch in tqdm(batchIndex):
             if model.onehot:
-                sampled = model.sample(listin[:,batch], max_len, nsample=1, method="gumbel")
+                sampled = model.sample(listin[:,batch], max_len, nsample=1, method="simple")
                 output = model(listin[:,batch], sampled[:-1, :])
                 output = output.reshape(-1, output.shape[2])
                 #_, targets_Original = listout[:,batch].max(dim=2)
@@ -289,7 +289,7 @@ def ConditionalEntropyEstimatorGivenInp(inp, model, pad, max_len,nseq=1000, batc
                 entropylist.append(Entropy)
                 # inp_repeted = listin[:,j,:].unsqueeze(1).repeat(1,len(batch),1)
             else:
-                sampled = model.sample(listin[:,batch], max_len, nsample=1, method="gumbel")
+                sampled = model.sample(listin[:,batch], max_len, nsample=1, method="simple")
                 # acc+=accuracy(pds_val[batch], sampled[1:]).item()
                 output = model(listin[:,batch], sampled[:-1, :])[:-1]
                 output = output.reshape(-1, output.shape[2])

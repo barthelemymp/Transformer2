@@ -89,9 +89,11 @@ class ProteinTranslationDataset(torch.utils.data.Dataset):
         self.init_token = "<sos>"
         self.eos_token = "<eos>"
         self.pad_token = "<pad>"
+        self.unk="X"
         self.mapstring = mapstring
         self.onehot=onehot
         self.SymbolMap=dict([(mapstring[i],i) for i in range(len(mapstring))])
+        self.SymbolMap[self.unk] = len(mapstring)
         self.SymbolMap[self.init_token] = len(mapstring)+1
         self.SymbolMap[self.eos_token] = len(mapstring)+2
         self.SymbolMap[self.pad_token] = len(mapstring)+3
