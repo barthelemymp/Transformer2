@@ -12,15 +12,16 @@ import numpy as np
 import scipy.optimize
 
 
-def back2seq(seq, mapstring):
+def back2seq(seq, mapstring, unk="-"):
     BackSymbolMap=dict([(i,mapstring[i]) for i in range(len(mapstring))])
+    BackSymbolMap[len(mapstring)] =unk
     BackSymbolMap[len(mapstring)+1] ="<sos>"
     BackSymbolMap[len(mapstring)+2] = "<eos>"
     BackSymbolMap[len(mapstring)+3] = "<pad>"
     seq_Original = seq.max(dim=1)[1].cpu().numpy()
     seqout = ""
     for i in range(seq_Original.shape[0]):
-        if seq_Original[i]<=len(mapstring):
+        if seq_Original[i]<=len(mapstring)+1:
             seqout+=BackSymbolMap[seq_Original[i]]
     return seqout
     
