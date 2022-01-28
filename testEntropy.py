@@ -153,7 +153,7 @@ for alpha in alphalist:
             nn.init.xavier_normal_(p)
             
     optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
-    sparseoptim = torch.optim.SparseAdam(model.parameters(), lr=5e-6)
+    sparseoptim = torch.optim.SGD(model.parameters(), lr=5e-6)
     pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
     criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
     for epoch in range(num_epochs+1):
