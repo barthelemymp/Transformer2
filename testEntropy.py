@@ -139,6 +139,7 @@ for alpha in alphalist:
       "num_heads": num_heads,
       "loss": "CE",
       "alpha":alpha,
+      "sparseoptim":"adam+sparseAdam 5e-5"
     }
     wandb.config.update(config_dict) 
     
@@ -152,8 +153,11 @@ for alpha in alphalist:
         if p.dim() > 1:
             nn.init.xavier_normal_(p)
             
-    optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
-    sparseoptim = torch.optim.SGD(model.parameters(), lr=5e-4)
+    # optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
+    # sparseoptim = torch.optim.SGD(model.parameters(), lr=5e-4)
+    
+    opt_sparse = torch.optim.SparseAdam([model.fc_out.parameters(), model.transformer.parameters()], lr=learning_rate)
+    opt_dense = torch.optim.Adam([model.embed_tokens.parameters()], lr=learning_rate)
     pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
     criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
     for epoch in range(num_epochs+1):
@@ -163,6 +167,8 @@ for alpha in alphalist:
         accuracyTrain = 0
         for batch_idx, batch in enumerate(train_iterator):
             if epoch<3000:
+                opt_sparse.zero_grad()
+                opt_dense.zero_grad()
                 inp_data, target= batch[0], batch[1]
                 output = model(inp_data, target[:-1, :])
                 accuracyTrain += accuracy(batch, output, onehot=False).item()
@@ -177,17 +183,22 @@ for alpha in alphalist:
                 lossesCE.append(loss.item())
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1) 
-                optimizer.step()
+                # optimizer.step()
+                opt_sparse.step()
+                opt_dense.step()
             else:
-                sparseoptim.zero_grad()
+                #sparseoptim.zero_grad()
+                opt_sparse.zero_grad()
+                opt_dense.zero_grad()
                 lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10)
                 accuracyTrain += acc
                 lossesCE.append(lossCE.item())
                 loss = lossCE + alpha * lossEntropy
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1) 
-                
-                sparseoptim.step()
+                opt_sparse.step()
+                opt_dense.step()
+                #sparseoptim.step()
             
             
         mean_lossCETrain = sum(lossesCE) / len(lossesCE)
