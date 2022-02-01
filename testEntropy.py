@@ -156,8 +156,8 @@ for alpha in alphalist:
     # optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
     # sparseoptim = torch.optim.SGD(model.parameters(), lr=5e-4)
     
-    opt_sparse = torch.optim.SparseAdam([model.fc_out.parameters(), model.transformer.parameters()], lr=learning_rate)
-    opt_dense = torch.optim.Adam([model.embed_tokens.parameters()], lr=learning_rate)
+    opt_sparse = torch.optim.SparseAdam(model.embed_tokens.parameters(), lr=learning_rate)
+    opt_dense = torch.optim.Adam([model.fc_out.parameters(), model.transformer.parameters()], lr=learning_rate)
     pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
     criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
     for epoch in range(num_epochs+1):
