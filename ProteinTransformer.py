@@ -591,7 +591,7 @@ class Transformer(nn.Module):
         self.embedding_size = embedding_size
         self.onehot = onehot
         if onehot==False:
-            self.embed_tokens = nn.Embedding(src_vocab_size, embedding_size)
+            self.embed_tokens = nn.Embedding(src_vocab_size, embedding_size, sparse=True)
         self.transformer = ProteinTransformer(
             embedding_size,
             num_heads,
