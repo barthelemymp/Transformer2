@@ -178,7 +178,7 @@ for alpha in alphalist:
                 else:
                     targets_Original= target
                 targets_Original = targets_Original[1:].reshape(-1)
-                optimizer.zero_grad()
+                # optimizer.zero_grad()
                 loss = criterion(output, targets_Original)
                 lossesCE.append(loss.item())
                 loss.backward()
