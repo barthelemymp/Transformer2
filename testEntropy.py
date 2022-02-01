@@ -153,7 +153,7 @@ for alpha in alphalist:
             nn.init.xavier_normal_(p)
             
     optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
-    sparseoptim = torch.optim.SGD(model.parameters(), lr=5e-6)
+    sparseoptim = torch.optim.SGD(model.parameters(), lr=5e-4)
     pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
     criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
     for epoch in range(num_epochs+1):
@@ -179,7 +179,7 @@ for alpha in alphalist:
                 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1) 
                 optimizer.step()
             else:
-                optimizer.zero_grad()
+                sparseoptim.zero_grad()
                 lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10)
                 accuracyTrain += acc
                 lossesCE.append(lossCE.item())
