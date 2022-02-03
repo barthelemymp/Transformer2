@@ -139,7 +139,7 @@ for alpha in alphalist:
       "num_heads": num_heads,
       "loss": "CE",
       "alpha":alpha,
-      "sparseoptim":"adam+sparseAdam 5e-5+gumbel"
+      "sparseoptim":"adam+sparseAdam 5e-5+gumbel"+str(gumbel)
     }
     wandb.config.update(config_dict) 
     
