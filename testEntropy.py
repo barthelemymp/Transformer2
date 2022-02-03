@@ -52,7 +52,7 @@ wd_list = [0.0]#, 0.00005]
 # ilist = [46, 69, 71,157,160,251, 258, 17]
 onehot=False
 wd=0.0
-gumbel = False
+gumbel = True
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
 import sys
