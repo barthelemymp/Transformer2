@@ -456,6 +456,8 @@ def ConditioalEntropyMatchingLoss(batch,
         output = output.reshape(-1, output.shape[2])
         if gumbel ==True:
             _, samples_Original = samples.max(dim=2)
+        else: 
+            samples_Original = samples
         samples_Original = samples_Original[1:].reshape(-1)
         lossEntropy += CCL_mean(output, samples_Original)
     
