@@ -47,7 +47,7 @@ repartition = [0.7, 0.15, 0.15]
 #EPOCHS 
 num_epochs =5000
 Unalign = False
-alphalist=[-0.1,0.0, 0.1]
+alphalist=[-0.1,0.1, 0.0]
 wd_list = [0.0]#, 0.00005]
 # ilist = [46, 69, 71,157,160,251, 258, 17]
 onehot=False
@@ -139,7 +139,7 @@ for alpha in alphalist:
       "num_heads": num_heads,
       "loss": "CE",
       "alpha":alpha,
-      "sparseoptim":"adam+sparseAdam 5e-5"
+      "sparseoptim":"adam+sparseAdam 5e-5+gumbel"
     }
     wandb.config.update(config_dict) 
     

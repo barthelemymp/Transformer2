@@ -583,6 +583,7 @@ class Transformer(nn.Module):
         # len_output,
         device,
         onehot=True,
+        sparseEmbed = True,
     ):
         super(Transformer, self).__init__()
         self.device = device
@@ -591,7 +592,7 @@ class Transformer(nn.Module):
         self.embedding_size = embedding_size
         self.onehot = onehot
         if onehot==False:
-            self.embed_tokens = nn.Embedding(src_vocab_size, embedding_size, sparse=True)
+            self.embed_tokens = nn.Embedding(src_vocab_size, embedding_size, sparse=sparseEmbed)
         self.transformer = ProteinTransformer(
             embedding_size,
             num_heads,
@@ -604,6 +605,7 @@ class Transformer(nn.Module):
         self.trg_vocab_size =trg_vocab_size
         self.dropout = nn.Dropout(dropout)
         self.src_pad_idx = src_pad_idx
+        self.sparseEmbed = sparseEmbed
 
         
         
@@ -653,11 +655,18 @@ class Transformer(nn.Module):
             if len(src.shape)==2:
                 src = self.embed_tokens(src)
             else:
-                src = torch.matmul(src, self.embed_tokens.weight)
+                if self.sparseEmbed:
+                    src = torch.sparse.mm(src, self.embed_tokens.weight)
+                else:
+                    src = torch.matmul(src, self.embed_tokens.weight)
             if len(trg.shape)==2:
                 trg = self.embed_tokens(trg)
             else:
-                trg = torch.matmul(trg, self.embed_tokens.weight)
+                if self.sparseEmbed:
+                    trg = torch.sparse.mm(trg, self.embed_tokens.weight)
+                else:
+                    trg = torch.matmul(trg, self.embed_tokens.weight)
+                
             
         embed_src = self.src_position_embedding.forward(src)#self.OneHot(src).to(self.device))#(src)#
         embed_trg = self.trg_position_embedding.forward(trg)#self.OneHot(trg).to(self.device))#trg
