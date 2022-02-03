@@ -447,7 +447,7 @@ def ConditioalEntropyMatchingLoss(batch,
     output = model(inp_data, samples[:-1, :])
     output = output.reshape(-1, output.shape[2])
 
-    _, samples_Original = samples.max(dim=2)
+    #_, samples_Original = samples.max(dim=2)
     samples_Original = samples_Original[1:].reshape(-1)
     lossEntropy = CCL_mean(output, samples_Original)
     for i in range(samplingMultiple-1):
