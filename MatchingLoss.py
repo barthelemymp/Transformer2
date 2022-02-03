@@ -440,6 +440,8 @@ def ConditioalEntropyMatchingLoss(batch,
     
     ## Entropic 
     samples = model.pseudosample(inp_data, target, nsample=1, method="gumbel")
+    ### fake step
+    samples = samples.max(dim=2)[1]
     output = model(inp_data, samples[:-1, :])
     output = output.reshape(-1, output.shape[2])
 

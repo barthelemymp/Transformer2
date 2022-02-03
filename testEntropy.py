@@ -166,7 +166,7 @@ for alpha in alphalist:
         lossesCE = []
         accuracyTrain = 0
         for batch_idx, batch in enumerate(train_iterator):
-            if epoch<3000:
+            if epoch<3:
                 opt_sparse.zero_grad()
                 opt_dense.zero_grad()
                 inp_data, target= batch[0], batch[1]
