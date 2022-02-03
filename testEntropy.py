@@ -190,7 +190,7 @@ for alpha in alphalist:
                 #sparseoptim.zero_grad()
                 opt_sparse.zero_grad()
                 opt_dense.zero_grad()
-                lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10)
+                lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10, gumbel=False)
                 accuracyTrain += acc
                 lossesCE.append(lossCE.item())
                 loss = lossCE + alpha * lossEntropy
