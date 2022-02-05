@@ -52,7 +52,7 @@ wd_list = [0.0]#, 0.00005]
 # ilist = [46, 69, 71,157,160,251, 258, 17]
 onehot=False
 wd=0.0
-gumbel = True
+gumbel = False
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
 import sys
@@ -257,7 +257,7 @@ for alpha in alphalist:
         wandb.log({"Train loss CE": mean_lossCETrain,  "Val loss CE": mean_lossVal, "test loss CE": mean_losstest,  "accuracyVal":accuracyVal , "accuracytest":accuracytest ,  "accuracyTrain": accuracyTrain, "epoch":epoch})
         
         
-        if epoch%200==10:
+        if epoch%200==5:
             criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
             model.eval()
             criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
