@@ -656,6 +656,7 @@ class Transformer(nn.Module):
                 src = self.embed_tokens(src)
             else:
                 if self.sparseEmbed:
+                    print(src.shape, self.embed_token.weight.shape)
                     src = torch.sparse.mm(src, self.embed_tokens.weight)
                 else:
                     src = torch.matmul(src, self.embed_tokens.weight)
@@ -663,6 +664,7 @@ class Transformer(nn.Module):
                 trg = self.embed_tokens(trg)
             else:
                 if self.sparseEmbed:
+                    print(trg.shape, self.embed_token.weight.shape)
                     trg = torch.sparse.mm(trg, self.embed_tokens.weight)
                 else:
                     trg = torch.matmul(trg, self.embed_tokens.weight)
