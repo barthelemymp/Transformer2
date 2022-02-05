@@ -290,6 +290,7 @@ def ConditionalEntropyEstimatorGivenInp(inp, model, pad, max_len,nseq=1000, batc
                 # inp_repeted = listin[:,j,:].unsqueeze(1).repeat(1,len(batch),1)
             else:
                 sampled = model.sample(listin[:,batch], max_len, nsample=1, method="simple")
+                sampled = sampled.max(dim=2)[1]
                 # acc+=accuracy(pds_val[batch], sampled[1:]).item()
                 output = model(listin[:,batch], sampled[:-1, :])[:-1]
                 output = output.reshape(-1, output.shape[2])
