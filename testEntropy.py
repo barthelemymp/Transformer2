@@ -52,7 +52,7 @@ wd_list = [0.0]#, 0.00005]
 # ilist = [46, 69, 71,157,160,251, 258, 17]
 onehot=False
 wd=0.0
-gumbel = True
+gumbel = False
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
 import sys
@@ -190,7 +190,7 @@ for alpha in alphalist:
                 #sparseoptim.zero_grad()
                 opt_sparse.zero_grad()
                 opt_dense.zero_grad()
-                lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10, gumbel=False)
+                lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10, gumbel=gumbel)
                 accuracyTrain += acc
                 lossesCE.append(lossCE.item())
                 loss = lossCE + alpha * lossEntropy
