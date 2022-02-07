@@ -297,7 +297,7 @@ def ConditionalEntropyEstimatorGivenInp(inp, model, pad, max_len,nseq=1000, batc
                 targets_Original = sampled.max(dim=2)[1]#listout[:,batch]
                 targets_Original = targets_Original[1:-1].reshape(-1)
                 Entropy = criterionE(output, targets_Original).reshape(-1,len(batch)).sum(dim=0)
-                entropylist+=[Entropy[i] for i in range(len(Entropy))]
+                entropylist += [Entropy[i] for i in range(len(Entropy))]
         # print(acc/nseq)
         meanEntropy = sum(entropylist)/len(entropylist)
     if returnAcc:
