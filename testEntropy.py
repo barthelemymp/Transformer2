@@ -156,11 +156,15 @@ for alpha in alphalist:
         if p.dim() > 1:
             nn.init.xavier_normal_(p)
             
-    optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0, eps=1e-3)
+    # optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0, eps=1e-3)
     # sparseoptim = torch.optim.SGD(model.parameters(), lr=5e-4)
     
     # opt_sparse = torch.optim.SparseAdam(model.embed_tokens.parameters(), lr=learning_rate)
     # opt_dense = torch.optim.Adam(list(model.fc_out.parameters())+ list(model.transformer.parameters()), lr=learning_rate)
+    
+    
+    opt_sparse = torch.optim.AdamW(model.embed_tokens.parameters(), lr=learning_rate, eps=1e-3)
+    opt_dense = torch.optim.AdamW(list(model.fc_out.parameters())+ list(model.transformer.parameters()), lr=learning_rate)
     
     
     pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
@@ -172,10 +176,10 @@ for alpha in alphalist:
         accuracyTrain = 0
         for batch_idx, batch in enumerate(train_iterator):
             if epoch<3000:
-                optimizer.zero_grad()
+                # optimizer.zero_grad()
                 
-                # opt_sparse.zero_grad()
-                # opt_dense.zero_grad()
+                opt_sparse.zero_grad()
+                opt_dense.zero_grad()
                 
                 inp_data, target= batch[0], batch[1]
                 output = model(inp_data, target[:-1, :])
@@ -191,24 +195,24 @@ for alpha in alphalist:
                 lossesCE.append(loss.item())
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1) 
-                optimizer.step()
-                # opt_sparse.step()
-                # opt_dense.step()
+                # optimizer.step()
+                opt_sparse.step()
+                opt_dense.step()
             else:
-                optimizer.zero_grad()
+                # optimizer.zero_grad()
                 # sparseoptim.zero_grad()
-                # opt_sparse.zero_grad()
-                # opt_dense.zero_grad()
+                opt_sparse.zero_grad()
+                opt_dense.zero_grad()
                 lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10, gumbel=gumbel)
                 accuracyTrain += acc
                 lossesCE.append(lossCE.item())
                 loss = lossCE + alpha * lossEntropy
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1) 
-                # opt_sparse.step()
-                # opt_dense.step()
-                #sparseoptim.step()
-                optimizer.step()
+                opt_sparse.step()
+                opt_dense.step()
+                # sparseoptim.step()
+                # optimizer.step()
             
             
         mean_lossCETrain = sum(lossesCE) / len(lossesCE)
