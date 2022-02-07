@@ -24,7 +24,7 @@ def back2seq(seq, mapstring, unk="-"):
         if seq_Original[i]<=len(mapstring):
             seqout+=BackSymbolMap[seq_Original[i]]
         else:
-            print(seq_Original[i])
+            #print(seq_Original[i])
             seqout+=unk
     return seqout
     
