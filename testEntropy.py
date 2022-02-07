@@ -47,7 +47,7 @@ repartition = [0.7, 0.15, 0.15]
 #EPOCHS 
 num_epochs =5000
 Unalign = False
-alphalist=[-0.1,0.1, 0.0]
+alphalist=[0.05, 0.1, 0.0]
 wd_list = [0.0]#, 0.00005]
 # ilist = [46, 69, 71,157,160,251, 258, 17]
 onehot=False
@@ -139,9 +139,9 @@ for alpha in alphalist:
       "sizetrain": len(pds_train),
       "sizeval": len(pds_val),
       "num_heads": num_heads,
-      "loss": "CE",
+      "loss": "CE + contrastiveCEMatching",
       "alpha":alpha,
-      "sparseoptim":"adam+sparseAdam 5e-5+gumbel"+str(gumbel),
+      "sparseoptim":"adam+AdamW epse-3embed+gumbel"+str(gumbel),
       "sparseEmbed": sparseEmbed,
     }
     wandb.config.update(config_dict) 
@@ -169,6 +169,7 @@ for alpha in alphalist:
     
     pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
     criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
+    criterionMatching = nn.CrossEntropyLoss()
     for epoch in range(num_epochs+1):
         print(f"[Epoch {epoch} / {num_epochs}]")
         model.train()
@@ -203,7 +204,16 @@ for alpha in alphalist:
                 # sparseoptim.zero_grad()
                 opt_sparse.zero_grad()
                 opt_dense.zero_grad()
-                lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10, gumbel=gumbel)
+                #lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10, gumbel=gumbel)
+                SamplerContrastiveMatchingLoss(batch, model,
+                                                    criterion,
+                                                    criterionMatching,
+                                                    device,
+                                                    accumulate=False,
+                                                    alpha=alpha,
+                                                    numberContrastive=10,
+                                                    sampler="gumbel")
+                
                 accuracyTrain += acc
                 lossesCE.append(lossCE.item())
                 loss = lossCE + alpha * lossEntropy

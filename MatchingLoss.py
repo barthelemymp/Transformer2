@@ -362,14 +362,13 @@ def PointwiseMutualInformationLoss(batch,
 
 def SamplerContrastiveMatchingLoss(batch,
                                     model,
-                                    pds,
                                     criterion,
                                     criterionMatching,
                                     device,
                                     accumulate=False,
                                     alpha=0.0,
                                     numberContrastive="batch_size",
-                                    sampler="simple"):
+                                    sampler="gumbel"):
 
     inp_data, target, idx_list = batch[0], batch[1], batch[2]
     bs = inp_data.shape[1]
@@ -385,11 +384,12 @@ def SamplerContrastiveMatchingLoss(batch,
     for i in range(bs):
         idx_input = idx_list[i]
         inp_repeted = inp_data[:,i,:].unsqueeze(1).repeat(1, numberContrastive, 1)
-
+        targi = torch.nn.functional.one_hot(target[:,i].unsqueeze(1), num_classes=model.trg_vocab_size)
         # idx_output = negativesampler(scoreHungarian[idx_input, :], idx_input, numberContrastive)
         # contrastivebatch = getPreciseBatch(pds, idx_output)
-        contrastiveTarget = model.sample(inp_data[:,i,:].unsqueeze(1), target[:,i,:].unsqueeze(1), nsample=numberContrastive-1, method="simple")
-        contrastiveTarget = torch.cat([contrastiveTarget, target[:,i,:].unsqueeze(1)], dim=1)
+        contrastiveTarget = model.pseudosample(inp_data[:,i].unsqueeze(1), target[:,i].unsqueeze(1), nsample=numberContrastive-1, method=sampler)
+        #contrastiveTarget = contrastiveTarget.max(dim=2)[1]
+        contrastiveTarget = torch.cat([contrastiveTarget, targi], dim=1)
         #print("check is getting the right", torch.equal(contrastivebatch[0][:,numberContrastive-1,:], inp_data[:,i,:]))
         output = model(inp_repeted, contrastiveTarget[:-1, :])
         output = output.reshape(-1, output.shape[2])
