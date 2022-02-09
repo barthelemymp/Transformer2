@@ -7,4 +7,4 @@ python run_train.py --fam 17 \
 		    --batch_size 32 \
 		    --forward_expansion 2048 \
 		    --num_epochs 5000
-		    --dir_save simpletrans_ddi_17.pth.tar\ 
+		    --dir_save "simpletrans_ddi_17.pth.tar"\ 
