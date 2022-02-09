@@ -43,6 +43,8 @@ def get_params(params):
 
 def main(params):
 
+    
+    
     # Params
     opts = get_params(params)
     i = opts.fam
@@ -58,15 +60,14 @@ def main(params):
     src_vocab_size = 25
     trg_vocab_size = 25
     dropout = 0.10
-    # i=46
-    # wd =0.0
-    alpha = 0.0
+    load_model= bool(opts.dir_save)
+    save_model= bool(opts.dir_load)
+    
     ##### Training simple 
     pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
     pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
     inputsize, outputsize = getLengthfromCSV(pathTofile)
-    os.path.isfile(pathTofile)
-    count +=1
+
     print("ddi", i, " is running")
     name = "combined_MSA_ddi_" +str(i)+"_joined"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -89,9 +90,9 @@ def main(params):
     maskValclose = maskValclose.cpu().numpy()
     maskValfar = (dval1+dval2).min(dim=0)[0]>=(dval1+dval2).min(dim=0)[0].median()
     maskValfar = maskValfar.cpu().numpy()
-    ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
-    print("score", i)
-    print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
+    # ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
+    # print("score", i)
+    # print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
 
     train_iterator = DataLoader(pds_train, batch_size=batch_size,
                     shuffle=True, num_workers=0, collate_fn=default_collate)
@@ -99,7 +100,6 @@ def main(params):
                     shuffle=True, num_workers=0, collate_fn=default_collate)
     val_iterator = DataLoader(pds_val, batch_size=batch_size,
                     shuffle=True, num_workers=0, collate_fn=default_collate)
-    
     
     # Model hyperparameters
     
@@ -248,8 +248,13 @@ def main(params):
             # scoHTrain = scipy.optimize.linear_sum_assignment(scoreHungarianTrain)
             # scoreMatchingTrain = sum(scoHTrain[0]==scoHTrain[1])
             wandb.log({ "scoreMatching Val": scoreMatchingVal, "scoreMatchingValClose": scoreMatchingValClose, "scoreMatchingVal Far": scoreMatchingValFar,"epoch":epoch})
-    wandb.finish()
+            
+            if save_model:
+                save_checkpoint(checkpoint, filename=opts.dir_save)
         
+    
+    wandb.finish()
+    
 
 if __name__ == "__main__":
     import sys
