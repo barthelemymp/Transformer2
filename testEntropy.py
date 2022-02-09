@@ -205,7 +205,7 @@ for alpha in alphalist:
                 opt_sparse.zero_grad()
                 opt_dense.zero_grad()
                 #lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10, gumbel=gumbel)
-                SamplerContrastiveMatchingLoss(batch, model,
+                LossCE, lossMatching = SamplerContrastiveMatchingLoss(batch, model,
                                                     criterion,
                                                     criterionMatching,
                                                     device,

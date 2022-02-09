@@ -383,12 +383,13 @@ def SamplerContrastiveMatchingLoss(batch,
     targetMatching = torch.tensor([numberContrastive-1]*bs).to(device)
     for i in range(bs):
         idx_input = idx_list[i]
-        inp_repeted = inp_data[:,].unsqueeze(1).repeat(1, numberContrastive, 1)
+        inp_repeted = inp_data[:,i].unsqueeze(1).repeat(1, numberContrastive, 1)
         targi = torch.nn.functional.one_hot(target[:,i].unsqueeze(1), num_classes=model.trg_vocab_size)
+        #print("targi",targi.shape)
         # idx_output = negativesampler(scoreHungarian[idx_input, :], idx_input, numberContrastive)
         # contrastivebatch = getPreciseBatch(pds, idx_output)
         contrastiveTarget = model.pseudosample(inp_data[:,i].unsqueeze(1), target[:,i].unsqueeze(1), nsample=numberContrastive-1, method=sampler)
-        print("1",contrastiveTarget.shape)
+       # print("1",contrastiveTarget.shape)
         #contrastiveTarget = contrastiveTarget.max(dim=2)[1]
         contrastiveTarget = torch.cat([contrastiveTarget, targi], dim=1)
         #print("check is getting the right", torch.equal(contrastivebatch[0][:,numberContrastive-1,:], inp_data[:,i,:]))
