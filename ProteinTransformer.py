@@ -637,7 +637,7 @@ class Transformer(nn.Module):
 #        print(src.shape, trg.shape)
         src_seq_length = src.shape[0]
         trg_seq_length= trg.shape[0]
-        print("3",src.shape)
+
         
         ### embed onehot vector:
         # Position embedding
@@ -651,15 +651,12 @@ class Transformer(nn.Module):
         # Creating the input of the Encoder and Decoder
         # It considers also the position
         if self.onehot==False:
-            print("onehotflase", len(src.shape))
             if len(src.shape)==2:
                 src = self.embed_tokens(src)
             else:
                 if self.sparseEmbed:
-                    print(src.shape, self.embed_token.weight.shape)
                     src = torch.sparse.mm(src, self.embed_tokens.weight)
                 else:
-                    print("4",src.shape)
                     src = torch.matmul(src, self.embed_tokens.weight)
             if len(trg.shape)==2:
                 trg = self.embed_tokens(trg)
