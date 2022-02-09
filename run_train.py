@@ -1,9 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Dec  2 17:24:37 2021
-
-@author: bartm
-"""
+import argparse
+import numpy as np
 import scipy.optimize
 import torch
 import torch.nn as nn
@@ -25,58 +21,48 @@ from ProteinsDataset import *
 from MatchingLoss import *
 from utils import *
 from ardca import *
-print("import done")
-#torch.functional.one_hot
-pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
-torch.set_num_threads(1)
-#pathtoFolder = "/home/Datasets/DomainsInter/processed/"
-count = 0
-# Model hyperparameters--> CAN BE CHANGED
-batch_size = 32
-num_heads = 5
-num_encoder_layers = 2
-num_decoder_layers = 2
-dropout = 0.10
-forward_expansion = 2048
-src_vocab_size = 25#len(protein.vocab) 
-trg_vocab_size = 25#len(protein_trans.vocab) 
-embedding_size = 55#len(protein.vocab) #it should be 25. 21 amino, 2 start and end sequence, 1 for pad, and 1 for unknown token
-
-repartition = [0.7, 0.15, 0.15]
-#EPOCHS 
-num_epochs =5000
-Unalign = False
-alphalist=[0.0, 0.01, 0.1]
-wd_list = [0.0]#, 0.00005]
-# ilist = [46, 69, 71,157,160,251, 258, 17]
-onehot=True
-wd=0.0
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
 
 
-ilist = []
+def get_params(params):
 
-for i in range(150,300):
-    pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
-    if os.path.isfile(pathTofile)==True:
-        print(i)
-        name = "combined_MSA_ddi_" +str(i)+"_joined"
-        train_path = pathtoFolder + name +'_train.csv'
-        try:
-            pds = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
-        except:
-            print(i, "does not work")
-        if len(pds) >= 4000:
-            ilist.append(i)
+    parser = argparse.ArgumentParser()
 
-onehot=True
-for i in ilist:
+    # Parameters
+    parser.add_argument('--fam', type=int, help="msa to use")
+    parser.add_argument('--nlayer', type=int, default=2,help="Path to expression matrix")
+    parser.add_argument('--embed_dim', type=int, default=55, help="Method for features selection")
+    parser.add_argument('--nhead', type=int, default=5, help="Method for features selection")
+    parser.add_argument('--batch_size', type=int, default=32, help="Method for features selection")
+    parser.add_argument('--forward_expansion', type=int, default=2048, help="Number of subsets")
+    parser.add_argument('--num_epochs', type=int, default=5000, help="Number of features when applied to subset")
+    parser.add_argument('--dir_save', type=str, default="", help="Method for features selection")
+    parser.add_argument('--dir_load', type=str, default="", help="MI info save path")
+    args = parser.parse_args(params)
+
+    return args
+
+def main(params):
+
+    # Params
+    opts = get_params(params)
+    i = opts.fam
+    nlayer = opts.nlayer
+    embed_dim = opts.embed_dim
+    if embed_dim>0:
+        onehot=False
+    Unalign = False
+    nhead = opts.nhead
+    batch_size = opts.batch_size
+    forward_expansion = opts.forward_expansion
+    num_epochs= opts.num_epochs
+    src_vocab_size = 25
+    trg_vocab_size = 25
+    dropout = 0.10
     # i=46
     # wd =0.0
     alpha = 0.0
     ##### Training simple 
+    pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
     pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
     inputsize, outputsize = getLengthfromCSV(pathTofile)
     os.path.isfile(pathTofile)
@@ -169,6 +155,7 @@ for i in ilist:
     optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
     pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
     criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
+    
     for epoch in range(num_epochs+1):
         print(f"[Epoch {epoch} / {num_epochs}]")
         model.train()
@@ -264,30 +251,6 @@ for i in ilist:
     wandb.finish()
         
 
-
-# i = "hk"
-# pathTofile = 'train_real.csv'
-# inputsize, outputsize = getLengthfromCSV(pathTofile)
-# os.path.isfile(pathTofile)
-# count +=1
-# print("ddi", i, " is running")
-# name = "combined_MSA_ddi_" +str(i)+"_joined"
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-# #Dataset
-# train_path = 'train_real.csv'
-# val_path = 'val_real.csv'
-# test_path = 'test_real.csv'
-# #add 2 for start and end token 
-# len_input = inputsize + 2
-# len_output =outputsize + 2
-
-# pds_train = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
-# pds_test = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
-# pds_val = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
-# ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
-# print("score", )
-# print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
-
- 
-
+if __name__ == "__main__":
+    import sys
+    main(sys.argv[1:])

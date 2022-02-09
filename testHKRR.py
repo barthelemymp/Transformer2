@@ -253,3 +253,283 @@ for epoch in range(num_epochs+1):
             save_checkpoint(checkpoint, filename="famHkRR_"+str(epoch)+".pth.tar")
 wandb.finish()
     
+
+
+
+
+
+import scipy.optimize
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+# from torch.utils.tensorboard import SummaryWriter
+from torchtext.legacy.data import Field, BucketIterator, TabularDataset
+from torch.utils.data import Dataset, DataLoader
+import sys
+import os
+import math
+import wandb
+print("wandb imported")
+wandb.login()
+print("wandb login")
+sys.path.append("")
+from ProteinTransformer import *
+from ProteinsDataset import *
+from MatchingLoss import *
+from utils import *
+from ardca import *
+print("import done")
+#torch.functional.one_hot
+pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
+torch.set_num_threads(16)
+#pathtoFolder = "/home/Datasets/DomainsInter/processed/"
+count = 0
+# Model hyperparameters--> CAN BE CHANGED
+batch_size = 32
+num_heads = 5
+num_encoder_layers = 2
+num_decoder_layers = 2
+dropout = 0.10
+forward_expansion = 2048
+src_vocab_size = 25#len(protein.vocab) 
+trg_vocab_size = 25#len(protein_trans.vocab) 
+embedding_size = 55#len(protein.vocab) #it should be 25. 21 amino, 2 start and end sequence, 1 for pad, and 1 for unknown token
+
+repartition = [0.7, 0.15, 0.15]
+#EPOCHS 
+num_epochs =5000
+Unalign = False
+alphalist=[0.0, 0.01, 0.1]
+wd_list = [0.0]#, 0.00005]
+# ilist = [46, 69, 71,157,160,251, 258, 17]
+onehot=False
+wd=0.0
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
+
+
+save_model = True
+alpha = 0.0
+##### Training simple 
+pathTofile = "train_real.csv"
+inputsize, outputsize = getLengthfromCSV(pathTofile)
+os.path.isfile(pathTofile)
+count +=1
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+#Dataset
+train_path = "train_real.csv"
+val_path = "test_real.csv"
+test_path = "val_real.csv"
+#add 2 for start and end token 
+len_input = inputsize + 2
+len_output =outputsize + 2
+max_len = len_output
+pds_train = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
+pds_test = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
+pds_val = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
+ntrain = len(pds_train)
+nval = len(pds_val)
+ntest = len(pds_test)
+dval1,dval2 = distanceTrainVal(pds_train, pds_val)
+print("median", (dval1+dval2).min(dim=0)[0].median())
+maskValclose = (dval1+dval2).min(dim=0)[0]<(dval1+dval2).min(dim=0)[0].median()
+maskValclose = maskValclose.cpu().numpy()
+maskValfar = (dval1+dval2).min(dim=0)[0]>=(dval1+dval2).min(dim=0)[0].median()
+maskValfar = maskValfar.cpu().numpy()
+# ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
+# print("score", i)
+# print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
+
+train_iterator = DataLoader(pds_train, batch_size=batch_size,
+                shuffle=True, num_workers=0, collate_fn=default_collate)
+test_iterator = DataLoader(pds_test, batch_size=batch_size,
+                shuffle=True, num_workers=0, collate_fn=default_collate)
+val_iterator = DataLoader(pds_val, batch_size=batch_size,
+                shuffle=True, num_workers=0, collate_fn=default_collate)
+
+
+# Model hyperparameters
+
+src_pad_idx = pds_train.SymbolMap["<pad>"]#"<pad>"# protein.vocab.stoi["<pad>"] 
+src_position_embedding = PositionalEncoding(embedding_size, max_len=len_input,device=device)
+trg_position_embedding = PositionalEncoding(embedding_size, max_len=len_output, device=device)
+        
+model = Transformer(
+    embedding_size,
+    src_vocab_size,
+    trg_vocab_size,
+    src_pad_idx,
+    num_heads,
+    num_encoder_layers,
+    num_decoder_layers,
+    forward_expansion,
+    dropout,
+    src_position_embedding,
+    trg_position_embedding,
+    device,
+    onehot=onehot,
+).to(device)
+
+
+
+step = 0
+step_ev = 0
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(device)
+learning_rate = 5e-5
+
+        
+optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
+pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
+criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
+
+epoch = 999
+load_checkpoint(torch.load("famHkRR_"+str(epoch)+".pth.tar"), model, optimizer)
+
+import copy
+
+pds_sample = copy.deepcopy(pds_train)
+batchIndex = makebatchList(len(pds_sample), 300)
+for batchI in batchIndex:
+    sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+    pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+
+    
+    
+path = "sample_multiple1_epoch1000_joined.faa"
+writefasta(torch.cat([torch.nn.functional.one_hot(pds_sample.tensorIN, num_classes=model.trg_vocab_size), torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size)]), path, mapstring =pds_sample.mapstring)
+
+
+path = "sample_multiple1_epoch1000_2.faa"
+writefasta(torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size), path, mapstring =pds_sample.mapstring)
+
+
+for batchI in batchIndex:
+    sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+    # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+    pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
+    pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
+
+
+path = "sample_multiple1_epoch1000_joinedbig.faa"
+writefasta(torch.cat([torch.nn.functional.one_hot(pds_sample.tensorIN, num_classes=model.trg_vocab_size), torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size)]), path, mapstring =pds_sample.mapstring)
+
+path = "sample_multiple1_epoch1000_2big.faa"
+writefasta(torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size), path, mapstring =pds_sample.mapstring)
+
+
+
+
+epoch = 1999
+load_checkpoint(torch.load("famHkRR_"+str(epoch)+".pth.tar"), model, optimizer)
+
+pds_sample = copy.deepcopy(pds_train)
+batchIndex = makebatchList(len(pds_sample), 300)
+for batchI in batchIndex:
+    sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+    pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+
+    
+    
+path = "sample_multiple1_epoch2000_joined.faa"
+writefasta(torch.cat([torch.nn.functional.one_hot(pds_sample.tensorIN, num_classes=model.trg_vocab_size), torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size)]), path, mapstring =pds_sample.mapstring)
+
+
+path = "sample_multiple1_epoch2000_2.faa"
+writefasta(torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size), path, mapstring =pds_sample.mapstring)
+
+
+for batchI in batchIndex:
+    sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+    # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+    pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
+    pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
+
+
+path = "sample_multiple1_epoch2000_joinedbig.faa"
+writefasta(torch.cat([torch.nn.functional.one_hot(pds_sample.tensorIN, num_classes=model.trg_vocab_size), torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size)]), path, mapstring =pds_sample.mapstring)
+
+path = "sample_multiple1_epoch2000_2big.faa"
+writefasta(torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size), path, mapstring =pds_sample.mapstring)
+
+
+
+
+epoch = 2999
+load_checkpoint(torch.load("famHkRR_"+str(epoch)+".pth.tar"), model, optimizer)
+
+pds_sample = copy.deepcopy(pds_train)
+batchIndex = makebatchList(len(pds_sample), 300)
+for batchI in batchIndex:
+    sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+    pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+
+    
+    
+path = "sample_multiple1_epoch3000_joined.faa"
+writefasta(torch.cat([torch.nn.functional.one_hot(pds_sample.tensorIN, num_classes=model.trg_vocab_size), torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size)]), path, mapstring =pds_sample.mapstring)
+
+
+path = "sample_multiple1_epoch3000_2.faa"
+writefasta(torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size), path, mapstring =pds_sample.mapstring)
+
+
+for batchI in batchIndex:
+    sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+    # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+    pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
+    pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
+
+
+path = "sample_multiple1_epoch3000_joinedbig.faa"
+writefasta(torch.cat([torch.nn.functional.one_hot(pds_sample.tensorIN, num_classes=model.trg_vocab_size), torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size)]), path, mapstring =pds_sample.mapstring)
+
+path = "sample_multiple1_epoch3000_2big.faa"
+writefasta(torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size), path, mapstring =pds_sample.mapstring)
+
+
+
+
+
+epoch = 3999
+load_checkpoint(torch.load("famHkRR_"+str(epoch)+".pth.tar"), model, optimizer)
+
+pds_sample = copy.deepcopy(pds_train)
+batchIndex = makebatchList(len(pds_sample), 300)
+for batchI in batchIndex:
+    sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+    pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+
+    
+    
+path = "sample_multiple1_epoch4000_joined.faa"
+writefasta(torch.cat([torch.nn.functional.one_hot(pds_sample.tensorIN, num_classes=model.trg_vocab_size), torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size)]), path, mapstring =pds_sample.mapstring)
+
+
+path = "sample_multiple1_epoch4000_2.faa"
+writefasta(torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size), path, mapstring =pds_sample.mapstring)
+
+
+for batchI in batchIndex:
+    sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+    # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+    pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
+    pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
+
+
+path = "sample_multiple1_epoch4000_joinedbig.faa"
+writefasta(torch.cat([torch.nn.functional.one_hot(pds_sample.tensorIN, num_classes=model.trg_vocab_size), torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size)]), path, mapstring =pds_sample.mapstring)
+
+path = "sample_multiple1_epoch4000_2big.faa"
+writefasta(torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size), path, mapstring =pds_sample.mapstring)
+
+
+
+
+
+
+
+
