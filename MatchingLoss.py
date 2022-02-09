@@ -388,9 +388,12 @@ def SamplerContrastiveMatchingLoss(batch,
         # idx_output = negativesampler(scoreHungarian[idx_input, :], idx_input, numberContrastive)
         # contrastivebatch = getPreciseBatch(pds, idx_output)
         contrastiveTarget = model.pseudosample(inp_data[:,i].unsqueeze(1), target[:,i].unsqueeze(1), nsample=numberContrastive-1, method=sampler)
+        print("1",contrastiveTarget.shape)
         #contrastiveTarget = contrastiveTarget.max(dim=2)[1]
         contrastiveTarget = torch.cat([contrastiveTarget, targi], dim=1)
         #print("check is getting the right", torch.equal(contrastivebatch[0][:,numberContrastive-1,:], inp_data[:,i,:]))
+        print("2",contrastiveTarget.shape)
+        print("3",contrastiveTarget[:-1, :].shape)
         output = model(inp_repeted, contrastiveTarget[:-1, :])
         output = output.reshape(-1, output.shape[2])
         _, targets_Original = contrastiveTarget.max(dim=2)
