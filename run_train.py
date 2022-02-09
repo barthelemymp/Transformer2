@@ -30,7 +30,7 @@ def get_params(params):
     # Parameters
     parser.add_argument('--fam', type=int, help="msa to use")
     parser.add_argument('--nlayer', type=int, default=2,help="Path to expression matrix")
-    parser.add_argument('--embed_dim', type=int, default=55, help="Method for features selection")
+    parser.add_argument('--embedding_size', type=int, default=55, help="Method for features selection")
     parser.add_argument('--nhead', type=int, default=5, help="Method for features selection")
     parser.add_argument('--batch_size', type=int, default=32, help="Method for features selection")
     parser.add_argument('--forward_expansion', type=int, default=2048, help="Number of subsets")
@@ -49,8 +49,8 @@ def main(params):
     opts = get_params(params)
     i = opts.fam
     nlayer = opts.nlayer
-    embed_dim = opts.embed_dim
-    if embed_dim>0:
+    embedding_size = opts.embedding_size
+    if embedding_size>0:
         onehot=False
     Unalign = False
     nhead = opts.nhead
