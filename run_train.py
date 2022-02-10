@@ -21,7 +21,7 @@ from ProteinsDataset import *
 from MatchingLoss import *
 from utils import *
 from ardca import *
-
+torch.set_num_threads(4)
 
 def get_params(params):
 
@@ -49,6 +49,8 @@ def main(params):
     opts = get_params(params)
     i = opts.fam
     nlayer = opts.nlayer
+    num_encoder_layers = nlayer
+    num_decoder_layers = nlayer
     embedding_size = opts.embedding_size
     if embedding_size>0:
         onehot=False

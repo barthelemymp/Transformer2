@@ -26,7 +26,7 @@ from ProteinsDataset import *
 from MatchingLoss import *
 from utils import *
 from ardca import *
-torch.set_num_threads(16)
+torch.set_num_threads(4)
 print("import done")
 #torch.functional.one_hot
 pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
