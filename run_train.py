@@ -53,7 +53,7 @@ def main(params):
     if embedding_size>0:
         onehot=False
     Unalign = False
-    nhead = opts.nhead
+    num_heads = opts.nhead
     batch_size = opts.batch_size
     forward_expansion = opts.forward_expansion
     num_epochs= opts.num_epochs
