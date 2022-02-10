@@ -384,7 +384,7 @@ def SamplerContrastiveMatchingLoss(batch,
     for i in range(bs):
         idx_input = idx_list[i]
         inp_repeted = inp_data[:,i].unsqueeze(1).repeat(1, numberContrastive)
-        print("1",inp_data.shape, inp_data[:,i].unsqueeze(1).shape, inp_repeted.shape)
+        # print("1",inp_data.shape, inp_data[:,i].unsqueeze(1).shape, inp_repeted.shape)
         targi = torch.nn.functional.one_hot(target[:,i].unsqueeze(1), num_classes=model.trg_vocab_size)
         #print("targi",targi.shape)
         # idx_output = negativesampler(scoreHungarian[idx_input, :], idx_input, numberContrastive)
