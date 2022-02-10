@@ -215,7 +215,7 @@ for alpha in alphalist:
                                                     numberContrastive=10,
                                                     sampler="gumbel")
                 
-                accuracyTrain += acc
+                #accuracyTrain += acc
                 lossesCE.append(lossCE.item())
                 loss = lossCE + alpha * lossEntropy
                 loss.backward()
