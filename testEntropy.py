@@ -169,6 +169,7 @@ for alpha in alphalist:
     
     pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
     criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
+    criterion_raw = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
     criterionMatching = nn.CrossEntropyLoss()
     for epoch in range(num_epochs+1):
         print(f"[Epoch {epoch} / {num_epochs}]")
@@ -206,7 +207,7 @@ for alpha in alphalist:
                 opt_dense.zero_grad()
                 #lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10, gumbel=gumbel)
                 LossCE, lossMatching = SamplerContrastiveMatchingLoss(batch, model,
-                                                    criterion,
+                                                    criterion_raw,
                                                     criterionMatching,
                                                     device,
                                                     accumulate=False,
