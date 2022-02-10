@@ -383,7 +383,7 @@ def SamplerContrastiveMatchingLoss(batch,
     targetMatching = torch.tensor([numberContrastive-1]*bs).to(device)
     for i in range(bs):
         idx_input = idx_list[i]
-        inp_repeted = inp_data[:,i].unsqueeze(1).repeat(1, numberContrastive, 1)
+        inp_repeted = inp_data[:,i].unsqueeze(1).repeat(1, numberContrastive)
         print("1",inp_data.shape, inp_data[:,i].unsqueeze(1).shape, inp_repeted.shape)
         targi = torch.nn.functional.one_hot(target[:,i].unsqueeze(1), num_classes=model.trg_vocab_size)
         #print("targi",targi.shape)
