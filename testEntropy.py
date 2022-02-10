@@ -177,7 +177,7 @@ for alpha in alphalist:
         lossesCE = []
         accuracyTrain = 0
         for batch_idx, batch in enumerate(train_iterator):
-            if epoch<1:
+            if epoch<3000:
                 # optimizer.zero_grad()
                 
                 opt_sparse.zero_grad()
@@ -282,7 +282,7 @@ for alpha in alphalist:
         wandb.log({"Train loss CE": mean_lossCETrain,  "Val loss CE": mean_lossVal, "test loss CE": mean_losstest,  "accuracyVal":accuracyVal , "accuracytest":accuracytest ,  "accuracyTrain": accuracyTrain, "epoch":epoch})
         
         
-        if epoch%200==30:
+        if epoch%200==0:
             criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
             model.eval()
             criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
