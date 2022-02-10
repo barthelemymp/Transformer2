@@ -583,7 +583,7 @@ class Transformer(nn.Module):
         # len_output,
         device,
         onehot=True,
-        sparseEmbed = True,
+        sparseEmbed = False,
     ):
         super(Transformer, self).__init__()
         self.device = device
