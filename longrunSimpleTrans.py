@@ -49,29 +49,29 @@ Unalign = False
 alphalist=[0.0, 0.01, 0.1]
 wd_list = [0.0]#, 0.00005]
 ilist = [46, 69, 71,157,160,251, 258, 17]
-onehot=True
+onehot=False
 wd=0.0
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
 
 
-# ilist = []
+ilist = []
 
-# for i in range(1000,1500):
-#     pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
-#     if os.path.isfile(pathTofile)==True:
-#         print(i)
-#         name = "combined_MSA_ddi_" +str(i)+"_joined"
-#         train_path = pathtoFolder + name +'_train.csv'
-#         try:
-#             pds = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
-#         except:
-#             print(i, "does not work")
-#         if len(pds) >= 4000:
-#             ilist.append(i)
+for i in range(1000,1500):
+    pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
+    if os.path.isfile(pathTofile)==True:
+        print(i)
+        name = "combined_MSA_ddi_" +str(i)+"_joined"
+        train_path = pathtoFolder + name +'_train.csv'
+        try:
+            pds = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
+        except:
+            print(i, "does not work")
+        if len(pds) >= 4000:
+            ilist.append(i)
             
-ilist = [46, 69, 71,157,160,251, 258] 
+#ilist = [46, 69, 71,157,160,251, 258] 
 save_model = True
 onehot=False
 for i in ilist:
@@ -265,6 +265,10 @@ for i in ilist:
             # scoreMatchingTrain = sum(scoHTrain[0]==scoHTrain[1])
             wandb.log({ "scoreMatching Val": scoreMatchingVal, "scoreMatchingValClose": scoreMatchingValClose, "scoreMatchingVal Far": scoreMatchingValFar,"Entropy":Entropy, "epoch":epoch})
             if save_model:
+                checkpoint = {
+                    "state_dict": model.state_dict(),
+                    "optimizer": optimizer.state_dict(),
+                }
                 save_checkpoint(checkpoint, filename="TransSimple_fam"+str(i)+".pth.tar")
     wandb.finish()
         
