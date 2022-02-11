@@ -33,7 +33,7 @@ torch.set_num_threads(1)
 count = 0
 # Model hyperparameters--> CAN BE CHANGED
 batch_size = 32
-num_heads = 5
+num_heads = 1
 num_encoder_layers = 2
 num_decoder_layers = 2
 dropout = 0.10
@@ -58,7 +58,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 ilist = []
 
-for i in range(150,300):
+for i in range(0,500):
     pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
     if os.path.isfile(pathTofile)==True:
         print(i)
@@ -70,8 +70,10 @@ for i in range(150,300):
             print(i, "does not work")
         if len(pds) >= 4000:
             ilist.append(i)
-
-onehot=True
+            
+            
+save_model = True
+onehot=False
 for i in ilist:
     # i=46
     # wd =0.0
@@ -103,9 +105,9 @@ for i in ilist:
     maskValclose = maskValclose.cpu().numpy()
     maskValfar = (dval1+dval2).min(dim=0)[0]>=(dval1+dval2).min(dim=0)[0].median()
     maskValfar = maskValfar.cpu().numpy()
-    ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
-    print("score", i)
-    print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
+    # ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
+    # print("score", i)
+    # print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
 
     train_iterator = DataLoader(pds_train, batch_size=batch_size,
                     shuffle=True, num_workers=0, collate_fn=default_collate)
@@ -138,7 +140,7 @@ for i in ilist:
     ).to(device)
     
     #whyyy 'cpu?'
-    wandb.init(project="Transformer Simple large Fam", entity="barthelemymp")
+    wandb.init(project="Transformer Simple large Fam 2", entity="barthelemymp")
     config_dict = {
       "num_layers": num_encoder_layers,
       "embedding":embedding_size,
@@ -248,7 +250,7 @@ for i in ilist:
         wandb.log({"Train loss CE": mean_lossCETrain,  "Val loss CE": mean_lossVal, "test loss CE": mean_losstest,  "accuracyVal":accuracyVal , "accuracytest":accuracytest ,  "accuracyTrain": accuracyTrain, "epoch":epoch})
         
         
-        if epoch%200==0:
+        if epoch%500==0:
             criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
             model.eval()
             criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
@@ -257,10 +259,13 @@ for i in ilist:
             scoreMatchingVal = sum(scoHVal[0]==scoHVal[1])
             scoreMatchingValClose = sum((scoHVal[0]==scoHVal[1])[maskValclose])
             scoreMatchingValFar = sum((scoHVal[0]==scoHVal[1])[maskValfar])
+            Entropy = ConditionalEntropyEstimatorGivenInp(pds_val[0][0], model, pds_train.SymbolMap["<pad>"], len_output,nseq=10000, batchs=100, returnAcc=False)
             # scoreHungarianTrain = HungarianMatchingBS(pds_train, model,100)
             # scoHTrain = scipy.optimize.linear_sum_assignment(scoreHungarianTrain)
             # scoreMatchingTrain = sum(scoHTrain[0]==scoHTrain[1])
-            wandb.log({ "scoreMatching Val": scoreMatchingVal, "scoreMatchingValClose": scoreMatchingValClose, "scoreMatchingVal Far": scoreMatchingValFar,"epoch":epoch})
+            wandb.log({ "scoreMatching Val": scoreMatchingVal, "scoreMatchingValClose": scoreMatchingValClose, "scoreMatchingVal Far": scoreMatchingValFar,"Entropy":Entropy, "epoch":epoch})
+            if save_model:
+                save_checkpoint(checkpoint, filename="TransSimple_fam"+str(i)+".pth.tar")
     wandb.finish()
         
 
