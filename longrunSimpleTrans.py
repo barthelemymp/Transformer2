@@ -48,7 +48,7 @@ num_epochs =5000
 Unalign = False
 alphalist=[0.0, 0.01, 0.1]
 wd_list = [0.0]#, 0.00005]
-# ilist = [46, 69, 71,157,160,251, 258, 17]
+ilist = [46, 69, 71,157,160,251, 258, 17]
 onehot=True
 wd=0.0
 
@@ -56,22 +56,22 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
 
 
-ilist = []
+# ilist = []
 
-for i in range(1000,1500):
-    pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
-    if os.path.isfile(pathTofile)==True:
-        print(i)
-        name = "combined_MSA_ddi_" +str(i)+"_joined"
-        train_path = pathtoFolder + name +'_train.csv'
-        try:
-            pds = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
-        except:
-            print(i, "does not work")
-        if len(pds) >= 4000:
-            ilist.append(i)
+# for i in range(1000,1500):
+#     pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
+#     if os.path.isfile(pathTofile)==True:
+#         print(i)
+#         name = "combined_MSA_ddi_" +str(i)+"_joined"
+#         train_path = pathtoFolder + name +'_train.csv'
+#         try:
+#             pds = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
+#         except:
+#             print(i, "does not work")
+#         if len(pds) >= 4000:
+#             ilist.append(i)
             
-            
+ilist = [46, 69, 71,157,160,251, 258] 
 save_model = True
 onehot=False
 for i in ilist:
