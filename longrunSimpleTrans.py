@@ -58,7 +58,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 ilist = []
 
-for i in range(500,1000):
+for i in range(1000,1500):
     pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
     if os.path.isfile(pathTofile)==True:
         print(i)
