@@ -71,7 +71,7 @@ for i in range(1000,1500):
         if len(pds) >= 4000:
             ilist.append(i)
             
-#ilist = [46, 69, 71,157,160,251, 258] 
+#ilist = [46, 69, 71,157,160,251, 258, 17] 
 save_model = True
 onehot=False
 for i in ilist:
