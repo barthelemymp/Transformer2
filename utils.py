@@ -193,6 +193,39 @@ def HungarianMatchingBS(pds_val, model, batchs):
     return scoreHungarian
 
 
+
+
+def HungarianMatchingBSfa(pds_val, model, batchs):
+    model.eval()
+    criterionE = nn.CrossEntropyLoss(ignore_index=pds_val.SymbolMap["<pad>"], reduction='none')
+    data = getPreciseBatch(pds_val, torch.tensor(range(len(pds_val))))
+    listin, listout = data[0], data[1]
+    tot = listin.shape[1]
+    scoreHungarian = np.zeros((tot, tot))
+    batchIndex = makebatchList(tot, batchs)
+    with torch.no_grad():
+        for j in tqdm(range(tot)):
+            for batch in batchIndex:
+                if model.onehot:
+                    _, targets_Original = listout[:,batch].max(dim=2)
+                    inp_repeted = listin[:,j,:].unsqueeze(1).repeat(1,len(batch),1)
+                else:
+                    targets_Original= listout[:,batch]
+                    inp_repeted = listin[:,j].unsqueeze(1).repeat(1,len(batch))
+                
+                _,output = model(inp_repeted, listout[:-1, batch])
+                output = output.reshape(-1, output.shape[2])#keep last dimension
+
+                targets_Original = targets_Original[1:].reshape(-1)
+                loss = criterionE(output, targets_Original).reshape(-1,len(batch)).mean(dim=0)
+                scoreHungarian[j,batch] = loss.cpu().numpy()
+    # nameH = "scoreHungarianTransformer" + str(i) + "npy"
+    # np.save(nameH, scoreHungarian)
+    # scoH = scipy.optimize.linear_sum_assignment(scoreHungarian)
+    # scoreMatching = sum(scoH[0]==scoH[1])
+    return scoreHungarian
+
+
 def distanceTrainVal(pds_val, pds_train):
     #.t() because of batch first
     if pds_val.onehot:

@@ -79,7 +79,32 @@ def ARDCA(pdsTrain, pdsTest, pdsVal):
     return CEtrain, CEtest, CEval, acctrain, acctest, accval, scoreMatchingVal
     
     
-
+def ARDCA_returnmatrix(pdsTrain, pdsTest, pdsVal):
+    tempTrain = writefastafrompds(pdsTrain)
+    tempTest = writefastafrompds(pdsTest)
+    tempVal = writefastafrompds(pdsVal)
+    tempScoreH = next(tempfile._get_candidate_names())
+    os.system("export JULIA_NUM_THREADS=$(nproc --all)")
+    output = subprocess.check_output(["julia", "ardca_call.jl", tempTrain, tempTest, tempVal, tempScoreH])
+    print(output)
+    removetemp(tempTrain)
+    removetemp(tempTest)
+    removetemp(tempVal)
+    tt = str(output).split('\\n')[-3].split('=')[-1].split(',')
+    CEtrain = float(tt[0].split('(')[-1])
+    CEtest = float(tt[1])
+    CEval = float(tt[2].split(')')[0])
+    ttacc = str(output).split('\\n')[-2].split('=')[-1].split(',')
+    acctrain = float(ttacc[0].split('(')[-1])
+    acctest = float(ttacc[1])
+    accval = float(ttacc[2].split(')')[0])
+    scoreHungarianVal = np.load(tempScoreH)
+    scoHVal = scipy.optimize.linear_sum_assignment(scoreHungarianVal)
+    scoreMatchingVal = sum(scoHVal[0]==scoHVal[1])
+    os.remove(tempScoreH)
+    return scoreHungarianVal
+    
+    
     
 
 
