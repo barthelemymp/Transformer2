@@ -153,7 +153,12 @@ for i in range(1500):
         model.eval()
         criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
         scoreHungarianVal = HungarianMatchingBS(pds_val, model,100)
-        scoreHungarianVal_Ardca = ARDCA_returnmatrix(pds_train, pds_test, pds_val)
+        
+        
+        pds_train2 = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        pds_test2 = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        pds_val2 = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        scoreHungarianVal_Ardca = ARDCA_returnmatrix(pds_train2, pds_test2, pds_val2)
         print("score", i)
         print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
 
