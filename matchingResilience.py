@@ -160,7 +160,6 @@ for i in range(1500):
         pds_val2 = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
         scoreHungarianVal_Ardca = ARDCA_returnmatrix(pds_train2, pds_test2, pds_val2)
         print("score", i)
-        print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
 
         for siz in range(10, len(pds_val), 10):
             subscoreH = scoreHungarianVal[:siz, :siz]
