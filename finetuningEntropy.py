@@ -195,30 +195,29 @@ for alpha in alphalist:
         accuracyTrain = 0
         for batch_idx, batch in enumerate(train_iterator):
 
-            else:
-                optimizer.zero_grad()
-                # sparseoptim.zero_grad()
-                # opt_sparse.zero_grad()
-                # opt_dense.zero_grad()
-                #lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10, gumbel=gumbel)
-                lossCE, lossEntropy = SamplerContrastiveMatchingLoss(batch, model,
-                                                    criterion_raw,
-                                                    criterionMatching,
-                                                    device,
-                                                    accumulate=False,
-                                                    alpha=alpha,
-                                                    numberContrastive=10,
-                                                    sampler="gumbel")
-                
-                #accuracyTrain += acc
-                lossesCE.append(lossCE.item())
-                loss = lossCE + alpha * lossEntropy
-                loss.backward()
-                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1) 
-                # opt_sparse.step()
-                # opt_dense.step()
-                # sparseoptim.step()
-                optimizer.step()
+            optimizer.zero_grad()
+            # sparseoptim.zero_grad()
+            # opt_sparse.zero_grad()
+            # opt_dense.zero_grad()
+            #lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10, gumbel=gumbel)
+            lossCE, lossEntropy = SamplerContrastiveMatchingLoss(batch, model,
+                                                criterion_raw,
+                                                criterionMatching,
+                                                device,
+                                                accumulate=False,
+                                                alpha=alpha,
+                                                numberContrastive=10,
+                                                sampler="gumbel")
+            
+            #accuracyTrain += acc
+            lossesCE.append(lossCE.item())
+            loss = lossCE + alpha * lossEntropy
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1) 
+            # opt_sparse.step()
+            # opt_dense.step()
+            # sparseoptim.step()
+            optimizer.step()
             
             
         mean_lossCETrain = sum(lossesCE) / len(lossesCE)
