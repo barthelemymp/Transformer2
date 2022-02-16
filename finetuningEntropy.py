@@ -162,7 +162,6 @@ for alpha in alphalist:
       "loss": "CE + contrastiveCEMatching",
       "alpha":alpha,
       "sparseoptim":"AdamW",
-      "sparseEmbed": sparseEmbed,
     }
     wandb.config.update(config_dict) 
     
