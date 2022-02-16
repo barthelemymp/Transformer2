@@ -117,22 +117,7 @@ model = Transformer(
 
 #whyyy 'cpu?'
 
-config_dict = {
-  "num_layers": num_encoder_layers,
-  "embedding":embedding_size,
-  "forward_expansion": forward_expansion,
-  "batch_size": batch_size,
-  "Encoder": "Positional",
-  "Family":i,
-  "dropout":dropout,
-  "len input":len_input,
-  "len output":len_output,
-  "sizetrain": len(pds_train),
-  "sizeval": len(pds_val),
-  "num_heads": num_heads,
-  "loss": "CE"
-}
-wandb.config.update(config_dict) 
+
 
 step = 0
 step_ev = 0
