@@ -137,10 +137,10 @@ optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
 pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
 criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
 
-load_checkpoint(torch.load(modelpath), model, optimizer)
+
 
 for alpha in alphalist:
-
+    load_checkpoint(torch.load(modelpath), model, optimizer)
     ##### Training simple 
     
     
@@ -161,7 +161,7 @@ for alpha in alphalist:
       "num_heads": num_heads,
       "loss": "CE + contrastiveCEMatching",
       "alpha":alpha,
-      "sparseoptim":"adam+AdamW epse-3embed+gumbel"+str(gumbel),
+      "sparseoptim":"AdamW",
       "sparseEmbed": sparseEmbed,
     }
     wandb.config.update(config_dict) 
