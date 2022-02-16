@@ -53,7 +53,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 ilist = [46, 69, 71,157,160,251, 258, 17] 
 save_model = True
 onehot=False
-for i in range(1500):
+for i in range(500):
     modelpath = "TransSimple_fam"+str(i)+".pth.tar"
     if os.path.isfile(modelpath):
         
@@ -169,7 +169,6 @@ for i in range(1500):
             subscoreH = scoreHungarianVal_Ardca[:siz, :siz]
             scoHVal = scipy.optimize.linear_sum_assignment(subscoreH)
             scoreMatchingVal_Ardca = sum(scoHVal[0]==scoHVal[1])
-            
-        wandb.log({"siz": siz, "scoreMatchingVal Trans":scoreMatchingVal, "scoreMatchingVal Ardca":scoreMatchingVal_Ardca})
-        
+            wandb.log({"siz": siz, "scoreMatchingVal Trans":scoreMatchingVal, "scoreMatchingVal Ardca":scoreMatchingVal_Ardca})
+        wandb.finish()
         # In c
