@@ -150,10 +150,12 @@ for i in family_list:
     np.save("chain1listtemp.npy", chain1list)
     np.save("chain2listtemp.npy", chain2list)
     hmmRadical ="hmm_"+str(i)+"_"
-    tempTrain = writefastafrompds(pds_train)
+    tempTrainr = writefastafrompds(pds_train)
+    tempTrain=tempTrainr+"joined.faa"
     output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
     print(output)
     ppvO = np.load(tempFile)
+    removetemp(tempTrainr)
     
     ### sample times 2
     pds_sample = copy.deepcopy(pds_train)
@@ -161,10 +163,12 @@ for i in family_list:
     for batchI in batchIndex:
         sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
         pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-    tempTrain = writefastafrompds(pds_sample)
+    tempTrainr = writefastafrompds(pds_sample)
+    tempTrain=tempTrainr+"joined.faa"
     output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
     print(output)
     ppvS1 = np.load(tempFile)
+    removetemp(tempTrainr)
     
         
     for batchI in batchIndex:
@@ -177,10 +181,12 @@ for i in family_list:
         # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
         pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
         pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-    tempTrain = writefastafrompds(pds_sample)
+    tempTrainr = writefastafrompds(pds_sample)
+    tempTrain=tempTrainr+"joined.faa"
     output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
     print(output)
     ppvS3 = np.load(tempFile)
+    removetemp(tempTrainr)
         
         
     for batchI in batchIndex:
