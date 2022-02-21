@@ -12,13 +12,16 @@ import numpy as np
 import scipy.optimize
 
 
-def back2seq(seq, mapstring, unk="-"):
+def back2seq(seq, mapstring, unk="-", onehot=True):
     BackSymbolMap=dict([(i,mapstring[i]) for i in range(len(mapstring))])
     BackSymbolMap[len(mapstring)] =unk
     BackSymbolMap[len(mapstring)+1] ="<sos>"
     BackSymbolMap[len(mapstring)+2] = "<eos>"
     BackSymbolMap[len(mapstring)+3] = "<pad>"
-    seq_Original = seq.max(dim=1)[1].cpu().numpy()
+    if onehot:    
+        seq_Original = seq.max(dim=1)[1].cpu().numpy()
+    else:
+        seq_Original = seq.cpu().numpy()
     seqout = ""
     for i in range(seq_Original.shape[0]):
         if seq_Original[i]<=len(mapstring):
@@ -29,10 +32,10 @@ def back2seq(seq, mapstring, unk="-"):
     return seqout
     
 
-def writefasta(matrix, destination, mapstring = "-ACDEFGHIKLMNPQRSTVWY"):
+def writefasta(matrix, destination, mapstring = "-ACDEFGHIKLMNPQRSTVWY", onehot=True):
     ofile = open(destination, "w")
     for i in range(matrix.shape[1]):
-        seq = back2seq(matrix[:,i,:], mapstring)
+        seq = back2seq(matrix[:,i], mapstring, onehot=onehot)
         name = str(i)
         ofile.write(">" + name + "\n" +seq + "\n")
     ofile.close()
