@@ -150,7 +150,7 @@ for i in family_list:
     np.save("chain1listtemp.npy", chain1list)
     np.save("chain2listtemp.npy", chain2list)
     hmmRadical ="hmm_"+str(i)+"_"
-    tempTrain = writefastafrompds(pdsTrain)
+    tempTrain = writefastafrompds(pds_train)
     output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
     print(output)
     ppvO = np.load(tempFile)
