@@ -48,7 +48,7 @@ def writefastafrompds(pds):
     tempfilejoined = tempFile+"joined.faa"
     writefasta(pds.tensorIN, tempfileIN, mapstring =pds.mapstring)
     writefasta(pds.tensorOUT, tempfileOUT, mapstring =pds.mapstring)
-    writefasta(torch.cat([pds.tensorIN, pds.tensorOUT]), tempfilejoined, mapstring =pds.mapstring)
+    writefasta(torch.cat([pds.tensorIN, pds.tensorOUT]), tempfilejoined, mapstring =pds.mapstring, onehot = pds.onehot)
     return tempFile
 
 def removetemp(temp):
