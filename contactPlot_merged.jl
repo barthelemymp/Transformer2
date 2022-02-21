@@ -288,9 +288,9 @@ if mode == "inter"
 		if  !isfile(PDBs[i]*".pdb")
 			run(`wget $comm`)
 		end
-		pdb=PdbTool.parsePdb(PDBs[i]*".pdb")
+		pdb1=PdbTool.parsePdb(PDBs[i]*".pdb")
 		pdb2=PdbTool.parsePdb(PDBs[i]*".pdb")
-		PdbTool.mapChainToHmm(pdb.chain[chainIN[i]], hmm1)
+		PdbTool.mapChainToHmm(pdb1.chain[chainIN[i]], hmm1)
 		PdbTool.mapChainToHmm(pdb2.chain[chainOUT[i]], hmm2)
 		push!(chain1_list, pdb.chain[chainIN[i]])
 		push!(chain2_list, pdb2.chain[chainOUT[i]])
