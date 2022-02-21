@@ -7,25 +7,8 @@ Created on Fri Feb 18 18:24:01 2022
 import subprocess
 
 
-run(`hmmbuild --symfrac 0.0 hmm_972_1.hmm $pathfastatrain1`)
 
 
-def buildhmm(hmmout, ali):
-    subprocess.run(["hmmbuild", "--symfrac","0.0", hmmout, ali])
-
-
-
-
-def getlists(df, fam):
-    pdblist = list(df[df["id"]==fam]["pdb"])
-    chain1list = list(df[df["id"]==fam]["chain1"])
-    chain2list = list(df[df["id"]==fam]["chain2"])
-    return pdblist, chain1list, chain2list
-
-
-
-family_list = [1214,1213,1208,980,975,972,815,634,303,504,197,192,358,308,304,303,181,132,103,97,17]
-pdbtracker = pd.read_csv("pdbtracker.csv")
 
 
 import scipy.optimize
@@ -46,6 +29,26 @@ from ProteinsDataset import *
 from MatchingLoss import *
 from utils import *
 from ardca import *
+
+def buildhmm(hmmout, ali):
+    subprocess.run(["hmmbuild", "--symfrac","0.0", hmmout, ali])
+
+
+
+
+def getlists(df, fam):
+    pdblist = list(df[df["id"]==fam]["pdb"])
+    chain1list = list(df[df["id"]==fam]["chain1"])
+    chain2list = list(df[df["id"]==fam]["chain2"])
+    return pdblist, chain1list, chain2list
+
+
+
+family_list = [1214,1213,1208,980,975,972,815,634,303,504,197,192,358,308,304,303,181,132,103,97,17]
+pdbtracker = pd.read_csv("pdbtracker.csv")
+
+
+
 print("import done")
 #torch.functional.one_hot
 pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
