@@ -287,6 +287,7 @@ if mode == "inter"
 		comm = "https://files.rcsb.org/download/" * PDBs[i] * ".pdb"
 		if  !isfile(PDBs[i]*".pdb")
 			run(`wget $comm`)
+		end
 		pdb=PdbTool.parsePdb(PDBs[i]*".pdb")
 		pdb2=PdbTool.parsePdb(PDBs[i]*".pdb")
 		PdbTool.mapChainToHmm(pdb.chain[chainIN[i]], hmm1)
