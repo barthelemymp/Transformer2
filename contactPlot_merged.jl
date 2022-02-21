@@ -216,10 +216,12 @@ function parse_commandline()
 	"pathPDB"
         help = "PDB_list"
 		arg_type = String
+		required = true
 
 	"chainIN"
         help = "chain for imput list"
 		arg_type = String
+		required = true
 
 	"chainOUT"
 	    help = "chain output list"
