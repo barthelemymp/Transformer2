@@ -149,7 +149,7 @@ for i in family_list:
     np.save("pdblisttemp.npy", pdblist)
     np.save("chain1listtemp.npy", chain1list)
     np.save("chain2listtemp.npy", chain2list)
-    hmmRadical ="hmm_"+str(i)+"_"
+    hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
     tempTrainr = writefastafrompds(pds_train)
     tempTrain=tempTrainr+"joined.faa"
     output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
