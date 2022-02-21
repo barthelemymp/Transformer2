@@ -13,6 +13,7 @@ import scipy.optimize
 
 
 def back2seq(seq, mapstring, unk="-", onehot=True):
+    print(onehot)
     BackSymbolMap=dict([(i,mapstring[i]) for i in range(len(mapstring))])
     BackSymbolMap[len(mapstring)] =unk
     BackSymbolMap[len(mapstring)+1] ="<sos>"
@@ -33,6 +34,7 @@ def back2seq(seq, mapstring, unk="-", onehot=True):
     
 
 def writefasta(matrix, destination, mapstring = "-ACDEFGHIKLMNPQRSTVWY", onehot=True):
+    print(onehot)
     ofile = open(destination, "w")
     for i in range(matrix.shape[1]):
         seq = back2seq(matrix[:,i], mapstring, onehot=onehot)
@@ -42,6 +44,7 @@ def writefasta(matrix, destination, mapstring = "-ACDEFGHIKLMNPQRSTVWY", onehot=
     
 
 def writefastafrompds(pds):
+    print(pds.onehot)
     tempFile=next(tempfile._get_candidate_names())
     tempfileIN = tempFile+"1.faa"
     tempfileOUT = tempFile+"2.faa"
