@@ -181,15 +181,15 @@ function ppv_mergedcontact(file::String, score, sequence_length1::Int, sequence_
 end
 
 
-function ppv(results; size::Int=200)
-	y = zeros(size)
-	goodPred=0
-	for l in 1:size
-		goodPred+=results[l][3]
-		y[l] = goodPred/l
-	end
-	return y
-end
+# function ppv(results; size::Int=200)
+# 	y = zeros(size)
+# 	goodPred=0
+# 	for l in 1:size
+# 		goodPred+=results[l][3]
+# 		y[l] = goodPred/l
+# 	end
+# 	return y
+# end
 
 
 
