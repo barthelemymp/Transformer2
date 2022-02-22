@@ -158,6 +158,7 @@ for i in family_list:
     removetemp(tempTrainr)
     
     ### sample times 2
+    max_len = len_output
     pds_sample = copy.deepcopy(pds_train)
     batchIndex = makebatchList(len(pds_sample), 300)
     for batchI in batchIndex:
