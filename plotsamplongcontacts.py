@@ -44,7 +44,7 @@ def getlists(df, fam):
 
 
 
-family_list = [1214,1213,1208,980,975,972,815,634,303,504,197,192,358,308,304,303,181,132,103,97,17]
+family_list = [303,181,132,157,103,97,69,46,17]
 pdbtracker = pd.read_csv("pdbtracker.csv")
 
 
@@ -229,6 +229,7 @@ for i in family_list:
     plt.legend()
     plt.xscale("log")
     plt.savefig("ppvS_"+str(i)+".png")
+    plt.clf()
 
 
 
