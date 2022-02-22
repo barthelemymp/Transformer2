@@ -292,7 +292,7 @@ if mode == "inter"
 		pdb2=PdbTool.parsePdb(PDBs[i]*".pdb")
 		PdbTool.mapChainToHmm(pdb1.chain[chainIN[i]], hmm1)
 		PdbTool.mapChainToHmm(pdb2.chain[chainOUT[i]], hmm2)
-		push!(chain1_list, pdb.chain[chainIN[i]])
+		push!(chain1_list, pdb1.chain[chainIN[i]])
 		push!(chain2_list, pdb2.chain[chainOUT[i]])
 	end
 	result = mergedPDBInterRoc( plmo.score,chain1_list, chain2_list;cutoff=10.0, sz=200)
