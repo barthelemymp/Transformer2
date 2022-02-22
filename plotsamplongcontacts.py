@@ -5,7 +5,7 @@ Created on Fri Feb 18 18:24:01 2022
 @author: bartm
 """
 import subprocess
-
+import matplotlib.pyplot as plt
 
 
 
