@@ -297,7 +297,7 @@ if mode == "inter"
 	end
 	result = mergedPDBInterRoc( plmo.score,chain1_list, chain2_list;cutoff=10.0, sz=200)
 	ppv = map(x->x[1],result)
-	NPZ.write(outputpath, ppv)
+	np.save(outputpath, ppv)
 	# else
 	# 	sequence_length1 =  get_HMMlength(hmm1)
 	# 	sequence_length2 =  get_HMMlength(hmm2)

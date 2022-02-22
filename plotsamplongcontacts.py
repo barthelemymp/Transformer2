@@ -154,7 +154,7 @@ for i in family_list:
     tempTrain=tempTrainr+"joined.faa"
     output = subprocess.check_output(["stdbuf", "-oL", "julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
     print(output)
-    ppvO = np.load(tempFile,allow_pickle=True)
+    ppvO = np.load(tempFile)
     removetemp(tempTrainr)
     
     ### sample times 2
@@ -167,7 +167,7 @@ for i in family_list:
     tempTrain=tempTrainr+"joined.faa"
     output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
     print(output)
-    ppvS1 = np.load(tempFile,allow_pickle=True)
+    ppvS1 = np.load(tempFile)
     removetemp(tempTrainr)
     
         
@@ -185,7 +185,7 @@ for i in family_list:
     tempTrain=tempTrainr+"joined.faa"
     output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
     print(output)
-    ppvS3 = np.load(tempFile,allow_pickle=True)
+    ppvS3 = np.load(tempFile)
     removetemp(tempTrainr)
         
         
@@ -217,7 +217,7 @@ for i in family_list:
     tempTrain = writefastafrompds(pds_sample)
     output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
     print(output)
-    ppvS8 = np.load(tempFile,allow_pickle=True)
+    ppvS8 = np.load(tempFile)
     x = np.array(range(len(ppvO)))
     plt.plot(x,ppvO, label="Original")
     plt.plot(x,ppvS1, label="sampled*1")
@@ -241,15 +241,15 @@ for i in family_list:
 
 
 
-for i in range(7000):
-    original_pathj =  "/home/feinauer/Datasets/DomainsInter/processed/combined_MSA_ddi_"+str(i)+"_joined.fasta" 
-    original_path1 =  "/home/feinauer/Datasets/DomainsInter/processed/combined_MSA_ddi_"+str(i)+"_1.fasta" 
-    original_path2 =  "/home/feinauer/Datasets/DomainsInter/processed/combined_MSA_ddi_"+str(i)+"_2.fasta" 
-    if os.path.isfile(original_pathj):
-        print(i)
-        subprocess.run(["hmmbuild", "--symfrac", "0.0", "hmm_"+str(i)+"_joined.hmm", original_pathj])
-        subprocess.run(["hmmbuild", "--symfrac", "0.0", "hmm_"+str(i)+"_1.hmm", original_path1])
-        subprocess.run(["hmmbuild", "--symfrac",  "0.0", "hmm_"+str(i)+"_2.hmm", original_path2])
+# for i in range(7000):
+#     original_pathj =  "/home/feinauer/Datasets/DomainsInter/processed/combined_MSA_ddi_"+str(i)+"_joined.fasta" 
+#     original_path1 =  "/home/feinauer/Datasets/DomainsInter/processed/combined_MSA_ddi_"+str(i)+"_1.fasta" 
+#     original_path2 =  "/home/feinauer/Datasets/DomainsInter/processed/combined_MSA_ddi_"+str(i)+"_2.fasta" 
+#     if os.path.isfile(original_pathj):
+#         print(i)
+#         subprocess.run(["hmmbuild", "--symfrac", "0.0", "hmm_"+str(i)+"_joined.hmm", original_pathj])
+#         subprocess.run(["hmmbuild", "--symfrac", "0.0", "hmm_"+str(i)+"_1.hmm", original_path1])
+#         subprocess.run(["hmmbuild", "--symfrac",  "0.0", "hmm_"+str(i)+"_2.hmm", original_path2])
 
 
 
