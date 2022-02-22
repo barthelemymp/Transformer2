@@ -215,7 +215,8 @@ for i in family_list:
         # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
         pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
         pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-    tempTrain = writefastafrompds(pds_sample)
+    tempTrainr = writefastafrompds(pds_sample)
+    tempTrain=tempTrainr+"joined.faa"
     output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
     print(output)
     ppvS8 = np.load(tempFile)
