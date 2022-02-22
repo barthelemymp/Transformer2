@@ -154,7 +154,7 @@ for i in family_list:
     tempTrain=tempTrainr+"joined.faa"
     output = subprocess.check_output(["stdbuf", "-oL", "julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
     print(output)
-    ppvO = np.load(tempFile)
+    ppvO = np.load(tempFile,allow_pickle=True)
     removetemp(tempTrainr)
     
     ### sample times 2
@@ -167,7 +167,7 @@ for i in family_list:
     tempTrain=tempTrainr+"joined.faa"
     output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
     print(output)
-    ppvS1 = np.load(tempFile)
+    ppvS1 = np.load(tempFile,allow_pickle=True)
     removetemp(tempTrainr)
     
         
@@ -185,7 +185,7 @@ for i in family_list:
     tempTrain=tempTrainr+"joined.faa"
     output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
     print(output)
-    ppvS3 = np.load(tempFile)
+    ppvS3 = np.load(tempFile,allow_pickle=True)
     removetemp(tempTrainr)
         
         
@@ -217,7 +217,7 @@ for i in family_list:
     tempTrain = writefastafrompds(pds_sample)
     output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
     print(output)
-    ppvS8 = np.load(tempFile)
+    ppvS8 = np.load(tempFile,allow_pickle=True)
     x = np.array(range(len(ppvO)))
     plt.plot(x,ppvO, label="Original")
     plt.plot(x,ppvS1, label="sampled*1")
