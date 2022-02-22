@@ -22,7 +22,7 @@ from ardca import *
 print("import done")
 #torch.functional.one_hot
 pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
-torch.set_num_threads(1)
+torch.set_num_threads(4)
 #pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 count = 0
 # Model hyperparameters--> CAN BE CHANGED
@@ -40,7 +40,7 @@ repartition = [0.7, 0.15, 0.15]
 #EPOCHS 
 num_epochs =1000
 Unalign = False
-alphalist=[0.05, 0.1, 0.5]
+alphalist=[0.0, -0.1, -0.5]
 wd_list = [0.0]#, 0.00005]
 ilist = [46, 69, 71,157,160,251, 258, 17]
 onehot=False
