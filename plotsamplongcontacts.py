@@ -163,7 +163,9 @@ for i in family_list:
     batchIndex = makebatchList(len(pds_sample), 300)
     for batchI in batchIndex:
         sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-        pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+        # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+        pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
+        pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
     tempTrainr = writefastafrompds(pds_sample)
     tempTrain=tempTrainr+"joined.faa"
     output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
@@ -220,7 +222,7 @@ for i in family_list:
     output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
     print(output)
     ppvS8 = np.load(tempFile)
-    x = np.array(range(len(ppvO)))
+    x = np.array(range(1,len(ppvO)+1))
     plt.plot(x,ppvO, label="Original")
     plt.plot(x,ppvS1, label="sampled*1")
     plt.plot(x,ppvS3, label="sampled*3")
