@@ -56,7 +56,7 @@ onehot=False
 i=17
 modelpath = "TransSimple_fam"+str(i)+".pth.tar"
 
-
+gumbel=True
 
 
 pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
