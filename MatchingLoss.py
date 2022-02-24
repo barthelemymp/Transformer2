@@ -475,7 +475,61 @@ def ConditioalEntropyMatchingLoss(batch,
     
     return lossCE, lossEntropy, acc
 
+
+
+
+
+def ConditionalSquaredEntropyMatchingLoss(batch,
+                                  model,
+                                  CCL_mean,
+                                  device,
+                                  samplingMultiple=1,
+                                  gumbel=True):
+
+    inp_data, target, idx_list = batch[0], batch[1], batch[2]
+    output = model(inp_data, target[:-1, :])
+    acc = accuracy(batch, output, onehot=model.onehot).item()
+    output = output.reshape(-1, output.shape[2])#keep last dimension
+    if model.onehot:
+        _, targets_Original = target.max(dim=2)
+    else:
+        targets_Original= target
     
+    targets_Original = targets_Original[1:].reshape(-1)
+    lossCE = CCL_mean(output, targets_Original)
+    
+    
+    ## Entropic 
+    samples = model.pseudosample(inp_data, target, nsample=1, method="gumbel")
+    ### fake step
+    if gumbel==False:
+        samples = samples.max(dim=2)[1]
+    output = model(inp_data, samples[:-1, :])
+    output = output.reshape(-1, output.shape[2])
+
+    if gumbel ==True:
+        _, samples_Original = samples.max(dim=2)
+    else: 
+        samples_Original = samples
+    samples_Original = samples_Original[1:].reshape(-1)
+    lossEntropy = CCL_mean(output, samples_Original)
+    for i in range(samplingMultiple-1):
+        samples = model.pseudosample(inp_data, target, nsample=1, method="gumbel")
+        if gumbel==False:
+            samples = samples.max(dim=2)[1]
+        output = model(inp_data, samples[:-1, :])
+        output = output.reshape(-1, output.shape[2])
+        if gumbel ==True:
+            _, samples_Original = samples.max(dim=2)
+        else: 
+            samples_Original = samples
+        samples_Original = samples_Original[1:].reshape(-1)
+        lossEntropy += torch.exp(-1*CCL_mean(output, samples_Original))
+    
+    lossEntropy = lossEntropy/samplingMultiple  
+
+    
+    return lossCE, lossEntropy, acc
  
     
 # for batch_idx, batch in enumerate(train_iterator):

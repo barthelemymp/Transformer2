@@ -40,7 +40,7 @@ repartition = [0.7, 0.15, 0.15]
 #EPOCHS 
 num_epochs =1000
 Unalign = False
-alphalist=[0.0, -0.1, -0.5]
+alphalist=[0.1, -0.1, 0.0]
 wd_list = [0.0]#, 0.00005]
 ilist = [46, 69, 71,157,160,251, 258, 17]
 onehot=False
@@ -53,7 +53,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 onehot=False
-i=17
+i=46
 modelpath = "TransSimple_fam"+str(i)+".pth.tar"
 
 
