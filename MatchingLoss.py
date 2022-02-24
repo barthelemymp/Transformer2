@@ -524,7 +524,7 @@ def ConditionalSquaredEntropyMatchingLoss(batch,
         else: 
             samples_Original = samples
         samples_Original = samples_Original[1:].reshape(-1)
-        lossEntropy += torch.exp(-1*CCL_mean(output, samples_Original))
+        lossEntropy += -1*torch.exp(-1*CCL_mean(output, samples_Original))
     
     lossEntropy = lossEntropy/samplingMultiple  
 

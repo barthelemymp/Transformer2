@@ -40,7 +40,7 @@ repartition = [0.7, 0.15, 0.15]
 #EPOCHS 
 num_epochs =1000
 Unalign = False
-alphalist=[0.1, -0.1, 0.0]
+alphalist=[0.1, -0.1, 0.5]
 wd_list = [0.0]#, 0.00005]
 ilist = [46, 69, 71,157,160,251, 258, 17]
 onehot=False
@@ -53,7 +53,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 onehot=False
-i=46
+i=17
 modelpath = "TransSimple_fam"+str(i)+".pth.tar"
 
 
@@ -159,7 +159,7 @@ for alpha in alphalist:
       "sizetrain": len(pds_train),
       "sizeval": len(pds_val),
       "num_heads": num_heads,
-      "loss": "CE + contrastiveCEMatching",
+      "loss": "CE + SquaredContrastiveEntropy",#" contrastiveCEMatching",
       "alpha":alpha,
       "sparseoptim":"AdamW",
     }
@@ -183,15 +183,15 @@ for alpha in alphalist:
             # sparseoptim.zero_grad()
             # opt_sparse.zero_grad()
             # opt_dense.zero_grad()
-            #lossCE, lossEntropy, acc = ConditioalEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10, gumbel=gumbel)
-            lossCE, lossEntropy = SamplerContrastiveMatchingLoss(batch, model,
-                                                criterion_raw,
-                                                criterionMatching,
-                                                device,
-                                                accumulate=False,
-                                                alpha=alpha,
-                                                numberContrastive=10,
-                                                sampler="gumbel")
+            lossCE, lossEntropy, acc = ConditionalSquaredEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10, gumbel=gumbel)
+            # lossCE, lossEntropy = SamplerContrastiveMatchingLoss(batch, model,
+            #                                     criterion_raw,
+            #                                     criterionMatching,
+            #                                     device,
+            #                                     accumulate=False,
+            #                                     alpha=alpha,
+            #                                     numberContrastive=10,
+            #                                     sampler="gumbel")
             
             #accuracyTrain += acc
             lossesCE.append(lossCE.item())
