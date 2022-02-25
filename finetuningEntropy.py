@@ -159,7 +159,7 @@ for alpha in alphalist:
       "sizetrain": len(pds_train),
       "sizeval": len(pds_val),
       "num_heads": num_heads,
-      "loss": "CE + SquaredContrastiveEntropy",#" contrastiveCEMatching",
+      "loss": "CE + contrastiveCEMatching",#SquaredContrastiveEntropy",#" contrastiveCEMatching",
       "alpha":alpha,
       "sparseoptim":"AdamW",
     }
@@ -183,15 +183,15 @@ for alpha in alphalist:
             # sparseoptim.zero_grad()
             # opt_sparse.zero_grad()
             # opt_dense.zero_grad()
-            lossCE, lossEntropy, acc = ConditionalSquaredEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10, gumbel=gumbel)
-            # lossCE, lossEntropy = SamplerContrastiveMatchingLoss(batch, model,
-            #                                     criterion_raw,
-            #                                     criterionMatching,
-            #                                     device,
-            #                                     accumulate=False,
-            #                                     alpha=alpha,
-            #                                     numberContrastive=10,
-            #                                     sampler="gumbel")
+            # lossCE, lossEntropy, acc = ConditionalSquaredEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10, gumbel=gumbel)
+            lossCE, lossEntropy = SamplerContrastiveMatchingLoss(batch, model,
+                                                criterion_raw,
+                                                criterionMatching,
+                                                device,
+                                                accumulate=False,
+                                                alpha=alpha,
+                                                numberContrastive=10,
+                                                sampler="gumbel")
             
             #accuracyTrain += acc
             lossesCE.append(lossCE.item())
