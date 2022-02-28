@@ -21,7 +21,6 @@ from utils import *
 from ardca import *
 print("import done")
 
-#optimizer.param_groups[0]['weight_decay'] = 0.
 
 import sys
 family = str(sys.argv[1])
@@ -150,8 +149,9 @@ for alpha in alphalist:
     load_checkpoint(torch.load(modelpath), model, optimizer)
     ##### Training simple 
     
+    
     #whyyy 'cpu?'
-    wandb.init(project="Trans ContEntropy", entity="barthelemymp")
+    wandb.init(project="Trans SqEnt", entity="barthelemymp")
     config_dict = {
       "num_layers": num_encoder_layers,
       "embedding":embedding_size,
@@ -165,7 +165,7 @@ for alpha in alphalist:
       "sizetrain": len(pds_train),
       "sizeval": len(pds_val),
       "num_heads": num_heads,
-      "loss": "CE + contrastiveCEMatching",#SquaredContrastiveEntropy",#" contrastiveCEMatching",
+      "loss": "CE + SquaredEntropy",#SquaredContrastiveEntropy",#" contrastiveCEMatching",
       "alpha":alpha,
       "sparseoptim":"AdamW",
     }
@@ -257,7 +257,7 @@ for alpha in alphalist:
             # sparseoptim.zero_grad()
             # opt_sparse.zero_grad()
             # opt_dense.zero_grad()
-            # lossCE, lossEntropy, acc = ConditionalSquaredEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10, gumbel=gumbel)
+            lossCE, lossEntropy, acc = ConditionalSquaredEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10, gumbel=gumbel)
             lossCE, lossEntropy = SamplerContrastiveMatchingLoss(batch, model,
                                                 criterion_raw,
                                                 criterionMatching,
@@ -284,7 +284,6 @@ for alpha in alphalist:
         step += 1
 
         wandb.log({"Train loss CE": mean_lossCETrain,  "Val loss CE": mean_lossVal, "test loss CE": mean_losstest,  "accuracyVal":accuracyVal , "accuracytest":accuracytest ,  "accuracyTrain": accuracyTrain, "epoch":epoch})
-        
         
 
     wandb.finish()
