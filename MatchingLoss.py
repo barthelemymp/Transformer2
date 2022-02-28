@@ -512,7 +512,7 @@ def ConditionalSquaredEntropyMatchingLoss(batch,
     else: 
         samples_Original = samples
     samples_Original = samples_Original[1:].reshape(-1)
-    lossEntropy = CCL_mean(output, samples_Original)
+    lossEntropy = -1*torch.exp(-1*CCL_mean(output, samples_Original))
     for i in range(samplingMultiple-1):
         samples = model.pseudosample(inp_data, target, nsample=1, method="gumbel")
         if gumbel==False:
@@ -524,7 +524,7 @@ def ConditionalSquaredEntropyMatchingLoss(batch,
         else: 
             samples_Original = samples
         samples_Original = samples_Original[1:].reshape(-1)
-        lossEntropy += -1*torch.exp(-1*CCL_mean(output, samples_Original))
+        lossEntropy += torch.exp(-1*CCL_mean(output, samples_Original))
     
     lossEntropy = lossEntropy/samplingMultiple  
 
