@@ -26,8 +26,12 @@ from MatchingLoss import *
 from utils import *
 from ardca import *
 print("import done")
+PPI = True
 #torch.functional.one_hot
-pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
+if PPI:
+    pathtoFolder = "/home/Datasets/DomainsInter/PPIprocessed/"
+else:
+    pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
 torch.set_num_threads(1)
 #pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 count = 0
@@ -70,8 +74,10 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 #             print(i, "does not work")
 #         if len(pds) >= 4000:
 #             ilist.append(i)
-            
-ilist = [46, 69, 71,157,160,251, 258, 17] 
+if PPI:
+    ilist = [1,22,3,5,7,8,9,10,12,16,19,21,2,27,31]
+else:        
+    ilist = [46, 69, 71,157,160,251, 258, 17] 
 save_model = True
 onehot=False
 for i in ilist:
@@ -79,12 +85,18 @@ for i in ilist:
     # wd =0.0
     alpha = 0.0
     ##### Training simple 
-    pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
+    if PPI:
+        pathTofile = pathtoFolder+ "PPI_" +str(i)+"_joined.csv"
+    else:
+        pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
     inputsize, outputsize = getLengthfromCSV(pathTofile)
     os.path.isfile(pathTofile)
     count +=1
     print("ddi", i, " is running")
-    name = "combined_MSA_ddi_" +str(i)+"_joined"
+    if PPI:
+        name = "PPI_" +str(i)+"_joined"
+    else:
+        name = "combined_MSA_ddi_" +str(i)+"_joined"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     #Dataset
     train_path = pathtoFolder + name +'_train.csv'
@@ -138,7 +150,10 @@ for i in ilist:
         device,
         onehot=onehot,
     ).to(device)
-    
+    if PPI:
+        famname = "PPI"+str(i)
+    else:
+        famname = "DDI"+str(i)
     #whyyy 'cpu?'
     wandb.init(project="Transformer Simple large Fam 2", entity="barthelemymp")
     config_dict = {
@@ -147,7 +162,7 @@ for i in ilist:
       "forward_expansion": forward_expansion,
       "batch_size": batch_size,
       "Encoder": "Positional",
-      "Family":i,
+      "Family":famname,
       "dropout":dropout,
       "len input":len_input,
       "len output":len_output,
@@ -269,7 +284,10 @@ for i in ilist:
                     "state_dict": model.state_dict(),
                     "optimizer": optimizer.state_dict(),
                 }
-                save_checkpoint(checkpoint, filename="TransSimple_fam"+str(i)+".pth.tar")
+                if PPI:
+                    save_checkpoint(checkpoint, filename="TransSimple_famPPI"+str(i)+".pth.tar")
+                else:
+                    save_checkpoint(checkpoint, filename="TransSimple_fam"+str(i)+".pth.tar")
     wandb.finish()
         
 
