@@ -26,7 +26,7 @@ from MatchingLoss import *
 from utils import *
 from ardca import *
 print("import done")
-PPI = True
+PPI = False
 #torch.functional.one_hot
 if PPI:
     pathtoFolder = "/home/feinauer/Datasets/DomainsInter/PPIprocessed/"
@@ -108,6 +108,12 @@ for i in ilist:
     pds_train = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
     pds_test = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
     pds_val = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
+    
+    
+    pds_train.shuffle()
+    pds_test.shuffle()
+    pds_test.shuffle()
+    
     ntrain = len(pds_train)
     nval = len(pds_val)
     ntest = len(pds_test)
@@ -155,7 +161,7 @@ for i in ilist:
     else:
         famname = "DDI"+str(i)
     #whyyy 'cpu?'
-    wandb.init(project="Transformer Simple large Fam 2", entity="barthelemymp")
+    wandb.init(project="Transformer Shuffle", entity="barthelemymp")
     config_dict = {
       "num_layers": num_encoder_layers,
       "embedding":embedding_size,
