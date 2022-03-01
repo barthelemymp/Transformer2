@@ -60,7 +60,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 onehot=False
-i=69
+
 modelpath = "TransSimple_fam"+str(i)+".pth.tar"
 
 gumbel=True
