@@ -26,7 +26,7 @@ from MatchingLoss import *
 from utils import *
 from ardca import *
 print("import done")
-PPI = False
+PPI = True
 #torch.functional.one_hot
 if PPI:
     pathtoFolder = "/home/feinauer/Datasets/DomainsInter/PPIprocessed/"
@@ -41,8 +41,8 @@ count = 0
 # Model hyperparameters--> CAN BE CHANGED
 batch_size = 32
 num_heads = 1
-num_encoder_layers = 2
-num_decoder_layers = 2
+num_encoder_layers = 3
+num_decoder_layers = 3
 dropout = 0.10
 forward_expansion = 2048
 src_vocab_size = 25#len(protein.vocab) 
@@ -51,7 +51,7 @@ embedding_size = 55#len(protein.vocab) #it should be 25. 21 amino, 2 start and e
 
 repartition = [0.7, 0.15, 0.15]
 #EPOCHS 
-num_epochs =5000
+num_epochs =8000
 Unalign = False
 alphalist=[0.0, 0.01, 0.1]
 wd_list = [0.0]#, 0.00005]
@@ -169,7 +169,7 @@ for i in ilist:
     else:
         famname = "DDI"+str(i)
     #whyyy 'cpu?'
-    wandb.init(project="Transformer Shuffle", entity="barthelemymp")
+    wandb.init(project="Translong 3 layers", entity="barthelemymp")
     config_dict = {
       "num_layers": num_encoder_layers,
       "embedding":embedding_size,
