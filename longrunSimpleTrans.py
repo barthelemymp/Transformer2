@@ -26,7 +26,7 @@ from MatchingLoss import *
 from utils import *
 from ardca import *
 print("import done")
-PPI = True
+PPI = False
 #torch.functional.one_hot
 if PPI:
     pathtoFolder = "/home/meynard/Datasets/DomainsInter/PPIprocessed/"
@@ -41,8 +41,8 @@ count = 0
 # Model hyperparameters--> CAN BE CHANGED
 batch_size = 32
 num_heads = 1
-num_encoder_layers = 3
-num_decoder_layers = 3
+num_encoder_layers = 2
+num_decoder_layers = 2
 dropout = 0.10
 forward_expansion = 2048
 src_vocab_size = 25#len(protein.vocab) 
@@ -118,9 +118,9 @@ for i in ilist:
     # print("score", )
     # print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
 
-    # pds_train.shufflePairs()
-    # pds_test.shufflePairs()
-    # pds_test.shufflePairs()
+    pds_train.shufflePairs()
+    pds_test.shufflePairs()
+    pds_test.shufflePairs()
     
     ntrain = len(pds_train)
     nval = len(pds_val)
@@ -169,7 +169,7 @@ for i in ilist:
     else:
         famname = "DDI"+str(i)
     #whyyy 'cpu?'
-    wandb.init(project="Translong 3 layers", entity="barthelemymp")
+    wandb.init(project="Transformer Shuffle", entity="barthelemymp")
     config_dict = {
       "num_layers": num_encoder_layers,
       "embedding":embedding_size,
