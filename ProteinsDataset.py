@@ -191,6 +191,10 @@ class ProteinTranslationDataset(torch.utils.data.Dataset):
             self.tensorIN= self.tensorIN.to(device, non_blocking=True)
             self.tensorOUT= self.tensorOUT.to(device, non_blocking=True)
             
+    def shufflePairs(self,):
+        self.tensorOUT= self.tensorOUT[:,torch.randperm(self.tensorOUT.size()[1])]
+
+            
     ## TO DO join for onehot=False
     def join(self, pds):
         if self.device != pds.device:
