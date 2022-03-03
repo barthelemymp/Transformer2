@@ -118,9 +118,9 @@ for i in ilist:
     # print("score", )
     # print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
 
-    pds_train.shuffle()
-    pds_test.shuffle()
-    pds_test.shuffle()
+    pds_train.shufflePairs()
+    pds_test.shufflePairs()
+    pds_test.shufflePairs()
     
     ntrain = len(pds_train)
     nval = len(pds_val)
