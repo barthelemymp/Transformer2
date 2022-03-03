@@ -26,7 +26,7 @@ from MatchingLoss import *
 from utils import *
 from ardca import *
 print("import done")
-PPI = True
+PPI = False
 #torch.functional.one_hot
 if PPI:
     pathtoFolder = "/home/meynard/Datasets/DomainsInter/PPIprocessed/"
@@ -81,7 +81,7 @@ if PPI:
     ilist = [1,22,3,5,7,8,9,10,12,16,19,21,2,27,31]
 else:        
     ilist = [17, 46, 69, 71,157,160,251, 258, 97,103,132, 181, 192, 197,303,304,308,358,504, 634, 815, 972, 972, 980, 1208, 1213, 1214] 
-save_model = True
+save_model = False
 onehot=False
 
 for i in ilist:
