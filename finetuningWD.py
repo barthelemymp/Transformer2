@@ -154,7 +154,7 @@ for nwd in wd_list:
     ##### Training simple 
     
     #whyyy 'cpu?'
-    wandb.init(project="Trans ContEntropy", entity="barthelemymp")
+    wandb.init(project="Trans WDfinetuning", entity="barthelemymp")
     config_dict = {
       "num_layers": num_encoder_layers,
       "embedding":embedding_size,
