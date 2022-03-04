@@ -257,28 +257,20 @@ for nwd in wd_list:
         accuracyTrain = 0
         for batch_idx, batch in enumerate(train_iterator):
 
+            inp_data, target= batch[0], batch[1]
+            output = model(inp_data, target[:-1, :])
+            accuracyTrain += accuracy(batch, output, onehot=False).item()
+            output = output.reshape(-1, output.shape[2])#keep last dimension
+            if onehot:
+                _, targets_Original = target.max(dim=2)
+            else:
+                targets_Original= target
+            targets_Original = targets_Original[1:].reshape(-1)
             optimizer.zero_grad()
-            # sparseoptim.zero_grad()
-            # opt_sparse.zero_grad()
-            # opt_dense.zero_grad()
-            # lossCE, lossEntropy, acc = ConditionalSquaredEntropyMatchingLoss(batch, model, criterion, device, samplingMultiple=10, gumbel=gumbel)
-            lossCE, lossEntropy = SamplerContrastiveMatchingLoss(batch, model,
-                                                criterion_raw,
-                                                criterionMatching,
-                                                device,
-                                                accumulate=False,
-                                                alpha=alpha,
-                                                numberContrastive=10,
-                                                sampler="gumbel")
-            
-            #accuracyTrain += acc
-            lossesCE.append(lossCE.item())
-            loss = lossCE + alpha * lossEntropy
+            loss = criterion(output, targets_Original)
+            lossesCE.append(loss.item())
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1) 
-            # opt_sparse.step()
-            # opt_dense.step()
-            # sparseoptim.step()
             optimizer.step()
             
             
