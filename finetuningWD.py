@@ -49,7 +49,7 @@ repartition = [0.7, 0.15, 0.15]
 num_epochs =1000
 Unalign = False
 
-wd_list = [0.0001, 0.001, 0.01, 0.1]
+wd_list = [0.1, 0.3, 0.5]
 
 onehot=False
 wd=0.0
