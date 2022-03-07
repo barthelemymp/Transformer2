@@ -26,7 +26,10 @@ torch.set_num_threads(8)
 
 # Params
 
-i = 71
+import sys
+family = str(sys.argv[1])
+i = int(family)
+
 nlayer = 3
 num_encoder_layers = nlayer
 num_decoder_layers = nlayer
@@ -243,6 +246,7 @@ wandb.finish()
 
 
 alpha = -0.5
+wd = 0.0
 ##### Training simple 
 pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
 pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
