@@ -76,7 +76,7 @@ parameters_dict = {
         },
     
     'dropout': {
-          'values': [5e-5, 1e-5]
+          'values': [0.1]
         },
     
     'lr': {
