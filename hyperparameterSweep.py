@@ -94,7 +94,7 @@ parameters_dict = {
 
 sweep_config['parameters'] = parameters_dict
 repartition = [0.7, 0.15, 0.15]
-testardca = True
+testardca = False
 #torch.functional.one_hot
 sweepn = 0
 def train(config=None):
