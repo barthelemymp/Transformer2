@@ -28,7 +28,7 @@ from ardca import *
 import sys
 family = str(sys.argv[1])
 i = int(family)
-
+datasettype= "PPI"
 import wandb
 wandb.login()
 
@@ -44,13 +44,13 @@ metric = {
 sweep_config['metric'] = metric
 
 
-early_terminate={
-  "type": "hyperband",
-  "min_iter": 100
-  } 
+# early_terminate={
+#   "type": "hyperband",
+#   "min_iter": 1000
+#   } 
 
-sweep_config['early_terminate'] = early_terminate
-datasettype= "Domains"
+# sweep_config['early_terminate'] = early_terminate
+
 
 
 
