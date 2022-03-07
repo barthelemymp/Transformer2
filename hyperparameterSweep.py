@@ -59,7 +59,7 @@ parameters_dict = {
     #     'values': ['adam', 'sgd']
     #     },
     'forward_expansion': {
-        'values': [512, 1024, 2048]
+        'values': [2048]
         },
     'num_heads': {
           'values': [1,5]
@@ -75,8 +75,8 @@ parameters_dict = {
           'values': [55, 105]
         },
     
-    'dropout': {
-          'values': [0.1]
+    'lr': {
+          'values': [5e-5, 1e-5]
         },
     
     'weight_decay': {
@@ -98,7 +98,7 @@ def train(config=None):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         config = wandb.config
         onehot=False
-        num_epochs = 3000
+        num_epochs = 8000
         Unalign = False
         count=0
         if datasettype == "Domains":
@@ -115,7 +115,8 @@ def train(config=None):
             val_path = pathtoFolder + name +'_val.csv'
             test_path = pathtoFolder + name +'_test.csv'
         if datasettype == "PPI":
-            pathtoFolder = "/home/Datasets/DomainsInter/PPIprocessed/"
+            #pathtoFolder = "/home/Datasets/DomainsInter/PPIprocessed/" ##deathstar
+            pathtoFolder = "/home/meynard/Datasets/DomainsInter/PPIprocessed/" ##JussieuGPU
             pathTofile = pathtoFolder+ "PPI_" +str(i)+"_joined.csv"
             inputsize, outputsize = getLengthfromCSV(pathTofile)
             os.path.isfile(pathTofile)
@@ -210,7 +211,7 @@ def train(config=None):
         step_ev = 0
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print(device)
-        learning_rate = 0.0001
+        learning_rate = config.lr
         
         for p in model.parameters():
             if p.dim() > 1:
