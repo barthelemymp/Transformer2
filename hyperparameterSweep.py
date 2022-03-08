@@ -239,7 +239,7 @@ def train(config=None):
             output = subprocess.check_output(["stdbuf", "-oL", "julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
             print(output)
             ppvO = np.load(tempFile)
-            x_values = np.array(range(1,len(ppv)+1))
+            x_values = np.array(range(1,len(ppvO)+1))
             data = [[x, y] for (x, y) in zip(x_values, ppvO)]
             table = wandb.Table(data=data, columns = ["x", "y"])
             wandb.log({"PPV" : wandb.plot.line(table, "x", "y",
