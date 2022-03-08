@@ -47,7 +47,8 @@ repartition = [0.7, 0.15, 0.15]
 #EPOCHS 
 num_epochs =1000
 Unalign = False
-alphalist=[0.1, -0.1, 0.0, 0.3, -0.3, -0.5, 0.5]
+# alphalist=[0.1, -0.1, 0.0, 0.3, -0.3, -0.5, 0.5]
+alphalist=[-0.7, -1.0]
 wd_list = [0.0]#, 0.00005]
 ilist = [46, 69, 71,157,160,251, 258, 17]
 onehot=False
