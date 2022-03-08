@@ -44,7 +44,7 @@ def getlists(df, fam):
 
 
 
-family_list = [303,181,132,157,103,97,69,46,17]
+family_list = [ 17, 46, 69, 71,157,160,251, 258, 97,103,132,181, 192, 197,303,304,308,358,504, 634, 815, 972, 972, 980, 1208, 1213, 1214] 
 pdbtracker = pd.read_csv("pdbtracker.csv")
 
 
@@ -247,9 +247,9 @@ for i in family_list:
 
 
 # for i in range(7000):
-#     original_pathj =  "/home/feinauer/Datasets/DomainsInter/processed/combined_MSA_ddi_"+str(i)+"_joined.fasta" 
-#     original_path1 =  "/home/feinauer/Datasets/DomainsInter/processed/combined_MSA_ddi_"+str(i)+"_1.fasta" 
-#     original_path2 =  "/home/feinauer/Datasets/DomainsInter/processed/combined_MSA_ddi_"+str(i)+"_2.fasta" 
+#     original_pathj =  "/home/Datasets/DomainsInter/processed/combined_MSA_ddi_"+str(i)+"_joined.fasta" 
+#     original_path1 =  "/home/Datasets/DomainsInter/processed/combined_MSA_ddi_"+str(i)+"_1.fasta" 
+#     original_path2 =  "/home/Datasets/DomainsInter/processed/combined_MSA_ddi_"+str(i)+"_2.fasta" 
 #     if os.path.isfile(original_pathj):
 #         print(i)
 #         subprocess.run(["hmmbuild", "--symfrac", "0.0", "hmm_"+str(i)+"_joined.hmm", original_pathj])
