@@ -306,7 +306,7 @@ def train(config=None):
                 criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
                 model.eval()
                 criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
-                scoreHungarianVal = HungarianMatchingBS(pds_val, model,100)
+                scoreHungarianVal = HungarianMatchingBS(pds_val, model,500)
                 scoHVal = scipy.optimize.linear_sum_assignment(scoreHungarianVal)
                 scoreMatchingVal = sum(scoHVal[0]==scoHVal[1])
                 scoreMatchingValClose = sum((scoHVal[0]==scoHVal[1])[maskValclose])
