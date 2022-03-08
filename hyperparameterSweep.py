@@ -243,7 +243,7 @@ def train(config=None):
             data = [[x, y] for (x, y) in zip(x_values, ppvO)]
             table = wandb.Table(data=data, columns = ["x", "y"])
             wandb.log({"PPV" : wandb.plot.line(table, "x", "y",
-                       title="PPV original"), "epoch":epoch})
+                       title="PPV original")})
         
         
         
