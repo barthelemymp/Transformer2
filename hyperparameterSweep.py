@@ -242,7 +242,7 @@ def train(config=None):
             x_values = np.array(range(1,len(ppvO)+1))
             data = [[x, y] for (x, y) in zip(x_values, ppvO)]
             table = wandb.Table(data=data, columns = ["x", "y"])
-            wandb.log({"PPV" : wandb.plot.line(table, "x", "y",
+            wandb.log({"PPV original" : wandb.plot.line(table, "x", "y",
                        title="PPV original")})
         
         
@@ -350,7 +350,7 @@ def train(config=None):
                     x_values = np.array(range(1,len(ppv)+1))
                     data = [[x, y] for (x, y) in zip(x_values, ppv)]
                     table = wandb.Table(data=data, columns = ["x", "y"])
-                    wandb.log({"PPV" : wandb.plot.line(table, "x", "y",
+                    wandb.log({"PPV"+str(epoch) : wandb.plot.line(table, "x", "y",
                                title="Custom Y vs X Line Plot"), "epoch":epoch})
 
 
