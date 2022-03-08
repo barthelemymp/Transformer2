@@ -95,7 +95,7 @@ parameters_dict = {
 
 sweep_config['parameters'] = parameters_dict
 repartition = [0.7, 0.15, 0.15]
-testardca = True
+testardca = False
 #torch.functional.one_hot
 sweepn = 0
 def train(config=None):
@@ -224,7 +224,7 @@ def train(config=None):
         
         
         
-        if testardca:
+        if plotDCA:
             tempFile=next(tempfile._get_candidate_names())+".npy"
             mode = "inter"
             #### getlist

@@ -94,7 +94,7 @@ function makeInterRoc(score::Array{Tuple{Int64,Int64,Float64},1},chain1::PdbTool
 	end
 
 
-function mergedPDBInterRoc(score::Array{Tuple{Int64,Int64,Float64},1},chain1_list,chain2_list;sz=200,cutoff::Float64=8.0,out::AbstractString="return",pymolMode::Bool=false,naccessRatio::Float64=1.0)
+function mergedPDBInterRoc(score::Array{Tuple{Int64,Int64,Float64},1},chain1_list,chain2_list;sz=300,cutoff::Float64=8.0,out::AbstractString="return",pymolMode::Bool=false,naccessRatio::Float64=1.0)
 	# Check if mapping is existent
 	for p in 1:length(chain1_list)
 		chain1 = chain1_list[p]
