@@ -341,6 +341,8 @@ for p in model.parameters():
 optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=wd)
 pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
 criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
+criterion_raw = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
+criterionMatching = nn.CrossEntropyLoss()
 
 for epoch in range(num_epochs+1):
     print(f"[Epoch {epoch} / {num_epochs}]")
