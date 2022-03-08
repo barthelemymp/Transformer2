@@ -295,7 +295,7 @@ if mode == "inter"
 		push!(chain1_list, pdb1.chain[chainIN[i]])
 		push!(chain2_list, pdb2.chain[chainOUT[i]])
 	end
-	result = mergedPDBInterRoc( plmo.score,chain1_list, chain2_list;cutoff=10.0, sz=200)
+	result = mergedPDBInterRoc( plmo.score,chain1_list, chain2_list;cutoff=10.0, sz=300)
 	ppv = map(x->x[1],result)
 	np.save(outputpath, ppv)
 	# else
