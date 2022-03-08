@@ -10,6 +10,23 @@ import torch.nn as nn
 import torch.nn.functional as F
 from ProteinsDataset import *
 from tqdm import tqdm
+
+
+def buildhmm(hmmout, ali):
+    subprocess.run(["hmmbuild", "--symfrac","0.0", hmmout, ali])
+
+
+
+
+def getlists(df, fam):
+    pdblist = list(df[df["id"]==fam]["pdb"])
+    chain1list = list(df[df["id"]==fam]["chain1"])
+    chain2list = list(df[df["id"]==fam]["chain2"])
+    return pdblist, chain1list, chain2list
+
+
+
+
 def translate_sentence(model, sentence,protein,protein_trans, device, max_length=114):
 
     if type(sentence) == str:
@@ -340,7 +357,26 @@ def ConditionalEntropyEstimatorGivenInp(inp, model, pad, max_len,nseq=1000, batc
     
 
         
-        
+def sample_dataset(pds, model, nrepet=1, pathtosave=None): 
+    pds_sample = copy.deepcopy(pds)
+    max_len=pds.tensorOUT.shape[0]
+    batchIndex = makebatchList(len(pds_sample), 300)
+    for batchI in batchIndex:
+        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+        pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+    for i in range(1, nrepet):
+        for batchI in batchIndex:
+            sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+            pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
+            pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
+    if pathtosave:
+        path = pathtosave+"joined.faa"
+        writefasta(torch.cat([torch.nn.functional.one_hot(pds_sample.tensorIN, num_classes=model.trg_vocab_size), torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size)]), path, mapstring =pds_sample.mapstring)
+        path = pathtosave+"_2.faa"
+        writefasta(torch.nn.functional.one_hot(pds_sample.tensorOUT, num_classes=model.trg_vocab_size), path, mapstring =pds_sample.mapstring)
+
+
+
 
 
 
