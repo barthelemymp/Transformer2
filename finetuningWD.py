@@ -46,10 +46,10 @@ embedding_size = 55#len(protein.vocab) #it should be 25. 21 amino, 2 start and e
 
 repartition = [0.7, 0.15, 0.15]
 #EPOCHS 
-num_epochs =1000
+num_epochs =3000
 Unalign = False
 
-wd_list = [0.1, 0.3, 0.5]
+wd_list = [0.3, 0.5, 0.7]
 
 onehot=False
 wd=0.0
