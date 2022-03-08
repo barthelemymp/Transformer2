@@ -24,7 +24,7 @@ from MatchingLoss import *
 from utils import *
 from ardca import *
 
-
+import subprocess
 import sys
 family = str(sys.argv[1])
 i = int(family)
@@ -95,7 +95,7 @@ parameters_dict = {
 
 sweep_config['parameters'] = parameters_dict
 repartition = [0.7, 0.15, 0.15]
-testardca = False
+testardca = True
 #torch.functional.one_hot
 sweepn = 0
 def train(config=None):
@@ -103,7 +103,7 @@ def train(config=None):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         config = wandb.config
         onehot=False
-        num_epochs = 8000
+        num_epochs = 4000
         Unalign = False
         count=0
         if datasettype == "Domains":
@@ -222,6 +222,32 @@ def train(config=None):
             if p.dim() > 1:
                 nn.init.xavier_normal_(p)
         
+        
+        
+        if testardca:
+            tempFile=next(tempfile._get_candidate_names())+".npy"
+            mode = "inter"
+            #### getlist
+            pdbtracker = pd.read_csv("pdbtracker.csv")
+            pdblist, chain1list, chain2list = getlists(pdbtracker, i)
+            np.save("pdblisttemp.npy", pdblist)
+            np.save("chain1listtemp.npy", chain1list)
+            np.save("chain2listtemp.npy", chain2list)
+            hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
+            tempTrainr = writefastafrompds(pds_train)
+            tempTrain=tempTrainr+"joined.faa"
+            output = subprocess.check_output(["stdbuf", "-oL", "julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
+            print(output)
+            ppvO = np.load(tempFile)
+            x_values = np.array(range(1,len(ppv)+1))
+            data = [[x, y] for (x, y) in zip(x_values, ppvO)]
+            table = wandb.Table(data=data, columns = ["x", "y"])
+            wandb.log({"PPV" : wandb.plot.line(table, "x", "y",
+                       title="PPV original"), "epoch":epoch})
+        
+        
+        
+        
         optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=config.weight_decay)
         pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
         criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
@@ -276,7 +302,7 @@ def train(config=None):
                     accuracyVal = accuracyVal/nval
                     step_ev +=1
             wandb.log({"Train loss CE": mean_lossCETrain,  "Val loss CE": mean_lossVal,  "accuracyVal":accuracyVal ,  "accuracyTrain": accuracyTrain, "epoch":epoch})#,"Val Loss Matching":mean_lossMatchingVal, "alpha":alpha "Train loss Matching": mean_lossMatchingTrain,
-            if epoch%200==0:
+            if epoch%500==0:
                 criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
                 model.eval()
                 criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
