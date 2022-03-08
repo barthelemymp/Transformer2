@@ -28,7 +28,8 @@ from ardca import *
 import sys
 family = str(sys.argv[1])
 i = int(family)
-datasettype= "PPI"
+datasettype= "Domains"
+plotDCA = True
 import wandb
 wandb.login()
 
@@ -44,12 +45,12 @@ metric = {
 sweep_config['metric'] = metric
 
 
-# early_terminate={
-#   "type": "hyperband",
-#   "min_iter": 1000
-#   } 
+early_terminate={
+  "type": "hyperband",
+  "min_iter": 1000
+  } 
 
-# sweep_config['early_terminate'] = early_terminate
+sweep_config['early_terminate'] = early_terminate
 
 
 
@@ -72,7 +73,7 @@ parameters_dict = {
         },
     
     'embedding_size': {
-          'values': [55, 105]
+          'values': [55, 105, 255]
         },
     
     'dropout': {
@@ -84,7 +85,7 @@ parameters_dict = {
         },
     
     'weight_decay': {
-          'values': [0.0]
+          'values': [0.0, 0.5, 0.7]
         },
     
     'fam': {
@@ -289,9 +290,45 @@ def train(config=None):
                 # scoreMatchingTrain = sum(scoHTrain[0]==scoHTrain[1])
                 wandb.log({ "scoreMatching Val": scoreMatchingVal, "scoreMatchingValClose": scoreMatchingValClose, "scoreMatchingVal Far": scoreMatchingValFar,"epoch":epoch})
                 # wandb.log({"scoreMatching Val": scoreMatching, "epoch":epoch})
+                if plotDCA:
+                    max_len = len_output
+                    pds_sample = copy.deepcopy(pds_train)
+                    batchIndex = makebatchList(len(pds_sample), 300)
+                    for batchI in batchIndex:
+                        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+                        # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+                        pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
+                        pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
+                    for batchI in batchIndex:
+                        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+                        # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+                        pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
+                        pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
+                    for batchI in batchIndex:
+                        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+                        # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+                        pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
+                        pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
+                    for batchI in batchIndex:
+                        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+                        # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+                        pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
+                        pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
+                        
+                        
+                    tempTrainr = writefastafrompds(pds_sample)
+                    tempTrain=tempTrainr+"joined.faa"
+                    output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
+                    print(output)
+                    ppv = np.load(tempFile)
+                    x_values = np.array(range(1,len(ppv)+1))
+                    data = [[x, y] for (x, y) in zip(x_values, ppv)]
+                    table = wandb.Table(data=data, columns = ["x", "y"])
+                    wandb.log({"PPV" : wandb.plot.line(table, "x", "y",
+                               title="Custom Y vs X Line Plot"), "epoch":epoch})
 
 
-sweep_id = wandb.sweep(sweep_config, project="Hyperparamter Sweep embed PPI"+str(i))
+sweep_id = wandb.sweep(sweep_config, project="HyperNew"+str(i))
 wandb.agent(sweep_id, train)
 
 
