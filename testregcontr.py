@@ -94,13 +94,13 @@ mode = "inter"
 #### getlist
 pdbtracker = pd.read_csv("pdbtracker.csv")
 pdblist, chain1list, chain2list = getlists(pdbtracker, i)
-np.save("pdblisttemp.npy", pdblist)
-np.save("chain1listtemp.npy", chain1list)
-np.save("chain2listtemp.npy", chain2list)
+np.save("pdblisttemp"+str(i)+".npy", pdblist)
+np.save("chain1listtemp"+str(i)+".npy", chain1list)
+np.save("chain2listtemp"+str(i)+".npy", chain2list)
 hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
 tempTrainr = writefastafrompds(pds_train)
 tempTrain=tempTrainr+"joined.faa"
-output = subprocess.check_output(["stdbuf", "-oL", "julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
+output = subprocess.check_output(["stdbuf", "-oL", "julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp"+str(i)+"+.npy", "chain1listtemp"+str(i)"+.npy", "chain2listtemp"+str(i)"+.npy", hmmRadical, tempFile, mode])
 print(output)
 ppvO = np.load(tempFile)
 x_values = np.array(range(1,len(ppvO)+1))
@@ -292,7 +292,7 @@ for epoch in range(num_epochs+1):
             
         tempTrainr = writefastafrompds(pds_sample)
         tempTrain=tempTrainr+"joined.faa"
-        output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
+        output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp"+str(i)+"+.npy", "chain1listtemp"+str(i)"+.npy", "chain2listtemp"+str(i)"+.npy", hmmRadical, tempFile, mode])
         print(output)
         ppv = np.load(tempFile)
         x_values = np.array(range(1,len(ppv)+1))
