@@ -100,7 +100,7 @@ np.save("chain2listtemp"+str(i)+".npy", chain2list)
 hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
 tempTrainr = writefastafrompds(pds_train)
 tempTrain=tempTrainr+"joined.faa"
-output = subprocess.check_output(["stdbuf", "-oL", "julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp"+str(i)+"+.npy", "chain1listtemp"+str(i)"+.npy", "chain2listtemp"+str(i)"+.npy", hmmRadical, tempFile, mode])
+output = subprocess.check_output(["stdbuf", "-oL", "julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp"+str(i)+".npy", "chain1listtemp"+str(i)+".npy", "chain2listtemp"+str(i)+".npy", hmmRadical, tempFile, mode])
 print(output)
 ppvO = np.load(tempFile)
 x_values = np.array(range(1,len(ppvO)+1))
@@ -292,7 +292,7 @@ for epoch in range(num_epochs+1):
             
         tempTrainr = writefastafrompds(pds_sample)
         tempTrain=tempTrainr+"joined.faa"
-        output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp"+str(i)+"+.npy", "chain1listtemp"+str(i)"+.npy", "chain2listtemp"+str(i)"+.npy", hmmRadical, tempFile, mode])
+        output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp"+str(i)+".npy", "chain1listtemp"+str(i)+".npy", "chain2listtemp"+str(i)+".npy", hmmRadical, tempFile, mode])
         print(output)
         ppv = np.load(tempFile)
         x_values = np.array(range(1,len(ppv)+1))
