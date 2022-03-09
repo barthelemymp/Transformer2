@@ -88,7 +88,7 @@ val_iterator = DataLoader(pds_val, batch_size=batch_size,
                 shuffle=True, num_workers=0, collate_fn=default_collate)
 
 # Model hyperparameters
-
+wandb.init(project="Compare reg", entity="barthelemymp")
 tempFile=next(tempfile._get_candidate_names())+".npy"
 mode = "inter"
 #### getlist
@@ -135,7 +135,7 @@ model = Transformer(
 ).to(device)
 
 #whyyy 'cpu?'
-wandb.init(project="Compare reg", entity="barthelemymp")
+
 config_dict = {
   "num_layers": num_encoder_layers,
   "embedding":embedding_size,
