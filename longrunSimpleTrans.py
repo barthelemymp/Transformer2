@@ -26,7 +26,7 @@ from MatchingLoss import *
 from utils import *
 from ardca import *
 print("import done")
-PPI = False
+PPI = True
 #torch.functional.one_hot
 if PPI:
     pathtoFolder = "/home/meynard/Datasets/DomainsInter/PPIprocessed/"
@@ -41,8 +41,8 @@ count = 0
 # Model hyperparameters--> CAN BE CHANGED
 batch_size = 32
 num_heads = 1
-num_encoder_layers = 2
-num_decoder_layers = 2
+num_encoder_layers = 4
+num_decoder_layers = 4
 dropout = 0.10
 forward_expansion = 2048
 src_vocab_size = 25#len(protein.vocab) 
@@ -51,7 +51,7 @@ embedding_size = 55#len(protein.vocab) #it should be 25. 21 amino, 2 start and e
 
 repartition = [0.7, 0.15, 0.15]
 #EPOCHS 
-num_epochs =5000
+num_epochs =10000
 Unalign = False
 alphalist=[0.0, 0.01, 0.1]
 wd_list = [0.0]#, 0.00005]
@@ -80,8 +80,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 if PPI:
     ilist = [1,22,3,5,7,8,9,10,12,16,19,21,2,27,31]
 else:        
-    ilist = [  192, 197,303,304,308,358,504, 634, 815, 972, 972, 980, 1208, 1213, 1214] 
-save_model = False
+    ilist = [ 17, 46, 69, 71,157,160,251, 258, 97,103,132,181, 192, 197,303,304,308,358,504, 634, 815, 972, 972, 980, 1208, 1213, 1214] 
+save_model = True
 onehot=False
 
 for i in ilist:
@@ -118,7 +118,7 @@ for i in ilist:
     # print("score", )
     # print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
 
-    pds_train.shufflePairs()
+#    pds_train.shufflePairs()
 # #    pds_test.shufflePairs()
 #  #   pds_val.shufflePairs()
     
@@ -169,7 +169,7 @@ for i in ilist:
     else:
         famname = "DDI"+str(i)
     #whyyy 'cpu?'
-    wandb.init(project="Transformer Shuffle", entity="barthelemymp")
+    wandb.init(project="Transformer PPI large", entity="barthelemymp")
     config_dict = {
       "num_layers": num_encoder_layers,
       "embedding":embedding_size,
@@ -191,7 +191,7 @@ for i in ilist:
     step_ev = 0
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(device)
-    learning_rate = 5e-5
+    learning_rate = 1e-5
     
     for p in model.parameters():
         if p.dim() > 1:
@@ -299,7 +299,7 @@ for i in ilist:
                     "optimizer": optimizer.state_dict(),
                 }
                 if PPI:
-                    save_checkpoint(checkpoint, filename="TransSimple_famPPI"+str(i)+".pth.tar")
+                    save_checkpoint(checkpoint, filename="TransSimple_famPPI_large"+str(i)+".pth.tar")
                 else:
                     save_checkpoint(checkpoint, filename="TransSimple_fam"+str(i)+".pth.tar")
     wandb.finish()
