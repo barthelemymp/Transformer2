@@ -294,7 +294,7 @@ for downsamples in downsampleslist:
                 
             tempTrainr = writefastafrompds(pds_sample)
             tempTrain=tempTrainr+"joined.faa"
-            output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemph"+str(i)".npy", "chain1listtemph"+str(i)".npy", "chain2listtemph"+str(i)".npy", hmmRadical, tempFile, mode])
+            output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemph"+str(i)+".npy", "chain1listtemph"+str(i)+".npy", "chain2listtemph"+str(i)+".npy", hmmRadical, tempFile, mode])
             print(output)
             ppv = np.load(tempFile)
             x_values = np.array(range(1,len(ppv)+1))
