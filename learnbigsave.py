@@ -73,7 +73,7 @@ maskValclose = (dval1+dval2).min(dim=0)[0]<(dval1+dval2).min(dim=0)[0].median()
 maskValclose = maskValclose.cpu().numpy()
 maskValfar = (dval1+dval2).min(dim=0)[0]>=(dval1+dval2).min(dim=0)[0].median()
 maskValfar = maskValfar.cpu().numpy()
-downsampleslist = [100, 500, 1000, 3000, len(pds_train)]
+downsampleslist = [300, 800, 1200, 1700, 2200, 2700]
 # ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
 # print("score", i)
 # print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
