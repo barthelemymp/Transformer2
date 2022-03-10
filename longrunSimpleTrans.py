@@ -80,7 +80,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 if PPI:
     ilist = [1,22,3,5,7,8,9,10,12,16,19,21,2,27,31]
 else:        
-    ilist = [ 181, 192, 197,303,304,308,358,504, 634, 815, 972, 972, 980, 1208, 1213, 1214] 
+    ilist = [  192, 197,303,304,308,358,504, 634, 815, 972, 972, 980, 1208, 1213, 1214] 
 save_model = False
 onehot=False
 
@@ -119,8 +119,8 @@ for i in ilist:
     # print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
 
     pds_train.shufflePairs()
-    pds_test.shufflePairs()
-    pds_test.shufflePairs()
+# #    pds_test.shufflePairs()
+#  #   pds_val.shufflePairs()
     
     ntrain = len(pds_train)
     nval = len(pds_val)
