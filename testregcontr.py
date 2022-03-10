@@ -37,7 +37,7 @@ embedding_size = 105
 if embedding_size>0:
     onehot=False
 Unalign = False
-num_heads = 5
+num_heads = 1
 batch_size = 32
 forward_expansion = 2048
 num_epochs= 5000
@@ -47,9 +47,9 @@ dropout = 0.10
 wd = 0.5
 alpha = 0.0
 ##### Training simple 
-pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
+#pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
 #pathtoFolder = "/home/meynard/Datasets/DomainsInter/processed/" ##Jussieu GPU
-#pathtoFolder = "/home/Datasets/DomainsInter/processed/"
+pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
 
 inputsize, outputsize = getLengthfromCSV(pathTofile)
@@ -314,7 +314,6 @@ wandb.finish()
 alpha = -0.5
 wd = 0.0
 ##### Training simple 
-pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
 pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
 inputsize, outputsize = getLengthfromCSV(pathTofile)
 
@@ -542,7 +541,7 @@ for epoch in range(num_epochs+1):
             
         tempTrainr = writefastafrompds(pds_sample)
         tempTrain=tempTrainr+"joined.faa"
-        output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
+        output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp"+str(i)+".npy", "chain1listtemp"+str(i)+".npy", "chain2listtemp"+str(i)+".npy", hmmRadical, tempFile, mode])
         print(output)
         ppv = np.load(tempFile)
         x_values = np.array(range(1,len(ppv)+1))
