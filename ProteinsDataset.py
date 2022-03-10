@@ -193,6 +193,11 @@ class ProteinTranslationDataset(torch.utils.data.Dataset):
             
     def shufflePairs(self,):
         self.tensorOUT= self.tensorOUT[:,torch.randperm(self.tensorOUT.size()[1])]
+        
+    def downsample(self, nsamples):
+        idxs = torch.randperm(self.tensorOUT.size()[1])[:nsamples]
+        self.tensorIN= self.tensorIN[:,idxs]
+        self.tensorOUT= self.tensorOUT[:,idxs]
 
             
     ## TO DO join for onehot=False
