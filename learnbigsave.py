@@ -117,7 +117,7 @@ for downsamples in downsampleslist:
     ).to(device)
     
     #whyyy 'cpu?'
-    wandb.init(project="Compare reg", entity="barthelemymp")
+    wandb.init(project="Downsampling", entity="barthelemymp")
     config_dict = {
       "num_layers": num_encoder_layers,
       "embedding":embedding_size,
