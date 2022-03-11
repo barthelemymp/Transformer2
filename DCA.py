@@ -51,7 +51,7 @@ def PPV_from_pds(pds, pdblist, chain1list, chain2list, hmmRadical, mode ="inter"
     os.remove(tempFile)
     return ppv
 
-def sampleDataset(pds, len_output, multiplicative =1):
+def sampleDataset(model, pds, len_output, multiplicative =1):
     max_len = len_output
     pds_sample = copy.deepcopy(pds)
     batchIndex = makebatchList(len(pds_sample), 300)

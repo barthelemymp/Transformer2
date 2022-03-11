@@ -151,14 +151,14 @@ for i in family_list:
     ppvO = PPV_from_pds(pds_train, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
     
     
-    sampled = sampleDataset(pds_train, len_output, multiplicative =1)
+    sampled = sampleDataset(model, pds_train, len_output, multiplicative =1)
     ppvS1 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
     ### sample times 2
 
-    sampled = sampleDataset(pds_train, len_output, multiplicative =3)
+    sampled = sampleDataset(model, pds_train, len_output, multiplicative =3)
     ppvS3 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
         
-    sampled = sampleDataset(pds_train, len_output, multiplicative =8)
+    sampled = sampleDataset(model, pds_train, len_output, multiplicative =8)
     ppvS8 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
     x = np.array(range(1,len(ppvO)+1))
     plt.plot(x,ppvO, label="Original")
