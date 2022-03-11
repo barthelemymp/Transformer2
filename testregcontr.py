@@ -51,7 +51,7 @@ alpha = 0.0
 pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
 #pathtoFolder = "/home/meynard/Datasets/DomainsInter/processed/" ##Jussieu GPU
 #pathtoFolder = "/home/Datasets/DomainsInter/processed/"
-#pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
+pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
 
 inputsize, outputsize = getLengthfromCSV(pathTofile)
 
