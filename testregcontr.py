@@ -21,6 +21,7 @@ from ProteinsDataset import *
 from MatchingLoss import *
 from utils import *
 from ardca import *
+from DCA import *
 torch.set_num_threads(8)
 
 
@@ -40,7 +41,7 @@ Unalign = False
 num_heads = 1
 batch_size = 32
 forward_expansion = 2048
-num_epochs= 5000
+num_epochs= 4000
 src_vocab_size = 25
 trg_vocab_size = 25
 dropout = 0.10
@@ -89,24 +90,15 @@ val_iterator = DataLoader(pds_val, batch_size=batch_size,
 
 # Model hyperparameters
 wandb.init(project="Compare reg", entity="barthelemymp")
-tempFile=next(tempfile._get_candidate_names())+".npy"
-mode = "inter"
-#### getlist
 pdbtracker = pd.read_csv("pdbtracker.csv")
 pdblist, chain1list, chain2list = getlists(pdbtracker, i)
-np.save("pdblisttemp"+str(i)+".npy", pdblist)
-np.save("chain1listtemp"+str(i)+".npy", chain1list)
-np.save("chain2listtemp"+str(i)+".npy", chain2list)
 hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
-tempTrainr = writefastafrompds(pds_train)
-tempTrain=tempTrainr+"joined.faa"
-output = subprocess.check_output(["stdbuf", "-oL", "julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp"+str(i)+".npy", "chain1listtemp"+str(i)+".npy", "chain2listtemp"+str(i)+".npy", hmmRadical, tempFile, mode])
-print(output)
-ppvO = np.load(tempFile)
+
+ppvO = PPV_from_pds(pds_train, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
 x_values = np.array(range(1,len(ppvO)+1))
 data = [[x, y] for (x, y) in zip(x_values, ppvO)]
 table = wandb.Table(data=data, columns = ["x", "y"])
-wandb.log({"PPV original" : wandb.plot.line(table, "x", "y",
+wandb.log({"PPV original"+str(i) : wandb.plot.line(table, "x", "y",
            title="PPV original")})
 
 
@@ -265,40 +257,23 @@ for epoch in range(num_epochs+1):
         wandb.log({ "scoreMatching Val": scoreMatchingVal, "scoreMatchingValClose": scoreMatchingValClose, "scoreMatchingVal Far": scoreMatchingValFar,"epoch":epoch})
         
     if epoch%1000 ==0:
-        max_len = len_output
-        pds_sample = copy.deepcopy(pds_train)
-        batchIndex = makebatchList(len(pds_sample), 300)
-        for batchI in batchIndex:
-            sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-            # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-            pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-            pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-        for batchI in batchIndex:
-            sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-            # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-            pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-            pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-        for batchI in batchIndex:
-            sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-            # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-            pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-            pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-        for batchI in batchIndex:
-            sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-            # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-            pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-            pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
+        mode = "inter"
+        #### getlist
+        pdbtracker = pd.read_csv("pdbtracker.csv")
+        pdblist, chain1list, chain2list = getlists(pdbtracker, i)
+        hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
+    
+        ppvO = PPV_from_pds(pds_train, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
+        
+        
+        sampled = sampleDataset(model, pds_train, len_output, multiplicative =5)
+        ppv = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
             
             
-        tempTrainr = writefastafrompds(pds_sample)
-        tempTrain=tempTrainr+"joined.faa"
-        output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp"+str(i)+".npy", "chain1listtemp"+str(i)+".npy", "chain2listtemp"+str(i)+".npy", hmmRadical, tempFile, mode])
-        print(output)
-        ppv = np.load(tempFile)
         x_values = np.array(range(1,len(ppv)+1))
         data = [[x, y] for (x, y) in zip(x_values, ppv)]
         table = wandb.Table(data=data, columns = ["x", "y"])
-        wandb.log({"PPV"+str(epoch) : wandb.plot.line(table, "x", "y",
+        wandb.log({"PPV"+str(epoch)+"_"+str(i) : wandb.plot.line(table, "x", "y",
                    title="Custom Y vs X Line Plot"), "epoch":epoch})
 
     
@@ -514,40 +489,23 @@ for epoch in range(num_epochs+1):
         wandb.log({ "scoreMatching Val": scoreMatchingVal, "scoreMatchingValClose": scoreMatchingValClose, "scoreMatchingVal Far": scoreMatchingValFar,"epoch":epoch})
        
     if epoch%1000 ==0:
-        max_len = len_output
-        pds_sample = copy.deepcopy(pds_train)
-        batchIndex = makebatchList(len(pds_sample), 300)
-        for batchI in batchIndex:
-            sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-            # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-            pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-            pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-        for batchI in batchIndex:
-            sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-            # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-            pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-            pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-        for batchI in batchIndex:
-            sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-            # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-            pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-            pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-        for batchI in batchIndex:
-            sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-            # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-            pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-            pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
+        mode = "inter"
+        #### getlist
+        pdbtracker = pd.read_csv("pdbtracker.csv")
+        pdblist, chain1list, chain2list = getlists(pdbtracker, i)
+        hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
+    
+        ppvO = PPV_from_pds(pds_train, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
+        
+        
+        sampled = sampleDataset(model, pds_train, len_output, multiplicative =5)
+        ppv = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
             
             
-        tempTrainr = writefastafrompds(pds_sample)
-        tempTrain=tempTrainr+"joined.faa"
-        output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp"+str(i)+".npy", "chain1listtemp"+str(i)+".npy", "chain2listtemp"+str(i)+".npy", hmmRadical, tempFile, mode])
-        print(output)
-        ppv = np.load(tempFile)
         x_values = np.array(range(1,len(ppv)+1))
         data = [[x, y] for (x, y) in zip(x_values, ppv)]
         table = wandb.Table(data=data, columns = ["x", "y"])
-        wandb.log({"PPV"+str(epoch) : wandb.plot.line(table, "x", "y",
+        wandb.log({"PPV"+str(epoch)+"_"+str(i) : wandb.plot.line(table, "x", "y",
                    title="Custom Y vs X Line Plot"), "epoch":epoch})
 
     
