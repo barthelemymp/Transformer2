@@ -259,9 +259,14 @@ mode = parsed_args["mode"]
 using PyCall
 np = pyimport("numpy")
 
-PDBs = np.load("pdblisttemp.npy", allow_pickle=true)
-chainIN = np.load("chain1listtemp.npy", allow_pickle=true)
-chainOUT = np.load("chain2listtemp.npy", allow_pickle=true)
+#PDBs = np.load("pdblisttemp.npy", allow_pickle=true)
+#chainIN = np.load("chain1listtemp.npy", allow_pickle=true)
+#chainOUT = np.load("chain2listtemp.npy", allow_pickle=true)
+
+
+PDBs = np.load(parsed_args["pathPDB"], allow_pickle=true)
+chainIN = np.load(parsed_args["chainIN"], allow_pickle=true)
+chainOUT = np.load(parsed_args["chainOUT"], allow_pickle=true)
 
 hmmRadical = parsed_args["hmmRadical"]
 hmm1 = hmmRadical * "1.hmm"
