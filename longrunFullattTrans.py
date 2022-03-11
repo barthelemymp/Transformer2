@@ -26,16 +26,23 @@ from MatchingLoss import *
 from utils import *
 from ardca import *
 print("import done")
+PPI = False
 #torch.functional.one_hot
-pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
-torch.set_num_threads(1)
+if PPI:
+    pathtoFolder = "/home/meynard/Datasets/DomainsInter/PPIprocessed/"
+else:
+    pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
+
+
+
+torch.set_num_threads(8)
 #pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 count = 0
 # Model hyperparameters--> CAN BE CHANGED
 batch_size = 32
-num_heads = 5
-num_encoder_layers = 2
-num_decoder_layers = 2
+num_heads = 1
+num_encoder_layers = 4
+num_decoder_layers = 4
 dropout = 0.10
 forward_expansion = 2048
 src_vocab_size = 25#len(protein.vocab) 
@@ -44,34 +51,39 @@ embedding_size = 55#len(protein.vocab) #it should be 25. 21 amino, 2 start and e
 
 repartition = [0.7, 0.15, 0.15]
 #EPOCHS 
-num_epochs =5000
+num_epochs =10000
 Unalign = False
 alphalist=[0.0, 0.01, 0.1]
 wd_list = [0.0]#, 0.00005]
-# ilist = [46, 69, 71,157,160,251, 258, 17]
-onehot=True
+
+onehot=False
 wd=0.0
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
 
 
-ilist = []
+# ilist = []
 
-for i in range(0,300):
-    pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
-    if os.path.isfile(pathTofile)==True:
-        print(i)
-        name = "combined_MSA_ddi_" +str(i)+"_joined"
-        train_path = pathtoFolder + name +'_train.csv'
-        try:
-            pds = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
-        except:
-            print(i, "does not work")
-        if len(pds) >= 4000:
-            ilist.append(i)
-
+# for i in range(1000,1500):
+#     pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
+#     if os.path.isfile(pathTofile)==True:
+#         print(i)
+#         name = "combined_MSA_ddi_" +str(i)+"_joined"
+#         train_path = pathtoFolder + name +'_train.csv'
+#         try:
+#             pds = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
+#         except:
+#             print(i, "does not work")
+#         if len(pds) >= 4000:
+#             ilist.append(i)
+if PPI:
+    ilist = [1,22,3,5,7,8,9,10,12,16,19,21,2,27,31]
+else:        
+    ilist = [ 17, 358,504, 46, 69, 71,157,160,251, 258, 97,103,132,181, 192, 197,303,304,308, 634, 815, 972, 972, 980, 1208, 1213, 1214] 
+save_model = True
 onehot=False
+
 for i in ilist:
     # i=46
     # wd =0.0
