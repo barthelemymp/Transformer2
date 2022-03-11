@@ -147,7 +147,7 @@ for i in family_list:
     pdbtracker = pd.read_csv("pdbtracker.csv")
     pdblist, chain1list, chain2list = getlists(pdbtracker, i)
     hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
-    print(output)
+
     ppvO = PPV_from_pds(pds_train, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
     
     
