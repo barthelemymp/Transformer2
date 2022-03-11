@@ -989,7 +989,7 @@ class Full_att_Transformer(nn.Module):
         )
         if self.sampleInter == "softmax":
             if self.InterTransformersBackprop ==False:
-                input_full_att = torch.nn.functional.softmax(out.clone().detach(),dim=2)
+                input_full_att = torch.nn.functional.softmax(out.clone().detach(), dim=2)
             else:
                 input_full_att = torch.nn.functional.softmax(out,dim=2)
         elif self.sampleInter == "gumbel":
