@@ -29,7 +29,7 @@ from ProteinsDataset import *
 from MatchingLoss import *
 from utils import *
 from ardca import *
-
+from DCA import *
 def buildhmm(hmmout, ali):
     subprocess.run(["hmmbuild", "--symfrac","0.0", hmmout, ali])
 
@@ -44,16 +44,16 @@ def getlists(df, fam):
 
 
 
-family_list = [  815, 972, 972, 980, 1208, 1213, 1214, 17, 46,132] 
+family_list = [ 17, 46, 69, 71,157,160,251, 258, 97,103,132,181, 192, 197,303,304,308,358,504, 634, 815, 972, 972, 980, 1208, 1213, 1214] 
 pdbtracker = pd.read_csv("pdbtracker.csv")
 
 
 
 print("import done")
 #torch.functional.one_hot
-pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
+#pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
 torch.set_num_threads(4)
-#pathtoFolder = "/home/Datasets/DomainsInter/processed/"
+pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 # Model hyperparameters--> CAN BE CHANGED
 batch_size = 32
 num_heads = 1
@@ -146,91 +146,29 @@ for i in family_list:
     #### getlist
     pdbtracker = pd.read_csv("pdbtracker.csv")
     pdblist, chain1list, chain2list = getlists(pdbtracker, i)
-    np.save("pdblisttemp.npy", pdblist)
-    np.save("chain1listtemp.npy", chain1list)
-    np.save("chain2listtemp.npy", chain2list)
     hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
-    tempTrainr = writefastafrompds(pds_train)
-    tempTrain=tempTrainr+"joined.faa"
-    output = subprocess.check_output(["stdbuf", "-oL", "julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
     print(output)
-    ppvO = np.load(tempFile)
-    removetemp(tempTrainr)
+    ppvO = PPV_from_pds(pds_train, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
     
+    
+    sampled = sampleDataset(pds, len_output, multiplicative =1)
+    ppvS1 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
     ### sample times 2
-    max_len = len_output
-    pds_sample = copy.deepcopy(pds_train)
-    batchIndex = makebatchList(len(pds_sample), 300)
-    for batchI in batchIndex:
-        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-        # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-        pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-        pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-    tempTrainr = writefastafrompds(pds_sample)
-    tempTrain=tempTrainr+"joined.faa"
-    output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
-    print(output)
-    ppvS1 = np.load(tempFile)
-    removetemp(tempTrainr)
-    
+
+    sampled = sampleDataset(pds, len_output, multiplicative =3)
+    ppvS3 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
         
-    for batchI in batchIndex:
-        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-        # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-        pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-        pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-    for batchI in batchIndex:
-        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-        # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-        pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-        pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-    tempTrainr = writefastafrompds(pds_sample)
-    tempTrain=tempTrainr+"joined.faa"
-    output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
-    print(output)
-    ppvS3 = np.load(tempFile)
-    removetemp(tempTrainr)
-        
-        
-    for batchI in batchIndex:
-        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-        # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-        pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-        pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-    for batchI in batchIndex:
-        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-        # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-        pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-        pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-    for batchI in batchIndex:
-        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-        # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-        pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-        pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-    for batchI in batchIndex:
-        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-        # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-        pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-        pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-    for batchI in batchIndex:
-        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-        # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-        pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-        pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-    tempTrainr = writefastafrompds(pds_sample)
-    tempTrain=tempTrainr+"joined.faa"
-    output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
-    print(output)
-    ppvS8 = np.load(tempFile)
+    sampled = sampleDataset(pds, len_output, multiplicative =8)
+    ppvS8 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
     x = np.array(range(1,len(ppvO)+1))
     plt.plot(x,ppvO, label="Original")
-    plt.plot(x,ppvS1, label="sampled*1")
-    plt.plot(x,ppvS3, label="sampled*3")
-    plt.plot(x,ppvS8, label="sampled*8")
+    plt.plot(x,ppvS1, label="sampled*1", alpha=0.5)
+    plt.plot(x,ppvS3, label="sampled*3", alpha=0.5)
+    plt.plot(x,ppvS8, label="sampled*8", alpha=0.5)
     plt.title("PPV" + str(i))
     plt.legend()
-    plt.xscale("log")
-    plt.savefig("ppvS_"+str(i)+".png")
+    # plt.xscale("log")
+    plt.savefig("ppvS_flat"+str(i)+".png")
     plt.clf()
 
 
