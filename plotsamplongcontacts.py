@@ -51,9 +51,9 @@ pdbtracker = pd.read_csv("pdbtracker.csv")
 
 print("import done")
 #torch.functional.one_hot
-#pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
+pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
 torch.set_num_threads(4)
-pathtoFolder = "/home/Datasets/DomainsInter/processed/"
+#pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 # Model hyperparameters--> CAN BE CHANGED
 batch_size = 32
 num_heads = 1
