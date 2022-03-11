@@ -115,9 +115,9 @@ for i in ilist:
     maskValclose = maskValclose.cpu().numpy()
     maskValfar = (dval1+dval2).min(dim=0)[0]>=(dval1+dval2).min(dim=0)[0].median()
     maskValfar = maskValfar.cpu().numpy()
-    ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
-    print("score", i)
-    print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
+    # ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
+    # print("score", i)
+    # print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
 
     train_iterator = DataLoader(pds_train, batch_size=batch_size,
                     shuffle=True, num_workers=0, collate_fn=default_collate)
