@@ -919,8 +919,8 @@ class Full_att_Transformer(nn.Module):
 
     def forward(self, src, trg):
 #        print(src.shape, trg.shape)
-        src_seq_length, N, _ = src.shape
-        trg_seq_length, N, _ = trg.shape
+        src_seq_length = src.shape[0]
+        trg_seq_length= trg.shape[0]
         if self.onehot==False:
             if len(src.shape)==2:
                 src = self.embed_tokens(src)
