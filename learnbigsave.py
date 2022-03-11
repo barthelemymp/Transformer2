@@ -44,7 +44,7 @@ num_epochs= 5000
 src_vocab_size = 25
 trg_vocab_size = 25
 dropout = 0.10
-wd = 0.5
+wd = 0.0
 alpha = 0.0
 ##### Training simple 
 pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
@@ -73,7 +73,7 @@ maskValclose = (dval1+dval2).min(dim=0)[0]<(dval1+dval2).min(dim=0)[0].median()
 maskValclose = maskValclose.cpu().numpy()
 maskValfar = (dval1+dval2).min(dim=0)[0]>=(dval1+dval2).min(dim=0)[0].median()
 maskValfar = maskValfar.cpu().numpy()
-downsampleslist = [300, 800, 1200, 1700, 2200, 2700]
+downsampleslist = [100, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500]
 # ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
 # print("score", i)
 # print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
