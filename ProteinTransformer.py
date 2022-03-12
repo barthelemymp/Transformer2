@@ -972,6 +972,7 @@ class Full_att_Transformer(nn.Module):
             embed_src,
             embed_trg2,
             src_key_padding_mask=src_padding_mask,
+            tgt_mask=trg_mask,
         )
         out2 = self.fc_out_full_att(out2)
         return out, out2
