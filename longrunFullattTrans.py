@@ -89,12 +89,24 @@ for i in ilist:
     # wd =0.0
     alpha = 0.0
     ##### Training simple 
-    pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
+    
+    if PPI:
+        pathTofile = pathtoFolder+ "PPI_" +str(i)+"_joined.csv"
+    else:
+        pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
     inputsize, outputsize = getLengthfromCSV(pathTofile)
     os.path.isfile(pathTofile)
     count +=1
     print("ddi", i, " is running")
-    name = "combined_MSA_ddi_" +str(i)+"_joined"
+    if PPI:
+        name = "PPI_" +str(i)+"_joined"
+    else:
+        name = "combined_MSA_ddi_" +str(i)+"_joined"
+    # inputsize, outputsize = getLengthfromCSV(pathTofile)
+    # os.path.isfile(pathTofile)
+    # count +=1
+    # print("ddi", i, " is running")
+    # name = "combined_MSA_ddi_" +str(i)+"_joined"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     #Dataset
     train_path = pathtoFolder + name +'_train.csv'
