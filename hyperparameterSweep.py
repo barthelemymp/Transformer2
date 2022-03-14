@@ -69,11 +69,11 @@ parameters_dict = {
           'values': [32]
         },
     'num_layer': {
-          'values': [2, 4]
+          'values': [3]
         },
     
     'embedding_size': {
-          'values': [55, 105]
+          'values': [105]
         },
     
     'dropout': {
