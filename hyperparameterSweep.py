@@ -63,7 +63,7 @@ parameters_dict = {
         'values': [2048]
         },
     'num_heads': {
-          'values': [1,5]
+          'values': [1]
         },
     'batch_size': {
           'values': [32]
@@ -73,7 +73,7 @@ parameters_dict = {
         },
     
     'embedding_size': {
-          'values': [55, 105, 255]
+          'values': [55, 105]
         },
     
     'dropout': {
@@ -81,11 +81,11 @@ parameters_dict = {
         },
     
     'lr': {
-          'values': [5e-5, 1e-5]
+          'values': [5e-5]
         },
     
     'weight_decay': {
-          'values': [0.0, 0.5, 0.7]
+          'values': [0.0, 0.3, 0.5, 0.7]
         },
     
     'fam': {
@@ -103,11 +103,11 @@ def train(config=None):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         config = wandb.config
         onehot=False
-        num_epochs = 4000
+        num_epochs = 6000
         Unalign = False
         count=0
         if datasettype == "Domains":
-            pathtoFolder = "/home/Datasets/DomainsInter/processed/"
+            pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"#"/home/Datasets/DomainsInter/processed/"
             pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
             inputsize, outputsize = getLengthfromCSV(pathTofile)
             os.path.isfile(pathTofile)
@@ -230,9 +230,9 @@ def train(config=None):
             #### getlist
             pdbtracker = pd.read_csv("pdbtracker.csv")
             pdblist, chain1list, chain2list = getlists(pdbtracker, i)
-            np.save("pdblisttemp.npy", pdblist)
-            np.save("chain1listtemp.npy", chain1list)
-            np.save("chain2listtemp.npy", chain2list)
+            np.save("pdblisttemph"+str(i)+".npy", pdblist)
+            np.save("chain1listtemph"+str(i)+".npy", chain1list)
+            np.save("chain2listtemph"+str(i)+".npy", chain2list)
             hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
             tempTrainr = writefastafrompds(pds_train)
             tempTrain=tempTrainr+"joined.faa"
@@ -344,7 +344,7 @@ def train(config=None):
                         
                     tempTrainr = writefastafrompds(pds_sample)
                     tempTrain=tempTrainr+"joined.faa"
-                    output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
+                    output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemph"+str(i)+".npy", "chain1listtemph"+str(i)+".npy", "chain2listtemph"+str(i)+".npy", hmmRadical, tempFile, mode])
                     print(output)
                     ppv = np.load(tempFile)
                     x_values = np.array(range(1,len(ppv)+1))
