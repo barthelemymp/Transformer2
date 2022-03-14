@@ -26,10 +26,10 @@ from MatchingLoss import *
 from utils import *
 from ardca import *
 print("import done")
-PPI = False
+PPI = True
 #torch.functional.one_hot
 if PPI:
-    pathtoFolder = "/home/meynard/Datasets/DomainsInter/PPIprocessed/"
+    pathtoFolder = "/home/feinauer/Datasets/DomainsInter/PPIprocessed/"
 else:
     pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
 
@@ -81,7 +81,7 @@ if PPI:
     ilist = [1,22,3,5,7,8,9,10,12,16,19,21,2,27,31]
 else:        
     ilist = [ 17, 358,504, 46, 69, 71,157,160,251, 258, 97,103,132,181, 192, 197,303,304,308, 634, 815, 972, 972, 980, 1208, 1213, 1214] 
-save_model = True
+save_model = False
 onehot=False
 
 for i in ilist:
@@ -125,7 +125,6 @@ for i in ilist:
                     shuffle=True, num_workers=0, collate_fn=default_collate)
     val_iterator = DataLoader(pds_val, batch_size=batch_size,
                     shuffle=True, num_workers=0, collate_fn=default_collate)
-    
     
     # Model hyperparameters
     
