@@ -40,14 +40,14 @@ Unalign = False
 num_heads = 1
 batch_size = 32
 forward_expansion = 2048
-num_epochs= 5000
+num_epochs= 7000
 src_vocab_size = 25
 trg_vocab_size = 25
 dropout = 0.10
-wd = 0.0
+wd = 0.5
 alpha = 0.0
 ##### Training simple 
-pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
+pathtoFolder = "/home/Datasets/DomainsInter/processed/"#"/home/feinauer/Datasets/DomainsInter/processed/"
 pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
 inputsize, outputsize = getLengthfromCSV(pathTofile)
 
