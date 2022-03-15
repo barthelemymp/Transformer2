@@ -32,7 +32,7 @@ datasettype= "Domains"
 plotDCA = True
 import wandb
 wandb.login()
-
+torch.set_num_threads(8)
 sweep_config = {
     'method': 'bayes'
     }
