@@ -41,8 +41,8 @@ count = 0
 # Model hyperparameters--> CAN BE CHANGED
 batch_size = 32
 num_heads = 1
-num_encoder_layers = 4
-num_decoder_layers = 4
+num_encoder_layers = 2
+num_decoder_layers = 2
 dropout = 0.10
 forward_expansion = 2048
 src_vocab_size = 25#len(protein.vocab) 
