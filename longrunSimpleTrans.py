@@ -29,7 +29,7 @@ print("import done")
 PPI = True
 #torch.functional.one_hot
 if PPI:
-    pathtoFolder = "/home/meynard/Datasets/DomainsInter/PPIprocessed/"
+    pathtoFolder = "/home/Datasets/DomainsInter/PPIprocessed/"#/meynard
 else:
     pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
 
