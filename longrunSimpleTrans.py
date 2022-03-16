@@ -40,7 +40,7 @@ torch.set_num_threads(8)
 count = 0
 # Model hyperparameters--> CAN BE CHANGED
 batch_size = 32
-num_heads = 1
+num_heads = 5
 num_encoder_layers = 4
 num_decoder_layers = 4
 dropout = 0.10
@@ -51,7 +51,7 @@ embedding_size = 55#len(protein.vocab) #it should be 25. 21 amino, 2 start and e
 
 repartition = [0.7, 0.15, 0.15]
 #EPOCHS 
-num_epochs =10000
+num_epochs =15000
 Unalign = False
 alphalist=[0.0, 0.01, 0.1]
 wd_list = [0.0]#, 0.00005]
