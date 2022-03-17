@@ -23,18 +23,18 @@ from ProteinsDataset import *
 from MatchingLoss import *
 from utils import *
 from ardca import *
-
+from DCA import *
 import subprocess
 import sys
 family = str(sys.argv[1])
 i = int(family)
 datasettype= "Domains"
-plotDCA = True
+plotDCA = False
 import wandb
 wandb.login()
 torch.set_num_threads(8)
 sweep_config = {
-    'method': 'bayes'
+    'method': 'grid'
     }
 
 metric = {
@@ -45,12 +45,12 @@ metric = {
 sweep_config['metric'] = metric
 
 
-early_terminate={
-  "type": "hyperband",
-  "min_iter": 1000
-  } 
+# early_terminate={
+#   "type": "hyperband",
+#   "min_iter": 1000
+#   } 
 
-sweep_config['early_terminate'] = early_terminate
+# sweep_config['early_terminate'] = early_terminate
 
 
 
@@ -103,7 +103,7 @@ def train(config=None):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         config = wandb.config
         onehot=False
-        num_epochs = 6000
+        num_epochs = 2
         Unalign = False
         count=0
         if datasettype == "Domains":
@@ -302,7 +302,7 @@ def train(config=None):
                     accuracyVal = accuracyVal/nval
                     step_ev +=1
             wandb.log({"Train loss CE": mean_lossCETrain,  "Val loss CE": mean_lossVal,  "accuracyVal":accuracyVal ,  "accuracyTrain": accuracyTrain, "epoch":epoch})#,"Val Loss Matching":mean_lossMatchingVal, "alpha":alpha "Train loss Matching": mean_lossMatchingTrain,
-            if epoch%500==0:
+            if epoch%500==5:
                 criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
                 model.eval()
                 criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
