@@ -29,7 +29,7 @@ import sys
 family = str(sys.argv[1])
 i = int(family)
 datasettype= "Domains"
-plotDCA = False
+plotDCA = True
 import wandb
 wandb.login()
 torch.set_num_threads(8)
@@ -103,7 +103,7 @@ def train(config=None):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         config = wandb.config
         onehot=False
-        num_epochs = 2
+        num_epochs = 6000
         Unalign = False
         count=0
         if datasettype == "Domains":
@@ -302,7 +302,7 @@ def train(config=None):
                     accuracyVal = accuracyVal/nval
                     step_ev +=1
             wandb.log({"Train loss CE": mean_lossCETrain,  "Val loss CE": mean_lossVal,  "accuracyVal":accuracyVal ,  "accuracyTrain": accuracyTrain, "epoch":epoch})#,"Val Loss Matching":mean_lossMatchingVal, "alpha":alpha "Train loss Matching": mean_lossMatchingTrain,
-            if epoch%500==5:
+            if epoch%500==0:
                 criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
                 model.eval()
                 criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
