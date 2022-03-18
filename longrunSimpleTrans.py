@@ -288,7 +288,7 @@ for i in ilist:
             scoreMatchingVal = sum(scoHVal[0]==scoHVal[1])
             scoreMatchingValClose = sum((scoHVal[0]==scoHVal[1])[maskValclose])
             scoreMatchingValFar = sum((scoHVal[0]==scoHVal[1])[maskValfar])
-            Entropy = ConditionalEntropyEstimatorGivenInp(pds_val[0][0], model, pds_train.SymbolMap["<pad>"], len_output,nseq=10000, batchs=100, returnAcc=False)
+            Entropy = 0#ConditionalEntropyEstimatorGivenInp(pds_val[0][0], model, pds_train.SymbolMap["<pad>"], len_output,nseq=10000, batchs=100, returnAcc=False)
             # scoreHungarianTrain = HungarianMatchingBS(pds_train, model,100)
             # scoHTrain = scipy.optimize.linear_sum_assignment(scoreHungarianTrain)
             # scoreMatchingTrain = sum(scoHTrain[0]==scoHTrain[1])
