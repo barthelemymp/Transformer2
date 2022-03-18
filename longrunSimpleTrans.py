@@ -26,7 +26,7 @@ from MatchingLoss import *
 from utils import *
 from ardca import *
 print("import done")
-PPI = True
+PPI = False
 #torch.functional.one_hot
 if PPI:
     pathtoFolder = "/home/Datasets/DomainsInter/PPIprocessed/"#/meynard
