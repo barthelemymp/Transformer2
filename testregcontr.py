@@ -305,7 +305,7 @@ model = Transformer(
 ).to(device)
 
 #whyyy 'cpu?'
-
+wandb.init(project="Compare reg", entity="barthelemymp")
 config_dict = {
   "num_layers": num_encoder_layers,
   "embedding":embedding_size,
