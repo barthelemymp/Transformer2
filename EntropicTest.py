@@ -23,8 +23,9 @@ from utils import *
 from ardca import *
 from DCA import *
 torch.set_num_threads(8)
-save_model=True
 
+save_model=True
+load_model=True
 # Params
 
 import sys
@@ -154,7 +155,11 @@ criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
 criterion_raw = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
 criterionMatching = nn.CrossEntropyLoss()
 
-for epoch in range(num_epochs+1):
+
+if load_model:
+    load_checkpoint(torch.load("tempAdversial"+str(i)+"_alpha"+str(alpha)+".pth.tar"), model, optimizer)
+
+for epoch in range(400,num_epochs+1):
     print(f"[Epoch {epoch} / {num_epochs}]")
     model.train()
     lossesCE = []
