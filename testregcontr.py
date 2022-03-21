@@ -256,7 +256,7 @@ for epoch in range(num_epochs+1):
         # scoreMatchingTrain = sum(scoHTrain[0]==scoHTrain[1])
         wandb.log({ "scoreMatching Val": scoreMatchingVal, "scoreMatchingValClose": scoreMatchingValClose, "scoreMatchingVal Far": scoreMatchingValFar,"epoch":epoch})
         
-    if epoch%1000 ==0:
+    if epoch==4000:
         mode = "inter"
         #### getlist
         pdbtracker = pd.read_csv("pdbtracker.csv")
