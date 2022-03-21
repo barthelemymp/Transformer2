@@ -159,7 +159,7 @@ criterionMatching = nn.CrossEntropyLoss()
 if load_model:
     load_checkpoint(torch.load("tempAdversial"+str(i)+"_alpha"+str(alpha)+".pth.tar"), model, optimizer)
 
-for epoch in range(num_epochs+1):
+for epoch in range(400,num_epochs+1):
     print(f"[Epoch {epoch} / {num_epochs}]")
     model.train()
     lossesCE = []
