@@ -25,7 +25,7 @@ from DCA import *
 torch.set_num_threads(8)
 
 save_model=True
-load_model=True
+load_model=False
 # Params
 
 import sys
