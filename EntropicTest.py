@@ -52,9 +52,9 @@ trg_vocab_size = 25
 dropout = 0.10
 wd = 0.0
 ##### Training simple 
-#pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
+pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
 #pathtoFolder = "/home/meynard/Datasets/DomainsInter/processed/" ##Jussieu GPU
-pathtoFolder = "/home/Datasets/DomainsInter/processed/"
+#pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 
 wd = 0.0
 ##### Training simple 
