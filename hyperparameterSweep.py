@@ -29,7 +29,7 @@ import sys
 family = str(sys.argv[1])
 i = int(family)
 datasettype= "Domains"
-plotDCA = True
+plotDCA = False
 import wandb
 wandb.login()
 torch.set_num_threads(8)
@@ -107,7 +107,7 @@ def train(config=None):
         Unalign = False
         count=0
         if datasettype == "Domains":
-            pathtoFolder = "/home/Datasets/DomainsInter/processed/"#"/home/feinauer/Datasets/DomainsInter/processed/"#
+            pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"#"/home/Datasets/DomainsInter/processed/"##
             pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
             inputsize, outputsize = getLengthfromCSV(pathTofile)
             os.path.isfile(pathTofile)
