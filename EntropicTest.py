@@ -25,7 +25,7 @@ from DCA import *
 torch.set_num_threads(8)
 
 save_model=True
-load_model=False
+load_model=True
 # Params
 
 import sys
@@ -52,9 +52,9 @@ trg_vocab_size = 25
 dropout = 0.10
 wd = 0.0
 ##### Training simple 
-pathtoFolder = "/Data/DomainsInter/processed/"#turin
+#pathtoFolder = "/Data/DomainsInter/processed/"#turin
 #pathtoFolder = "/home/meynard/Datasets/DomainsInter/processed/" ##Jussieu GPU
-#pathtoFolder = "/home/Datasets/DomainsInter/processed/"
+pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 
 wd = 0.0
 ##### Training simple 
@@ -159,7 +159,7 @@ criterionMatching = nn.CrossEntropyLoss()
 if load_model:
     load_checkpoint(torch.load("tempAdversial"+str(i)+"_alpha"+str(alpha)+".pth.tar"), model, optimizer)
 
-for epoch in range(num_epochs+1):
+for epoch in range(2200,num_epochs+1):
     print(f"[Epoch {epoch} / {num_epochs}]")
     model.train()
     lossesCE = []
