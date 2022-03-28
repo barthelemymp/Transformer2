@@ -45,7 +45,7 @@ src_vocab_size = 25
 trg_vocab_size = 25
 dropout = 0.10
 wd = 0.0
-alpha = 0.0
+alpha = 0.1
 ##### Training simple 
 pathtoFolder = "/home/Datasets/DomainsInter/processed/"#"/home/feinauer/Datasets/DomainsInter/processed/"
 pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
@@ -73,7 +73,7 @@ maskValclose = (dval1+dval2).min(dim=0)[0]<(dval1+dval2).min(dim=0)[0].median()
 maskValclose = maskValclose.cpu().numpy()
 maskValfar = (dval1+dval2).min(dim=0)[0]>=(dval1+dval2).min(dim=0)[0].median()
 maskValfar = maskValfar.cpu().numpy()
-downsampleslist = [100, 500, 1000, 2000, 3000, 4000, 5000]
+downsampleslist = [5000] #100, 500, 1000, 2000, 3000, 4000, 
 # ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
 # print("score", i)
 # print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
