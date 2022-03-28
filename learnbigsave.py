@@ -265,7 +265,7 @@ for downsamples in downsampleslist:
             # scoHTrain = scipy.optimize.linear_sum_assignment(scoreHungarianTrain)
             # scoreMatchingTrain = sum(scoHTrain[0]==scoHTrain[1])
             wandb.log({ "scoreMatching Val": scoreMatchingVal, "scoreMatchingValClose": scoreMatchingValClose, "scoreMatchingVal Far": scoreMatchingValFar,"epoch":epoch})
-        if epoch%1000==0:
+        if epoch%7000==6999:
 
             max_len = len_output
             pds_sample = copy.deepcopy(pds_train)
