@@ -33,7 +33,7 @@ for (arg,val) in parsed_args
 end
 
 pathfastatrain = parsed_args["pathfastatrain"]
-
+pathfastaval = parsed_args["pathfastaval"]
 
 timetrain = @elapsed begin
     arnet,arvar=ardca(pathfastatrain*"joined.faa", verbose=false, lambdaJ=0.02,lambdaH=0.001; permorder=:NATURAL)
