@@ -48,7 +48,7 @@ wd = 0.0
 alpha = 0.0
 ##### Training simple 
 # pathtoFolder = "/home/Datasets/DomainsInter/processed/"#"/home/feinauer/Datasets/DomainsInter/processed/"
-pathtoFolder ="/home/feinauer/Datasets/DomainsInter/processed/"
+pathtoFolder ="/Data/DomainsInter/processed/"
 pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
 inputsize, outputsize = getLengthfromCSV(pathTofile)
 
