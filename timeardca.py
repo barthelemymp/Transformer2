@@ -73,11 +73,11 @@ ntest = len(pds_test)
 for sizecut in [20, 40, 60, 80, 100]:
     print(sizecut)
     pds_traincut = deepcopy(pds_train)
-    pds_traincut.tensorIN = pds_traincut.tensorIN[:sizecut,:,:]
-    pds_traincut.tensorOUT = pds_traincut.tensorOUT[:sizecut,:,:]
+    pds_traincut.tensorIN = pds_traincut.tensorIN[:sizecut,:]
+    pds_traincut.tensorOUT = pds_traincut.tensorOUT[:sizecut,:]
     pds_valcut = deepcopy(pds_val)
-    pds_valcut.tensorIN = pds_valcut.tensorIN[:sizecut,:,:]
-    pds_valcut.tensorOUT = pds_valcut.tensorOUT[:sizecut,:,:]
+    pds_valcut.tensorIN = pds_valcut.tensorIN[:sizecut,:]
+    pds_valcut.tensorOUT = pds_valcut.tensorOUT[:sizecut,:]
     output = ARDCA_timeit(pds_traincut, pds_valcut)
     print(output)
 
