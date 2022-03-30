@@ -29,7 +29,7 @@ load_model=True
 # Params
 
 import sys
-
+from copy import deepcopy
 i = 17
 
 onehot=False
