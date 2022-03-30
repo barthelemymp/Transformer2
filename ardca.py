@@ -111,7 +111,14 @@ def ARDCA_returnmatrix(pdsTrain, pdsTest, pdsVal):
     return scoreHungarianVal
     
     
-    
+def ARDCA_timeit(pdsTrain, pdsVal):
+    tempTrain = writefastafrompds(pdsTrain)
+    tempVal = writefastafrompds(pdsVal)
+    tempScoreH = next(tempfile._get_candidate_names())
+    os.system("export JULIA_NUM_THREADS=$(nproc --all)")
+    output = subprocess.check_output(["julia", "ardca_train.jl", tempTrain, tempVal])
+    print(output)
+    return output
 
 
 # inputsize, outputsize = getLengthfromCSV('train_real.csv')
