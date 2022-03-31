@@ -31,7 +31,7 @@ PPI = False
 if PPI:
     pathtoFolder = "/home/meynard/Datasets/DomainsInter/PPIprocessed/"#/meynard
 else:
-    pathtoFolder = "/Data/DomainsInter/processed/#"/home/feinauer/Datasets/DomainsInter/processed/"
+    pathtoFolder = "/Data/DomainsInter/processed/"#"/home/feinauer/Datasets/DomainsInter/processed/"
 
 
 
