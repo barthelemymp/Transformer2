@@ -40,7 +40,7 @@ timetrain = @elapsed begin
 end
 
 timeinfer = @elapsed begin
-    CE_ar_val, accval = computeCrossEntropy(arnet, pathfastaval*"1.faa", pathfastaval*"2.faa")
+    CE_ar_val, accval = arnet(arvar.Z)#computeCrossEntropy(arnet, pathfastaval*"1.faa", pathfastaval*"2.faa")
 end 
 
 
