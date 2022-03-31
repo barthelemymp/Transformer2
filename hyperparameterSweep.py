@@ -180,7 +180,7 @@ def train(config=None):
         # Model hyperparameters
         src_vocab_size = 25#len(protein.vocab) 
         trg_vocab_size = 25#len(protein_trans.vocab) 
-        embedding_size = 255#len(protein.vocab) #it should be 25. 21 amino, 2 start and end sequence, 1 for pad, and 1 for unknown token
+        #embedding_size = 255#len(protein.vocab) #it should be 25. 21 amino, 2 start and end sequence, 1 for pad, and 1 for unknown token
         src_pad_idx = pds_train.SymbolMap["<pad>"]#"<pad>"# protein.vocab.stoi["<pad>"] 
         src_position_embedding = PositionalEncoding(config.embedding_size, max_len=len_input,device=device)
         trg_position_embedding = PositionalEncoding(config.embedding_size, max_len=len_output, device=device)
@@ -302,11 +302,12 @@ def train(config=None):
                     accuracyVal = accuracyVal/nval
                     step_ev +=1
             wandb.log({"Train loss CE": mean_lossCETrain,  "Val loss CE": mean_lossVal,  "accuracyVal":accuracyVal ,  "accuracyTrain": accuracyTrain, "epoch":epoch})#,"Val Loss Matching":mean_lossMatchingVal, "alpha":alpha "Train loss Matching": mean_lossMatchingTrain,
-            if epoch%2000==1999:
+            if epoch%200==0:
+                
                 criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
                 model.eval()
                 criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
-                scoreHungarianVal = HungarianMatchingBS(pds_val, model,500)
+                scoreHungarianVal = HungarianMatchingBS(pds_val, model,100)
                 scoHVal = scipy.optimize.linear_sum_assignment(scoreHungarianVal)
                 scoreMatchingVal = sum(scoHVal[0]==scoHVal[1])
                 scoreMatchingValClose = sum((scoHVal[0]==scoHVal[1])[maskValclose])
@@ -315,43 +316,26 @@ def train(config=None):
                 # scoHTrain = scipy.optimize.linear_sum_assignment(scoreHungarianTrain)
                 # scoreMatchingTrain = sum(scoHTrain[0]==scoHTrain[1])
                 wandb.log({ "scoreMatching Val": scoreMatchingVal, "scoreMatchingValClose": scoreMatchingValClose, "scoreMatchingVal Far": scoreMatchingValFar,"epoch":epoch})
-                # wandb.log({"scoreMatching Val": scoreMatching, "epoch":epoch})
-                if plotDCA:
-                    max_len = len_output
-                    pds_sample = copy.deepcopy(pds_train)
-                    batchIndex = makebatchList(len(pds_sample), 300)
-                    for batchI in batchIndex:
-                        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-                        # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-                        pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-                        pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-                    for batchI in batchIndex:
-                        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-                        # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-                        pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-                        pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-                    for batchI in batchIndex:
-                        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-                        # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-                        pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-                        pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-                    for batchI in batchIndex:
-                        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-                        # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-                        pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-                        pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-                        
-                        
-                    tempTrainr = writefastafrompds(pds_sample)
-                    tempTrain=tempTrainr+"joined.faa"
-                    output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemph"+str(i)+".npy", "chain1listtemph"+str(i)+".npy", "chain2listtemph"+str(i)+".npy", hmmRadical, tempFile, mode])
-                    print(output)
-                    ppv = np.load(tempFile)
-                    x_values = np.array(range(1,len(ppv)+1))
-                    data = [[x, y] for (x, y) in zip(x_values, ppv)]
-                    table = wandb.Table(data=data, columns = ["x", "y"])
-                    wandb.log({"PPV"+str(epoch) : wandb.plot.line(table, "x", "y",
-                               title="Custom Y vs X Line Plot"), "epoch":epoch})
+                
+            if epoch==4000:
+                mode = "inter"
+                #### getlist
+                pdbtracker = pd.read_csv("pdbtracker.csv")
+                pdblist, chain1list, chain2list = getlists(pdbtracker, i)
+                hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
+                
+                ppvO = PPV_from_pds(pds_train, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
+                
+                
+                sampled = sampleDataset(model, pds_train, len_output, multiplicative =5)
+                ppv = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
+                    
+                    
+                x_values = np.array(range(1,len(ppv)+1))
+                data = [[x, y] for (x, y) in zip(x_values, ppv)]
+                table = wandb.Table(data=data, columns = ["x", "y"])
+                wandb.log({"PPV"+str(epoch)+"_"+str(i) : wandb.plot.line(table, "x", "y",
+                           title="Custom Y vs X Line Plot"), "epoch":epoch})
 
 
 sweep_id = wandb.sweep(sweep_config, project="HyperNew"+str(i))
