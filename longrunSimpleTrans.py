@@ -26,7 +26,7 @@ from MatchingLoss import *
 from utils import *
 from ardca import *
 print("import done")
-PPI = False
+PPI = True
 #torch.functional.one_hot
 if PPI:
     pathtoFolder = "/home/meynard/Datasets/DomainsInter/PPIprocessed/"#/meynard
@@ -47,7 +47,7 @@ dropout = 0.10
 forward_expansion = 2048
 src_vocab_size = 25#len(protein.vocab) 
 trg_vocab_size = 25#len(protein_trans.vocab) 
-embedding_size = 55#len(protein.vocab) #it should be 25. 21 amino, 2 start and end sequence, 1 for pad, and 1 for unknown token
+embedding_size = 105#len(protein.vocab) #it should be 25. 21 amino, 2 start and end sequence, 1 for pad, and 1 for unknown token
 
 repartition = [0.7, 0.15, 0.15]
 #EPOCHS 

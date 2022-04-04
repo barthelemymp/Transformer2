@@ -131,7 +131,8 @@ pathscoreH = parsed_args["pathscoreH"]
 # ceprofileTest = mean(computeCrossEntropy(profile, pathfastatest*"2.faa"))
 # ceprofileVal = mean(computeCrossEntropy(profile, pathfastaval*"2.faa"))
 # fastafile = "/home/Datasets/DomainsInter/processed/combined_MSA_ddi_$(k)_joined.fasta"
-arnet,arvar=ardca(pathfastatrain*"joined.faa", verbose=false, lambdaJ=0.02,lambdaH=0.001; permorder=:NATURAL)
+#arnet,arvar=ardca(pathfastatrain*"joined.faa", verbose=false, lambdaJ=0.02,lambdaH=0.001; permorder=:NATURAL)
+arnet,arvar=ardca(pathfastatrain*"joined.faa", verbose=false, lambdaJ=0.0001,lambdaH=0.0001; permorder=:NATURAL)
 
 CE_ar_train, acctrain = computeCrossEntropy(arnet, pathfastatrain*"1.faa", pathfastatrain*"2.faa")
 
