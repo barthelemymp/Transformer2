@@ -91,6 +91,7 @@ class ProteinTranslationDataset(torch.utils.data.Dataset):
         self.pad_token = "<pad>"
         self.unk="X"
         self.GapTheExtra = GapTheExtra
+        self.padIndex = -100
         if GapTheExtra:
             self.init_token = "-"
             self.eos_token = "-"
@@ -104,6 +105,7 @@ class ProteinTranslationDataset(torch.utils.data.Dataset):
             self.SymbolMap[self.init_token] = len(mapstring)+1
             self.SymbolMap[self.eos_token] = len(mapstring)+2
             self.SymbolMap[self.pad_token] = len(mapstring)+3
+            self.padIndex = len(mapstring)+3
         else:
             self.SymbolMap[self.init_token] = 0
             self.SymbolMap[self.eos_token] = 0
