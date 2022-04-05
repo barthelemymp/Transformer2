@@ -561,7 +561,7 @@ def SamplerContrastiveMatchingLossBin(batch,
     bs = inp_data.shape[1]
 
         
-    lossMatrix = torch.zeros((bs,numberContrastive)).to(device)
+    lossMatrix = torch.zeros((bs,2)).to(device)
     LossCE = torch.tensor(0.0).to(device)
     lossMatching = torch.tensor(0.0).to(device)
     targetMatching = torch.tensor([0]*bs).to(device)
