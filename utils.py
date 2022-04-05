@@ -142,7 +142,7 @@ def getLengthfromCSV(pathToFile):
     
 def HungarianMatching(pds_val, model):
     model.eval()
-    criterionE = nn.CrossEntropyLoss(ignore_index=pds_val.SymbolMap["<pad>"], reduction='none')
+    criterionE = nn.CrossEntropyLoss(ignore_index=pds_val.padIndex, reduction='none')
     data = getPreciseBatch(pds_val, torch.tensor(range(len(pds_val))))
     listin, listout = data[0], data[1]
     bs = listin.shape[1]
@@ -181,7 +181,7 @@ def makebatchList(tot, bs):
 
 def HungarianMatchingBS(pds_val, model, batchs):
     model.eval()
-    criterionE = nn.CrossEntropyLoss(ignore_index=pds_val.SymbolMap["<pad>"], reduction='none')
+    criterionE = nn.CrossEntropyLoss(ignore_index=pds_val.padIndex, reduction='none')
     data = getPreciseBatch(pds_val, torch.tensor(range(len(pds_val))))
     listin, listout = data[0], data[1]
     tot = listin.shape[1]
@@ -214,7 +214,7 @@ def HungarianMatchingBS(pds_val, model, batchs):
 
 def HungarianMatchingBSfa(pds_val, model, batchs):
     model.eval()
-    criterionE = nn.CrossEntropyLoss(ignore_index=pds_val.SymbolMap["<pad>"], reduction='none')
+    criterionE = nn.CrossEntropyLoss(ignore_index=pds_val.padIndex, reduction='none')
     data = getPreciseBatch(pds_val, torch.tensor(range(len(pds_val))))
     listin, listout = data[0], data[1]
     tot = listin.shape[1]
@@ -277,7 +277,7 @@ def accuracy(batch, output, onehot=False):
         
 def ConditionalEntropyEstimator(pds_val, model, batchs=100, returnAcc=False):
     model.eval()
-    criterionE = nn.CrossEntropyLoss(ignore_index=pds_val.SymbolMap["<pad>"], reduction='none')
+    criterionE = nn.CrossEntropyLoss(ignore_index=pds_val.padIndex, reduction='none')
     data = getPreciseBatch(pds_val, torch.tensor(range(len(pds_val))))
     listin, listout = data[0], data[1]
     tot = listin.shape[1]
