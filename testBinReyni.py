@@ -151,7 +151,7 @@ for alpha in alphalist:
     
     # Model hyperparameters
     
-    src_pad_idx = "<pad>"#pds_train.SymbolMap["<pad>"]#"<pad>"# protein.vocab.stoi["<pad>"] 
+    src_pad_idx = 25#pds_train.SymbolMap["<pad>"]#"<pad>"# protein.vocab.stoi["<pad>"] 
     src_position_embedding = PositionalEncoding(embedding_size, max_len=len_input,device=device)
     trg_position_embedding = PositionalEncoding(embedding_size, max_len=len_output, device=device)
             
@@ -206,8 +206,8 @@ for alpha in alphalist:
         
     optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=wd)
     pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
-    criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
-    criterion_raw = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
+    criterion = nn.CrossEntropyLoss()#ignore_index=25pds_train.SymbolMap["<pad>"])
+    criterion_raw = nn.CrossEntropyLoss(reduction='none')#ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
     criterionMatching = nn.CrossEntropyLoss()
     
     for epoch in range(num_epochs+1):
@@ -297,9 +297,9 @@ for alpha in alphalist:
         
         
         if epoch%200==0:
-            criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
+            criterionE = nn.CrossEntropyLoss(reduction='none')#ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
             model.eval()
-            criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
+            criterionE = nn.CrossEntropyLoss(reduction='none')#ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
             scoreHungarianVal = HungarianMatchingBS(pds_val, model,100)
             scoHVal = scipy.optimize.linear_sum_assignment(scoreHungarianVal)
             scoreMatchingVal = sum(scoHVal[0]==scoHVal[1])
