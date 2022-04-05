@@ -75,7 +75,7 @@ def getUnique(tensor):
 
 
 class ProteinTranslationDataset(torch.utils.data.Dataset):
-    def __init__(self, csvPath,  mapstring = "-ACDEFGHIKLMNPQRSTVWY", transform=None, device=None, batch_first=False, Unalign=False, filteringOption='none', returnIndex=False, onehot=True):
+    def __init__(self, csvPath,  mapstring = "-ACDEFGHIKLMNPQRSTVWY", transform=None, device=None, batch_first=False, Unalign=False, filteringOption='none', returnIndex=False, onehot=True, GapTheExtra=True):
         """
         Args:
             csv_file (string): Path to the csv file with annotations.
@@ -90,13 +90,25 @@ class ProteinTranslationDataset(torch.utils.data.Dataset):
         self.eos_token = "<eos>"
         self.pad_token = "<pad>"
         self.unk="X"
+        self.GapTheExtra = GapTheExtra
+        if GapTheExtra:
+            self.init_token = "-"
+            self.eos_token = "-"
+            self.pad_token = "-"
+            self.unk= "-"
         self.mapstring = mapstring
         self.onehot=onehot
         self.SymbolMap=dict([(mapstring[i],i) for i in range(len(mapstring))])
         self.SymbolMap[self.unk] = len(mapstring)
-        self.SymbolMap[self.init_token] = len(mapstring)+1
-        self.SymbolMap[self.eos_token] = len(mapstring)+2
-        self.SymbolMap[self.pad_token] = len(mapstring)+3
+        if GapTheExtra==False:
+            self.SymbolMap[self.init_token] = len(mapstring)+1
+            self.SymbolMap[self.eos_token] = len(mapstring)+2
+            self.SymbolMap[self.pad_token] = len(mapstring)+3
+        else:
+            self.SymbolMap[self.init_token] = 0
+            self.SymbolMap[self.eos_token] = 0
+            self.SymbolMap[self.pad_token] = 0
+
         self.inputsize = len(df.iloc[1][0].split(" "))+2
         self.outputsize = len(df.iloc[1][1].split(" "))+2
         self.gap = "-"

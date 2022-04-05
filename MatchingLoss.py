@@ -544,3 +544,49 @@ def ConditionalSquaredEntropyMatchingLoss(batch,
 #     loss.backward()
 #     torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1) 
 #     optimizer.step()
+
+
+
+
+
+def SamplerContrastiveMatchingLossBin(batch,
+                                    model,
+                                    criterion,
+                                    criterionMatching,
+                                    device,
+                                    accumulate=False,
+                                    sampler="gumbel"):
+
+    inp_data, target, idx_list = batch[0], batch[1], batch[2]
+    bs = inp_data.shape[1]
+
+        
+    lossMatrix = torch.zeros((bs,numberContrastive)).to(device)
+    LossCE = torch.tensor(0.0).to(device)
+    lossMatching = torch.tensor(0.0).to(device)
+    targetMatching = torch.tensor([0]*bs).to(device)
+    
+    contrastiveTarget = model.pseudosample(inp_data, target, nsample=1, method=sampler)
+    
+    output = model(inp_data, target[:-1, :])
+    output = output.reshape(-1, output.shape[2])
+    targets_Original = target
+    targets_Original = targets_Original[1:].reshape(-1)
+    loss = criterion(output, targets_Original).reshape(-1,bs).mean(dim=0)
+    lossMatrix[:,0] = loss
+    lossCE += mean(loss)
+    
+    output2 = model(inp_data, contrastiveTarget[:-1, :])
+    output2 = output2.reshape(-1, output2.shape[2])
+    _, targets_Original2 = contrastiveTarget.max(dim=2)
+    targets_Original2 = targets_Original2[1:].reshape(-1)
+    loss2 = criterion(output2, targets_Original2).reshape(-1,bs).mean(dim=0)
+    lossMatrix[:,1] = loss2
+    lossMatrix *=-1# torch.nn.functional.softmax(lossMatrix, dim=0)
+    lossMatching = criterionMatching(lossMatrix, targetMatching)
+
+    return LossCE, lossMatching
+    
+    
+
+

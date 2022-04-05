@@ -710,9 +710,7 @@ class Transformer(nn.Module):
             else:
                 inp_repeted = inp[:,0].unsqueeze(1).repeat(1, nsample)
                 
-            
-        
-        
+
         # sos = inp[0,0,:]
         # eos = inp[-1,0,:]
         # if inp.shape[1]==1:
@@ -735,9 +733,6 @@ class Transformer(nn.Module):
 
             return outputs
 
-
-                
-            
         if method=="gumbel":
             outputs = torch.zeros(max_len, nsample, self.trg_vocab_size).to(self.device)
             outputs[0,:,:] = sos.unsqueeze(0).repeat(nsample, 1)
