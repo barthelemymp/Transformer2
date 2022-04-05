@@ -574,7 +574,7 @@ def SamplerContrastiveMatchingLossBin(batch,
     targets_Original = targets_Original[1:].reshape(-1)
     loss = criterion(output, targets_Original).reshape(-1,bs).mean(dim=0)
     lossMatrix[:,0] = loss
-    lossCE += mean(loss)
+    LossCE += mean(loss)
     
     output2 = model(inp_data, contrastiveTarget[:-1, :])
     output2 = output2.reshape(-1, output2.shape[2])
