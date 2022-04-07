@@ -338,7 +338,7 @@ for epoch in range(num_epochs+1):
     
         
     
-    wandb.finish()
+wandb.finish()
 
 
 
