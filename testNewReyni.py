@@ -22,7 +22,7 @@ from MatchingLoss import *
 from utils import *
 from ardca import *
 from DCA import *
-torch.set_num_threads(8)
+torch.set_num_threads(4)
 
 
 # Params
