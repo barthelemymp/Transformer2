@@ -30,7 +30,7 @@ save_model = True
 import sys
 family = str(sys.argv[1])
 i = int(family)
-
+ncontrastive = 5
 nlayer = 3
 num_encoder_layers = nlayer
 num_decoder_layers = nlayer
@@ -187,7 +187,7 @@ config_dict = {
   "loss": "CE",
   "wd":wd,
   "alpha" :alpha,
-  "ncontrastive":5,
+  "ncontrastive":ncontrastive,
 }
 wandb.config.update(config_dict) 
 
@@ -225,7 +225,7 @@ for epoch in range(num_epochs+1):
                                             criterionMatching,
                                             device,
                                             accumulate=False,
-                                            ncontrastive=5,
+                                            ncontrastive=ncontrastive,
                                             sampler="gumbel")
         
         #accuracyTrain += acc
