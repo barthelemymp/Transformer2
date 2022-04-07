@@ -22,8 +22,8 @@ from MatchingLoss import *
 from utils import *
 from ardca import *
 from DCA import *
-torch.set_num_threads(4)
-
+torch.set_num_threads(6)
+save_model = True
 
 # Params
 
