@@ -48,8 +48,8 @@ dropout = 0.10
 wd = 0.5
 alphalist = [-0.1, -0.5, -0.7]
 ##### Training simple 
-#pathtoFolder = "/Data/DomainsInter/processed/"
-pathtoFolder = "/home/meynard/Datasets/DomainsInter/processed/" ##Jussieu GPU
+pathtoFolder = "/Data/DomainsInter/processed/"
+#pathtoFolder = "/home/meynard/Datasets/DomainsInter/processed/" ##Jussieu GPU
 #pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
 
