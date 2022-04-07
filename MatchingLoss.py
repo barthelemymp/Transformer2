@@ -654,7 +654,7 @@ def ReyniMatchingLossNew(batch,
     lossMatrix[:,0] = loss
     LossCE += loss.mean()
     
-    for i in range(ncontrastive):
+    for i in range(1,ncontrastive+1):
         contrastiveTarget = model.pseudosample(inp_data, target, nsample=1, method=sampler)
         output2 = model(inp_data, contrastiveTarget[:-1, :])
         output2 = output2.reshape(-1, output2.shape[2])
