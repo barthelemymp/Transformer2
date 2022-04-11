@@ -628,7 +628,7 @@ class Transformer(nn.Module):
         src is sequence to the encoder 
         """
         padPos = self.src_pad_idx
-        print("padpos",padPos)
+        print("padpos",padPos, "stc", src.shape)
         src_mask = src[:,:,padPos].transpose(0, 1) == 1#self.src_pad_idx
 
         # (N, src_len)
