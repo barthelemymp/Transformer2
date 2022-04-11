@@ -53,7 +53,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 ilist = [17, 46, 69, 258, 97,103,132, 192, 197,972, 980, 1208, 1213, 1214, 71,157,160,251, 303,304,308,358,504, 634, 815, 972, 972, 980,181] 
 save_model = True
 onehot=False
-for i in range(1000,1500):
+for i in ilist:# range(1000,1500):
     modelpath = "TransSimple_fam"+str(i)+".pth.tar"
     if os.path.isfile(modelpath):
         
@@ -94,7 +94,7 @@ for i in range(1000,1500):
         
         # Model hyperparameters
         
-        src_pad_idx = pds_train.SymbolMap["<pad>"]#"<pad>"# protein.vocab.stoi["<pad>"] 
+        src_pad_idx = pds_train.padIndex#pds_train.SymbolMap["<pad>"]#"<pad>"# protein.vocab.stoi["<pad>"] 
         src_position_embedding = PositionalEncoding(embedding_size, max_len=len_input,device=device)
         trg_position_embedding = PositionalEncoding(embedding_size, max_len=len_output, device=device)
                 
@@ -144,14 +144,14 @@ for i in range(1000,1500):
                 nn.init.xavier_normal_(p)
                 
         optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
-        pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
-        criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
+        #pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
+        criterion = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex)
 
         load_checkpoint(torch.load(modelpath), model, optimizer)
         
-        criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
+        criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
         model.eval()
-        criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
+        criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
         scoreHungarianVal = HungarianMatchingBS(pds_val, model,100)
         
         
