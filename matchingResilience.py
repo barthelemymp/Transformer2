@@ -147,14 +147,14 @@ for i in ilist:# range(1000,1500):
         #pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
         criterion = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex)
 
-        load_checkpoint(torch.load(modelpath), model, optimizer)
+        #load_checkpoint(torch.load(modelpath), model, optimizer)
         
         criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
         model.eval()
         criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
         scoreHungarianVal = HungarianMatchingBS(pds_val, model,100)
         
-        
+        print("ihenjrkdbuhjer hbjefc hbjefrcdbhjcefrdubhj")
         pds_train2 = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
         pds_test2 = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
         pds_val2 = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
