@@ -630,7 +630,7 @@ class Transformer(nn.Module):
         padPos = self.src_pad_idx
         print("padpos",padPos, "stc", src.shape)
         src_mask = src[:,:,padPos].transpose(0, 1) == 1#self.src_pad_idx
-
+        print(sum(src_mask))
         # (N, src_len)
         return src_mask.to(self.device)
 
