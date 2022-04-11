@@ -21,9 +21,9 @@ from utils import *
 from ardca import *
 print("import done")
 #torch.functional.one_hot
-pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
+#pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
 torch.set_num_threads(4)
-#pathtoFolder = "/home/Datasets/DomainsInter/processed/"
+pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 count = 0
 # Model hyperparameters--> CAN BE CHANGED
 batch_size = 32
@@ -50,7 +50,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
 #             ilist.append(i)
             
-ilist = [46, 69, 71,157,160,251, 258, 17] 
+ilist = [17, 46, 69, 258, 97,103,132, 192, 197,972, 980, 1208, 1213, 1214, 71,157,160,251, 303,304,308,358,504, 634, 815, 972, 972, 980,181] 
 save_model = True
 onehot=False
 for i in range(1000,1500):
@@ -115,7 +115,7 @@ for i in range(1000,1500):
         ).to(device)
         
         #whyyy 'cpu?'
-        wandb.init(project="Transformer Simple Matching resilience", entity="barthelemymp")
+        wandb.init(project="Trans Matching 2", entity="barthelemymp")
         config_dict = {
           "num_layers": num_encoder_layers,
           "embedding":embedding_size,
