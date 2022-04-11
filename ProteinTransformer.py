@@ -628,9 +628,9 @@ class Transformer(nn.Module):
         src is sequence to the encoder 
         """
         padPos = self.src_pad_idx
-        print("padpos",padPos, "stc", src.shape)
-        src_mask = src[:,:,padPos].transpose(0, 1) == 1#self.src_pad_idx
-        print(sum(src_mask))
+
+        src_mask = src[:,:].transpose(0, 1) == padPos#self.src_pad_idx
+
         # (N, src_len)
         return src_mask.to(self.device)
 
@@ -648,7 +648,7 @@ class Transformer(nn.Module):
         # .expand(src_seq_length, N) -> of the dimension of the source
 
 
-        
+        src_padding_mask = self.make_src_mask(src)
         # Creating the input of the Encoder and Decoder
         # It considers also the position
         if self.onehot==False:
@@ -674,7 +674,7 @@ class Transformer(nn.Module):
         # Creating the mask for the source and for the target (note that
         # for the target we are using a built-in torch function)
 
-        src_padding_mask = self.make_src_mask(src)
+        
         trg_mask = self.transformer.generate_square_subsequent_mask(trg_seq_length).to(
             self.device
         )
