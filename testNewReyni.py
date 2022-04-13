@@ -24,7 +24,7 @@ from ardca import *
 from DCA import *
 torch.set_num_threads(6)
 save_model = True
-
+load_model=True
 # Params
 
 import sys
@@ -49,8 +49,8 @@ wd = 0.5
 alphalist = [-0.1, -0.5, -0.7]
 ##### Training simple 
 #pathtoFolder = "/Data/DomainsInter/processed/"
-#pathtoFolder = "/home/meynard/Datasets/DomainsInter/processed/" ##Jussieu GPU
-pathtoFolder = "/home/Datasets/DomainsInter/processed/"
+pathtoFolder = "/home/meynard/Datasets/DomainsInter/processed/" ##Jussieu GPU
+#pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
 
 inputsize, outputsize = getLengthfromCSV(pathTofile)
@@ -209,7 +209,14 @@ criterion = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex)
 criterion_raw = nn.CrossEntropyLoss(reduction='none')#ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
 criterionMatching = nn.CrossEntropyLoss()
 
-for epoch in range(num_epochs+1):
+
+
+
+if load_model:
+    load_checkpoint(torch.load("Renyi_"+str(ncontrastive)+"_fam"+str(i)+"_alpha"+str(alpha)+".pth.tar"), model, optimizer)
+
+
+for epoch in range(2000, num_epochs+1):
     print(f"[Epoch {epoch} / {num_epochs}]")
     model.train()
     lossesCE = []
