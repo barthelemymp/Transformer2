@@ -229,7 +229,7 @@ if load_model:
     load_checkpoint(torch.load("Renyi_"+str(ncontrastive)+"_fam"+str(i)+"_alpha"+str(alpha)+".pth.tar"), model, optimizer)
 
 
-for epoch in range( num_epochs+1):
+for epoch in range(restartepoch, num_epochs+1):
     print(f"[Epoch {epoch} / {num_epochs}]")
     model.train()
     lossesCE = []
