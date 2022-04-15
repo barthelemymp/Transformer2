@@ -24,7 +24,7 @@ from ardca import *
 from DCA import *
 torch.set_num_threads(6)
 save_model = True
-load_model=True
+load_model=False
 # Params
 
 import sys
@@ -63,30 +63,30 @@ train_path = pathtoFolder + name +'_train.csv'
 val_path = pathtoFolder + name +'_val.csv'
 test_path = pathtoFolder + name +'_test.csv'
 #add 2 for start and end token 
-len_input = inputsize + 2
-len_output =outputsize + 2
-pds_train = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
-pds_test = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
-pds_val = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
-ntrain = len(pds_train)
-nval = len(pds_val)
-ntest = len(pds_test)
-dval1,dval2 = distanceTrainVal(pds_train, pds_val)
-print("median", (dval1+dval2).min(dim=0)[0].median())
-maskValclose = (dval1+dval2).min(dim=0)[0]<(dval1+dval2).min(dim=0)[0].median()
-maskValclose = maskValclose.cpu().numpy()
-maskValfar = (dval1+dval2).min(dim=0)[0]>=(dval1+dval2).min(dim=0)[0].median()
-maskValfar = maskValfar.cpu().numpy()
-# ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
-# print("score", i)
-# print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
+# len_input = inputsize + 2
+# len_output =outputsize + 2
+# pds_train = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
+# pds_test = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
+# pds_val = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
+# ntrain = len(pds_train)
+# nval = len(pds_val)
+# ntest = len(pds_test)
+# dval1,dval2 = distanceTrainVal(pds_train, pds_val)
+# print("median", (dval1+dval2).min(dim=0)[0].median())
+# maskValclose = (dval1+dval2).min(dim=0)[0]<(dval1+dval2).min(dim=0)[0].median()
+# maskValclose = maskValclose.cpu().numpy()
+# maskValfar = (dval1+dval2).min(dim=0)[0]>=(dval1+dval2).min(dim=0)[0].median()
+# maskValfar = maskValfar.cpu().numpy()
+# # ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
+# # print("score", i)
+# # print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
 
-train_iterator = DataLoader(pds_train, batch_size=batch_size,
-                shuffle=True, num_workers=0, collate_fn=default_collate)
-test_iterator = DataLoader(pds_test, batch_size=batch_size,
-                shuffle=True, num_workers=0, collate_fn=default_collate)
-val_iterator = DataLoader(pds_val, batch_size=batch_size,
-                shuffle=True, num_workers=0, collate_fn=default_collate)
+# train_iterator = DataLoader(pds_train, batch_size=batch_size,
+#                 shuffle=True, num_workers=0, collate_fn=default_collate)
+# test_iterator = DataLoader(pds_test, batch_size=batch_size,
+#                 shuffle=True, num_workers=0, collate_fn=default_collate)
+# val_iterator = DataLoader(pds_val, batch_size=batch_size,
+#                 shuffle=True, num_workers=0, collate_fn=default_collate)
 
 # Model hyperparameters
 # wandb.init(project="Compare reg", entity="barthelemymp")
@@ -216,7 +216,7 @@ if load_model:
     load_checkpoint(torch.load("Renyi_"+str(ncontrastive)+"_fam"+str(i)+"_alpha"+str(alpha)+".pth.tar"), model, optimizer)
 
 
-for epoch in range(2000, num_epochs+1):
+for epoch in range( num_epochs+1):
     print(f"[Epoch {epoch} / {num_epochs}]")
     model.train()
     lossesCE = []
