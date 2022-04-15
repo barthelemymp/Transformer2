@@ -33,7 +33,7 @@ i = int(family)
 
 
 try:
-    restartepoch = str(sys.argv[1])
+    restartepoch = str(sys.argv[2])
     restartepoch = int(restartepoch)
     if restartepoch>0:
         load_model = True
