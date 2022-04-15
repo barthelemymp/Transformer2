@@ -30,6 +30,19 @@ load_model=False
 import sys
 family = str(sys.argv[1])
 i = int(family)
+
+
+try:
+    restartepoch = str(sys.argv[1])
+    restartepoch = int(restartepoch)
+    if restartepoch>0:
+        load_model = True
+except:
+    restartepoch = 0
+    
+print(restartepoch, load_model)
+
+
 ncontrastive = 5
 nlayer = 3
 num_encoder_layers = nlayer
@@ -48,8 +61,8 @@ dropout = 0.10
 wd = 0.5
 alphalist = [-0.1, -0.5, -0.7]
 ##### Training simple 
-#pathtoFolder = "/Data/DomainsInter/processed/"
-pathtoFolder = "/home/meynard/Datasets/DomainsInter/processed/" ##Jussieu GPU
+pathtoFolder = "/Data/DomainsInter/processed/"
+#pathtoFolder = "/home/meynard/Datasets/DomainsInter/processed/" ##Jussieu GPU
 #pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
 
