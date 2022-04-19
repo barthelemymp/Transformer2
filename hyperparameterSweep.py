@@ -181,7 +181,7 @@ def train(config=None):
         src_vocab_size = 25#len(protein.vocab) 
         trg_vocab_size = 25#len(protein_trans.vocab) 
         #embedding_size = 255#len(protein.vocab) #it should be 25. 21 amino, 2 start and end sequence, 1 for pad, and 1 for unknown token
-        src_pad_idx = pds_train.SymbolMap["<pad>"]#"<pad>"# protein.vocab.stoi["<pad>"] 
+        src_pad_idx = pds_train.padIndex#pds_train.SymbolMap["<pad>"]#"<pad>"# protein.vocab.stoi["<pad>"] 
         src_position_embedding = PositionalEncoding(config.embedding_size, max_len=len_input,device=device)
         trg_position_embedding = PositionalEncoding(config.embedding_size, max_len=len_output, device=device)
                 
@@ -250,7 +250,7 @@ def train(config=None):
         
         optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=config.weight_decay)
         pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
-        criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
+        criterion = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex)#pds_train.SymbolMap["<pad>"])
         for epoch in range(num_epochs+1):
             print(f"[Epoch {epoch} / {num_epochs}]")
             model.train()
@@ -304,9 +304,9 @@ def train(config=None):
             wandb.log({"Train loss CE": mean_lossCETrain,  "Val loss CE": mean_lossVal,  "accuracyVal":accuracyVal ,  "accuracyTrain": accuracyTrain, "epoch":epoch})#,"Val Loss Matching":mean_lossMatchingVal, "alpha":alpha "Train loss Matching": mean_lossMatchingTrain,
             if epoch%200==0:
                 
-                criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
+                criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
                 model.eval()
-                criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
+                criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
                 scoreHungarianVal = HungarianMatchingBS(pds_val, model,100)
                 scoHVal = scipy.optimize.linear_sum_assignment(scoreHungarianVal)
                 scoreMatchingVal = sum(scoHVal[0]==scoHVal[1])
