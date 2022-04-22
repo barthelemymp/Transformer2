@@ -103,7 +103,7 @@ def train(config=None):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         config = wandb.config
         onehot=False
-        num_epochs = 6000
+        num_epochs = 4000
         Unalign = False
         count=0
         if datasettype == "Domains":
