@@ -26,7 +26,7 @@ def evaluateCE_matrix(pds_val, model):
     criterion = nn.CrossEntropyLoss(ignore_index=pds_val.padIndex, reduction ='none')
     accuracyTrain = np.zeros(len(pds_val))
     batchlist = makebatchList(len(pds_val), 100)
-    score = torch.zeros((120, len(pds_val))).to(model.device)
+    score = torch.zeros((pds_val.outputsize, len(pds_val))).to(model.device)
     with torch.no_grad():
         for batch in batchlist:
             inp_data, target, _= pds_val[batch]
