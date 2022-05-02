@@ -1,5 +1,6 @@
 #### Test trasformers etc
 
+
 using Base.Threads: @threads, nthreads
 using ArDCA
 using DCAUtils
@@ -15,16 +16,16 @@ function computeCrossEntropy(arnet::ArNet, testProt::String, testTrans::String)
 	Z_Trans = DCAUtils.read_fasta_alignment(testTrans, 1.0)#readfasta(testTrans)
 	@show size(Z_Prot)[2], size(Z_Trans)[2]
 	@assert size(Z_Prot)[2] == size(Z_Trans)[2]
-	CE_mat = zeros(size(Z_Trans)[1]-1, size(Z_Trans)[2])  #sequence_length * nsequences
+	CE_mat = zeros(size(Z_Trans))  #sequence_length * nsequences
 	accerror = zeros(size(Z_Prot)[2])
-    @threads for m in 1:size(Z_Trans)[2] # For every proteins
+	@threads for m in 1:size(Z_Trans)[2] # For every proteins
 		inputProt = Z_Prot[:,m]
 		TransProt = Z_Trans[:,m]
 		TotalProt = cat(inputProt,TransProt, dims=1)
 
 		totH = Vector{Float64}(undef, 21)
-		for site in (size(Z_Prot)[1]+1):(length(TotalProt) - 1) #progress in the position #+1 for the sos
-			transpos = site - size(Z_Prot)[1] #+ 1
+		for site in size(Z_Prot)[1]:(length(TotalProt) - 1) #progress in the position
+			transpos = site - size(Z_Prot)[1] + 1
 			Js = J[site]
 			h = H[site]
 			copy!(totH,h)
@@ -52,7 +53,7 @@ function computeCrossEntropyPairs(arnet::ArNet, testProt::String, testTrans::Str
     # @show size(Z_Prot)[2], size(Z_Trans)[2]
     @assert size(Z_Prot)[2] == size(Z_Trans)[2]
     scoreHungarian = zeros((size(Z_Trans)[2],size(Z_Trans)[2]))
-    CE_mat = zeros(size(Z_Trans)[1]-1, size(Z_Trans)[2])   #sequence_length * nsequences
+    CE_mat = zeros(size(Z_Trans))  #sequence_length * nsequences
     for m in 1:size(Z_Trans)[2] # For every proteins
         # @show m
         inputProt = Z_Prot[:,m]
@@ -130,8 +131,7 @@ pathscoreH = parsed_args["pathscoreH"]
 # ceprofileTest = mean(computeCrossEntropy(profile, pathfastatest*"2.faa"))
 # ceprofileVal = mean(computeCrossEntropy(profile, pathfastaval*"2.faa"))
 # fastafile = "/home/Datasets/DomainsInter/processed/combined_MSA_ddi_$(k)_joined.fasta"
-#arnet,arvar=ardca(pathfastatrain*"joined.faa", verbose=false, lambdaJ=0.02,lambdaH=0.001; permorder=:NATURAL)
-arnet,arvar=ardca(pathfastatrain*"joined.faa", verbose=false, lambdaJ=0.0001,lambdaH=0.0001; permorder=:NATURAL)
+arnet,arvar=ardca(pathfastatrain*"joined.faa", verbose=false, lambdaJ=0.02,lambdaH=0.001; permorder=:NATURAL)
 
 CE_ar_train, acctrain = computeCrossEntropy(arnet, pathfastatrain*"1.faa", pathfastatrain*"2.faa")
 
