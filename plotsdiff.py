@@ -42,9 +42,9 @@ def evaluateCE_matrix(pds_val, model):
 
 
 #torch.functional.one_hot
-#pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
+pathtoFolder = "/Data/DomainsInter/processed/"
 torch.set_num_threads(4)
-pathtoFolder = "/home/Datasets/DomainsInter/processed/"
+#pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 count = 0
 # Model hyperparameters--> CAN BE CHANGED
 batch_size = 32
