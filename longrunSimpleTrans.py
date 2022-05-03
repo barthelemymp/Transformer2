@@ -157,7 +157,7 @@ for i in ilist:
     
     # Model hyperparameters
     
-    src_pad_idx = pds_train.SymbolMap["<pad>"]#"<pad>"# protein.vocab.stoi["<pad>"] 
+    src_pad_idx =pds_train.padIndex# pds_train.SymbolMap["<pad>"]#"<pad>"# protein.vocab.stoi["<pad>"] 
     src_position_embedding = PositionalEncoding(embedding_size, max_len=len_input,device=device)
     trg_position_embedding = PositionalEncoding(embedding_size, max_len=len_output, device=device)
             
