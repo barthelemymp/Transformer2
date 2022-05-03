@@ -81,7 +81,7 @@ if PPI:
     ilist = [1,22,3,5,7,8,9,10,12,16,19,21,2,27,31]
 else:        
     ilist = [17, 46, 69, 71,157,160,251, 258, 97,103,132, 192, 197,303,304,308,358,504, 634, 815, 972, 972, 980, 1208, 1213, 1214, 181] #17, 46, 69, 71,157,160,251, 258, 97,103,132,181, 192, 197,303,304,308,358,504,1208, 1213, 1214]# 
-save_model = False
+save_model = True
 onehot=False
 
 
@@ -312,7 +312,7 @@ for i in ilist:
                 if PPI:
                     save_checkpoint(checkpoint, filename="TransSimple_famPPI_large"+str(i)+".pth.tar")
                 else:
-                    save_checkpoint(checkpoint, filename="TransSimple_fam"+str(i)+".pth.tar")
+                    save_checkpoint(checkpoint, filename="TransSimple2_fam"+str(i)+".pth.tar")
     wandb.finish()
         
 
