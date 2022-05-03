@@ -44,7 +44,7 @@ def evaluateCE_matrix(pds_val, model):
 
 #torch.functional.one_hot
 pathtoFolder = "/Data/DomainsInter/processed/"
-torch.set_num_threads(4)
+torch.set_num_threads(12)
 #pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 count = 0
 # Model hyperparameters--> CAN BE CHANGED
@@ -72,7 +72,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
 #             ilist.append(i)
             
-ilist =[1213,1214,132,17,181,192,251,258,304,308,46,504,634,69,71,972,975,97,980]# [17, 46, 69, 258, 97,103,132, 192, 197,972, 980, 1208, 1213, 1214, 71,157,160,251, 303,304,308,358,504, 634, 815, 972, 181] 
+ilist =[71,1213,1214,132,17,181,192,251,258,304,308,46,504,634,69,972,975,97,980]# [17, 46, 69, 258, 97,103,132, 192, 197,972, 980, 1208, 1213, 1214, 71,157,160,251, 303,304,308,358,504, 634, 815, 972, 181] 
 save_model = False
 onehot=False
 for i in ilist:# range(1000,1500):
