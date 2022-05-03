@@ -78,7 +78,14 @@ onehot=False
 for i in ilist:# range(1000,1500):
     modelpath = "TransSimple_fam"+str(i)+".pth.tar"
     if os.path.isfile(modelpath):
-        
+        num_heads = 1
+        num_encoder_layers = 2
+        num_decoder_layers = 2
+        dropout = 0.10
+        forward_expansion = 2048
+        src_vocab_size = 25#len(protein.vocab) 
+        trg_vocab_size = 25#len(protein_trans.vocab) 
+        embedding_size = 55
         
         pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
         inputsize, outputsize = getLengthfromCSV(pathTofile)
@@ -158,7 +165,34 @@ for i in ilist:# range(1000,1500):
         criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
         CE_matrix = evaluateCE_matrix(pds_val, model)
         
-        
+        num_heads = 5
+        num_encoder_layers = 3
+        num_decoder_layers = 3
+        dropout = 0.10
+        forward_expansion = 2048
+        src_vocab_size = 25#len(protein.vocab) 
+        trg_vocab_size = 25#len(protein_trans.vocab) 
+        embedding_size = 105
+        src_pad_idx = pds_train.padIndex#pds_train.SymbolMap["<pad>"]#"<pad>"# protein.vocab.stoi["<pad>"] 
+        src_position_embedding = PositionalEncoding(embedding_size, max_len=len_input,device=device)
+        trg_position_embedding = PositionalEncoding(embedding_size, max_len=len_output, device=device)
+                
+        model = Transformer(
+            embedding_size,
+            src_vocab_size,
+            trg_vocab_size,
+            src_pad_idx,
+            num_heads,
+            num_encoder_layers,
+            num_decoder_layers,
+            forward_expansion,
+            dropout,
+            src_position_embedding,
+            trg_position_embedding,
+            device,
+            onehot=onehot,
+        ).to(device)
+        optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
         modelpath = "Renyi_5_fam"+str(i)+"_alpha-0.7.pth.tar"
         load_checkpoint(torch.load(modelpath, map_location=torch.device('cpu')), model, optimizer)
         
