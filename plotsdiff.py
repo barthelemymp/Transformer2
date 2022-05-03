@@ -68,8 +68,8 @@ ilist = [46, 69, 71,157,160,251, 258, 17]
 onehot=False
 wd=0.0
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
+#device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cpu")    
 #             ilist.append(i)
             
 ilist =[71,1213,1214,132,17,181,192,251,258,304,308,46,504,634,69,972,975,97,980]# [17, 46, 69, 258, 97,103,132, 192, 197,972, 980, 1208, 1213, 1214, 71,157,160,251, 303,304,308,358,504, 634, 815, 972, 181] 
@@ -92,7 +92,7 @@ for i in ilist:# range(1000,1500):
         os.path.isfile(pathTofile)
         print("ddi", i, " is running")
         name = "combined_MSA_ddi_" +str(i)+"_joined"
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
         #Dataset
         train_path = pathtoFolder + name +'_train.csv'
         val_path = pathtoFolder + name +'_val.csv'
