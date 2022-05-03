@@ -168,7 +168,7 @@ for i in ilist:# range(1000,1500):
 
         x = dval2.min(dim=0)[0].cpu().numpy()
         y =CE_matrix.mean(dim=0).cpu().numpy()
-        y2 =CE_matrix_Ardca.mean(dim=0).cpu().numpy()
+        y2 =CE_matrix_Ardca.mean(axis=0).cpu().numpy()
         plt.xlabel("Hamming Distance from Training Set", fontsize=18)
         plt.ylabel("Cross Entropy Loss", fontsize=18)
         plt.title("Cross Entropy Loss at different distance from trainset for PF03171_PF14226", fontsize=18)
