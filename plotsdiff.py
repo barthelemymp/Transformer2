@@ -177,4 +177,5 @@ for i in ilist:# range(1000,1500):
         plt.tick_params(axis='both', labelsize=18)
         plt.legend(fontsize=18)
         plt.savefig("distanceCE_compare"+str(i)+".pdf")
+        plt.clf()
 
