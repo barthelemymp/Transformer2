@@ -124,7 +124,6 @@ def ARDCA_timeit(pdsTrain, pdsVal):
 
 def ARDCA_returnCE(pdsTrain, pdsVal):
     tempTrain = writefastafrompds(pdsTrain)
-
     tempVal = writefastafrompds(pdsVal)
     tempScoreH = next(tempfile._get_candidate_names())
     os.system("export JULIA_NUM_THREADS=$(nproc --all)")
@@ -133,7 +132,7 @@ def ARDCA_returnCE(pdsTrain, pdsVal):
     removetemp(tempVal)
     scoreCE = np.load(tempScoreH)
 
-    return scoreHungarianVal
+    return scoreCE
 # inputsize, outputsize = getLengthfromCSV('train_real.csv')
 
 # Unalign = False
