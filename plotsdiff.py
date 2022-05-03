@@ -170,8 +170,8 @@ for i in ilist:# range(1000,1500):
         num_decoder_layers = 3
         dropout = 0.10
         forward_expansion = 2048
-        src_vocab_size = 25#len(protein.vocab) 
-        trg_vocab_size = 25#len(protein_trans.vocab) 
+        src_vocab_size = 21#len(protein.vocab) 
+        trg_vocab_size = 21#len(protein_trans.vocab) 
         embedding_size = 105
         src_pad_idx = pds_train.padIndex#pds_train.SymbolMap["<pad>"]#"<pad>"# protein.vocab.stoi["<pad>"] 
         src_position_embedding = PositionalEncoding(embedding_size, max_len=len_input,device=device)
