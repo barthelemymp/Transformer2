@@ -38,6 +38,7 @@ else:
 # torch.set_num_threads(8)
 #pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 count = 0
+torch.set_num_threads(6)
 # Model hyperparameters--> CAN BE CHANGED
 batch_size = 32
 num_heads = 1
