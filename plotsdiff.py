@@ -159,12 +159,12 @@ for i in ilist:# range(1000,1500):
         CE_matrix = evaluateCE_matrix(pds_val, model)
         # scoreHungarianVal = HungarianMatchingBS(pds_val, model,100)
         
-        pds_train2 = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
-        pds_test2 = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
-        pds_val2 = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
-        CE_matrix_Ardca = ARDCA_returnCE(pds_train2, pds_val2)
-        print("score", i)
-        plt.rcParams["figure.figsize"] = 16,12
+        # pds_train2 = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        # pds_test2 = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        # pds_val2 = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        # CE_matrix_Ardca = ARDCA_returnCE(pds_train2, pds_val2)
+        # print("score", i)
+        # plt.rcParams["figure.figsize"] = 16,12
 
         x = dval2.min(dim=0)[0].cpu().numpy()
         print(np.sum(x==0), x.shape, np.sum(x==0)/x.shape[0])
