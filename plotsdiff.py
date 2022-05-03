@@ -138,7 +138,7 @@ for i in ilist:# range(1000,1500):
         
         step = 0
         step_ev = 0
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        device = torch.device("cpu")#("cuda" if torch.cuda.is_available() else "cpu")
         print(device)
         learning_rate = 5e-5
         
