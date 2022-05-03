@@ -211,7 +211,7 @@ for i in ilist:
             
     optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
     pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
-    criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
+    criterion = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex)
     for epoch in range(num_epochs+1):
         print(f"[Epoch {epoch} / {num_epochs}]")
         model.train()
@@ -292,9 +292,9 @@ for i in ilist:
         
         
         if epoch%500==0:
-            criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
+            criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
             model.eval()
-            criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
+            criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
             scoreHungarianVal = HungarianMatchingBS(pds_val, model,100)
             scoHVal = scipy.optimize.linear_sum_assignment(scoreHungarianVal)
             scoreMatchingVal = sum(scoHVal[0]==scoHVal[1])
