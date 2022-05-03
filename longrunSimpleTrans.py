@@ -26,16 +26,16 @@ from MatchingLoss import *
 from utils import *
 from ardca import *
 print("import done")
-PPI = True
+PPI = False
 #torch.functional.one_hot
 if PPI:
     pathtoFolder = "/home/meynard/Datasets/DomainsInter/PPIprocessed/"#/meynard
 else:
-    pathtoFolder = "/Data/DomainsInter/processed/"#"/home/feinauer/Datasets/DomainsInter/processed/"
+    pathtoFolder = "/Data/DomainsInter/processed/"#"/home/Datasets/DomainsInter/processed/"##"/home/feinauer/Datasets/DomainsInter/processed/"
 
 
 
-torch.set_num_threads(8)
+# torch.set_num_threads(8)
 #pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 count = 0
 # Model hyperparameters--> CAN BE CHANGED
@@ -45,13 +45,13 @@ num_encoder_layers = 2
 num_decoder_layers = 2
 dropout = 0.10
 forward_expansion = 2048
-src_vocab_size = 25#len(protein.vocab) 
-trg_vocab_size = 25#len(protein_trans.vocab) 
-embedding_size = 105#len(protein.vocab) #it should be 25. 21 amino, 2 start and end sequence, 1 for pad, and 1 for unknown token
+src_vocab_size = 21#len(protein.vocab) 
+trg_vocab_size = 21#len(protein_trans.vocab) 
+embedding_size = 55#len(protein.vocab) #it should be 25. 21 amino, 2 start and end sequence, 1 for pad, and 1 for unknown token
 
 repartition = [0.7, 0.15, 0.15]
 #EPOCHS 
-num_epochs =5000
+num_epochs =4000
 Unalign = False
 alphalist=[0.0, 0.01, 0.1]
 wd_list = [0.0]#, 0.00005]
@@ -80,9 +80,20 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 if PPI:
     ilist = [1,22,3,5,7,8,9,10,12,16,19,21,2,27,31]
 else:        
-    ilist = [1208, 1213, 1214]#[17, 46, 69, 71,157,160,251, 258, 97,103,132,181, 192, 197,303,304,308,358,504, 634, 815, 972, 972, 980, 1208, 1213, 1214] #17, 46, 69, 71,157,160,251, 258, 97,103,132,181, 192, 197,303,304,308,358,504, 
+    ilist = [17, 46, 69, 71,157,160,251, 258, 97,103,132, 192, 197,303,304,308,358,504, 634, 815, 972, 972, 980, 1208, 1213, 1214, 181] #17, 46, 69, 71,157,160,251, 258, 97,103,132,181, 192, 197,303,304,308,358,504,1208, 1213, 1214]# 
 save_model = False
 onehot=False
+
+
+# tempTrain = writefastafrompds(pds_train)
+# tempTest = writefastafrompds(pds_test)
+# tempVal = writefastafrompds(pds_val)
+# print(tempTrain,tempTest,tempVal)
+# aoopshvw jhgmumsh ww3bq6wx
+# pathfastatrain = "aoopshvw"
+# pathfastatest = "jhgmumsh"
+# pathfastaval = "ww3bq6wx"
+
 
 for i in ilist:
     # i=46
@@ -113,12 +124,12 @@ for i in ilist:
     pds_test = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
     pds_val = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
     
-   
+       
     # ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
     # print("score", )
     # print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
 
-    pds_train.shufflePairs()
+    # pds_train.shufflePairs()
 # #    pds_test.shufflePairs()
 #  #   pds_val.shufflePairs()
     
@@ -169,7 +180,7 @@ for i in ilist:
     else:
         famname = "DDI"+str(i)
     #whyyy 'cpu?'
-    wandb.init(project="Transformer Shuffle", entity="barthelemymp")
+    wandb.init(project="Transformer Simple 3", entity="barthelemymp")
     config_dict = {
       "num_layers": num_encoder_layers,
       "embedding":embedding_size,
