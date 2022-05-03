@@ -168,12 +168,13 @@ for i in ilist:# range(1000,1500):
 
         x = dval2.min(dim=0)[0].cpu().numpy()
         y =CE_matrix.mean(dim=0).cpu().numpy()
-        y2 =CE_matrix.mean(dim=0).cpu().numpy()
+        y2 =CE_matrix_Ardca.mean(dim=0).cpu().numpy()
         plt.xlabel("Hamming Distance from Training Set", fontsize=18)
         plt.ylabel("Cross Entropy Loss", fontsize=18)
         plt.title("Cross Entropy Loss at different distance from trainset for PF03171_PF14226", fontsize=18)
-        plt.scatter(x,y, alpha=0.1, color="blue", label="Transformer")
-        plt.scatter(x,y2, alpha=0.1, color="orange", label="ardca")
+        plt.scatter(x,y, alpha=0.3, color="blue", label="Transformer")
+        plt.scatter(x,y2, alpha=0.3, color="orange", label="ardca")
         plt.tick_params(axis='both', labelsize=18)
+        plt.legend(fontsize=18)
         plt.savefig("distanceCE_compare"+str(i)+".pdf")
 
