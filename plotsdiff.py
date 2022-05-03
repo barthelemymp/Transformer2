@@ -150,7 +150,7 @@ for i in ilist:# range(1000,1500):
         #pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
         criterion = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex)
 
-        load_checkpoint(torch.load(modelpath), model, optimizer)
+        load_checkpoint(torch.load(modelpath, map_location=torch.device('cpu')), model, optimizer)
         
         criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
         model.eval()
