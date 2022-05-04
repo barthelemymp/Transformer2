@@ -167,8 +167,8 @@ for i in family_list:
     plt.plot(x,ppvS8, label="sampled*8", alpha=0.5)
     plt.title("PPV" + str(i))
     plt.legend()
-    # plt.xscale("log")
-    plt.savefig("ppvS_flat"+str(i)+".png")
+    plt.xscale("log")
+    plt.savefig("ppvS_paper"+str(i)+".png")
     plt.clf()
 
 
