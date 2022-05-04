@@ -51,7 +51,7 @@ pdbtracker = pd.read_csv("pdbtracker.csv")
 
 print("import done")
 #torch.functional.one_hot
-pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
+pathtoFolder =  "/Data/DomainsInter/processed/"
 torch.set_num_threads(4)
 #pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 # Model hyperparameters--> CAN BE CHANGED
@@ -151,19 +151,19 @@ for i in family_list:
     ppvO = PPV_from_pds(pds_train, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
     
     
-    sampled = sampleDataset(model, pds_train, len_output, multiplicative =1)
-    ppvS1 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
-    ### sample times 2
+    # sampled = sampleDataset(model, pds_train, len_output, multiplicative =1)
+    # ppvS1 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
+    # ### sample times 2
 
-    sampled = sampleDataset(model, pds_train, len_output, multiplicative =3)
-    ppvS3 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
+    # sampled = sampleDataset(model, pds_train, len_output, multiplicative =3)
+    # ppvS3 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
         
     sampled = sampleDataset(model, pds_train, len_output, multiplicative =8)
     ppvS8 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
     x = np.array(range(1,len(ppvO)+1))
     plt.plot(x,ppvO, label="Original")
-    plt.plot(x,ppvS1, label="sampled*1", alpha=0.5)
-    plt.plot(x,ppvS3, label="sampled*3", alpha=0.5)
+    # plt.plot(x,ppvS1, label="sampled*1", alpha=0.5)
+    # plt.plot(x,ppvS3, label="sampled*3", alpha=0.5)
     plt.plot(x,ppvS8, label="sampled*8", alpha=0.5)
     plt.title("PPV" + str(i))
     plt.legend()
