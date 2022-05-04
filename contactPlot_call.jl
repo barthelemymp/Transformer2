@@ -5,7 +5,16 @@ using ArgParse
 using ExtractMacro: @extract
 using StatsBase
 using NPZ
+using PdbTool
+using PlmDCA
 
+
+function get_HMMlength(HmmPath)
+	a = String(read(`grep LENG $HmmPath`))
+	b = split(a, "  ")[2]
+	c = split(b, "\n")[1]
+	return parse(Int64,c)
+end
 
 function makeInterRoc(score::Array{Tuple{Int64,Int64,Float64},1},chain1::PdbTool.Chain,chain2::PdbTool.Chain;sz=200,cutoff::Float64=8.0,out::AbstractString="return",pymolMode::Bool=false,naccessRatio::Float64=1.0)
 
@@ -85,8 +94,116 @@ function makeInterRoc(score::Array{Tuple{Int64,Int64,Float64},1},chain1::PdbTool
 	end
 
 
+function mergedPDBInterRoc(score::Array{Tuple{Int64,Int64,Float64},1},chain1_list::Vector{PdbTool.Chain},chain2_list::Vector{PdbTool.Chain};sz=200,cutoff::Float64=8.0,out::AbstractString="return",pymolMode::Bool=false,naccessRatio::Float64=1.0)
+	# Check if mapping is existent
+	for p in 1:length(chain1_list)
+		chain1 = chain1_list[p]
+		chain2 = chain2_list[p]
+		if chain1.mappedTo == ""
+				error("chain 1 has no mapping")
+		elseif chain2.mappedTo == ""
+				error("chain 2 has no mapping")
+		end
+	end
+	LENG1=PdbTool.getHmmLength(chain1_list[1].mappedTo)
+	LENG2=PdbTool.getHmmLength(chain2_list[1].mappedTo)
 
 
+
+	roc=Array{Tuple{AbstractString,AbstractString,Float64,Float64}}(undef,0)
+	s::Int64=0
+	i::Int64=0
+	hits::Int64=0
+	positives::Int64=0
+	while s<sz && i<size(score,1)
+		i+=1
+		tempContact::Int64 = 0
+		tempHaskey::Int64 = 0
+		if score[i][1] <= LENG1 && score[i][2] > LENG1
+			ind1=score[i][1]
+			ind2=score[i][2]-LENG1
+		elseif score[i][2] <= LENG1 && score[i][1] > LENG1
+			ind1=score[i][2]
+			ind2=score[i][1]-LENG1
+		else
+			continue
+		end
+		for p in 1:length(chain1_list)
+			chain1 = chain1_list[p]
+			chain2 = chain2_list[p]
+			if haskey(chain1.align,ind1) && haskey(chain2.align,ind2)
+				tempHaskey +=1
+				# s+=1
+				id1=chain1.align[ind1].identifier
+				id2=chain2.align[ind2].identifier
+				if PdbTool.residueDist(chain1.align[ind1],chain2.align[ind2])<cutoff
+					tempContact+=1
+				end
+			end
+		end
+		if tempHaskey>0
+			s+=1
+			if tempContact+=1
+				hits+=1
+				push!(roc,(id1,id2,hits/s,score[i][3]))
+			else
+				push!(roc,(id1,id2,hits/s,score[i][3]))
+			end
+		end
+	end
+	return roc
+end
+
+
+function ppv_mergedcontact(file::String, score, sequence_length1::Int, sequence_length2::Int;contact_dist::Float64=10.0, sizeppv::Int=200)
+    A = DelimitedFiles.readdlm(file, ',')
+    l, _ =size(A)
+    contacts = []#Array{Int, 2}
+    distmat = Inf.*ones(sequence_length1,sequence_length2)
+    for i=2:l
+		@show i, A[i,:]
+        indi = A[i,1]+1
+        indj =A[i,2]+1
+		if A[i,4] != ""
+			@show A[i,4]
+			@show indi, indj
+        	distmat[indi,indj] = min(distmat[indi,indj], A[i,4])
+		end
+    end
+	y = zeros(sizeppv)
+	goodpred = 0
+    for l=1:sizeppv
+		i = score[l][1]
+		j = score[l][2]
+        if distmat[i,j]<contact_dist
+			goodpred +=1
+        end
+		push!(y,  goodpred/l)
+    end
+    return y
+end
+
+
+function ppv(results; size::Int=200)
+	y = zeros(size)
+	goodPred=0
+	for l in 1:size
+		goodPred+=results[l][3]
+		y[l] = goodPred/l
+	end
+	return y
+end
+
+
+
+
+
+
+
+
+
+
+"/home/feinauer/Datasets/DomainsInter/filters/new_training_set_ddi_num_17_PF03171_PF14226.dat"
 
 
 
@@ -100,14 +217,13 @@ function parse_commandline()
         required = true
 
 	"pathPDB"
-        help = "PDB path"
+        help = "PDB path or ContactMappath"
 		arg_type = String
-        required = true
 
 	"chainIN"
         help = "chain for imput"
 		arg_type = String
-        required = true
+
 
 	"chainOUT"
 	    help = "PDB path"
@@ -123,6 +239,18 @@ function parse_commandline()
         help = "path for plot output"
 		arg_type = String
         required = true
+
+	"mode"
+        help = "mode of dca: inter or intra"
+		arg_type = String
+        required = true
+
+	"ContactFormat"
+		help = "format of the contact map: merged or pdb"
+		arg_type = String
+		required = true
+
+
     end
     return parse_args(s)
 end
@@ -135,8 +263,7 @@ end
 
 pathfastatrain = parsed_args["pathfastatrain"]
 pathPDB = parsed_args["pathPDB"]
-
-
+mode = parsed_args["mode"]
 
 chainIN = parsed_args["chainIN"]
 chainOUT = parsed_args["chainOUT"]
@@ -144,15 +271,113 @@ hmmRadical = parsed_args["hmmRadical"]
 hmm1 = hmmRadical * "1.hmm"
 hmm2 = hmmRadical * "2.hmm"
 hmmjoined = hmmRadical * "joined.hmm"
+ContactFormat = parsed_args["ContactFormat"]
+outputPlot = parsed_args["outputPlot"]
+
+if mode == "inter"
+	write("temp2.fasta",read(`./Unalign  $pathfastatrain`))
+	write("temp1.fasta",read(`hmmalign --outformat a2m $hmmjoined temp2.fasta`))
+	write("temp2.fasta",read(`./removeInserts temp1.fasta`))
+
+	plmo = plmdca_asym(joinpath(pwd(), "temp2.fasta"), theta = :auto)
+	if ContactFormat == "pdb"
+		pdb=PdbTool.parsePdb(pathPDB)
+		PdbTool.mapChainToHmm(pdb.chain[chainIN], hmm1)
+		PdbTool.mapChainToHmm(pdb.chain[chainOUT], hmm2)
+		result = makeInterRoc(plmo.score,pdb.chain[chainIN],pdb.chain[chainOUT])
+		y = ppv(results)
+		@show y
+		plt = plot(title="ppv")
+		savefig(plt, )
+	else
+		sequence_length1 =  get_HMMlength(hmm1)
+		sequence_length2 =  get_HMMlength(hmm2)
+		y = ppv_mergedcontact(pathPDB, plmo.score, sequence_length1, sequence_length2;contact_dist=8.0, sizeppv=200)
+
+elseif mode == "intra"
+	write("temp2.fasta",read(`./Unalign  $pathfastatrain`))
+	write("temp1.fasta",read(`hmmalign --outformat a2m $hmm2 temp2.fasta`))
+	write("temp2.fasta",read(`./removeInserts temp1.fasta`))
+	pdb=PdbTool.parsePdb(pathPDB)
+	PdbTool.mapChainToHmm(pdb.chain[chainOUT], hmm2)
+	plmo = plmdca_asym(joinpath(pwd(), "temp2.fasta"), theta = :auto)
+	result = makeIntraRoc(plmo.score,pdb.chain[chainOUT])
+end
 
 
 
 
-write("temp2.fasta",read(`./Unalign  sample_multiple1_epoch4000_2big.faa`))
-write("temp1.fasta",read(`hmmalign --outformat a2m hkrrhmmmjoined.hmm temp2.fasta`))
-write("temp2.fasta",read(`./removeInserts temp1.fasta`))
+pathfastatrainjoined = "/home/feinauer/Datasets/DomainsInter/processed/combined_MSA_ddi_972_joined_train_joined.faa"
+pathfastatrain1 = "/home/feinauer/Datasets/DomainsInter/processed/combined_MSA_ddi_972_joined_train_1.faa"
+pathfastatrain2 = "/home/feinauer/Datasets/DomainsInter/processed/combined_MSA_ddi_972_joined_train_2.faa"
+
+pathfastatrainjoined = "/home/feinauer/Datasets/DomainsInter/processed/combined_MSA_ddi_972_joined_trainjoined.faa"
+pathfastatrain1 = "/home/feinauer/Datasets/DomainsInter/processed/combined_MSA_ddi_972_joined_train1.faa"
+pathfastatrain2 = "/home/feinauer/Datasets/DomainsInter/processed/combined_MSA_ddi_972_joined_train2.faa"
+
+run(`hmmbuild --symfrac 0.0 hmm_972_1.hmm $pathfastatrain1`)
+run(`hmmbuild --symfrac 0.0 hmm_972_2.hmm $pathfastatrain2`)
+run(`hmmbuild --symfrac 0.0 hmm_972_joined.hmm $pathfastatrainjoined`)
+
+run(`wget https://files.rcsb.org/download/2VBP.pdb`)
+pathPDB = "1BNC.pdb"
+chainIN = "A"
+chainOUT = "A"
 pdb=PdbTool.parsePdb(pathPDB)
-PdbTool.mapChainToHmm(pdb.chain[chainIN], hmm1)
-PdbTool.mapChainToHmm(pdb.chain[chainOUT], hmm2)
+PdbTool.mapChainToHmm(pdb.chain[chainOUT], "hmm_972_2.hmm")
+pdb.chain[chainOUT]
+plmo = plmdca_asym(joinpath(pwd(), pathfastatrain2), theta = :auto)
+
+
+sequence_length1 =  get_HMMlength("hmm_972_1.hmm")
+sequence_length2 =  get_HMMlength("hmm_972_2.hmm")
+ppv_mergedcontact(pathcontacts,plmo. score, sequence_length1, sequence_length2;contact_dist=0.0, sizeppv=200)
+result = PdbTool.makeIntraRoc(plmo.score,pdb.chain[chainOUT])
+
+
 plmo = plmdca_asym(joinpath(pwd(), "temp2.fasta"), theta = :auto)
-result = makeInterRoc(plmo.score,pdb.chain[chainIN],pdb.chain[chainOUT])
+result = PdbTool.makeIntraRoc(plmo.score,pdb.chain[chainOUT])
+
+pathsample = "sample_972_2.faa"
+write("temp2.fasta",read(`./Unalign  $pathsample`))
+write("temp1.fasta",read(`hmmalign --outformat a2m hmm_972_2.hmm temp2.fasta`))
+write("temp2.fasta",read(`./removeInserts temp1.fasta`))
+plmo = plmdca_asym(joinpath(pwd(), "temp2.fasta"), theta = :auto)
+result = PdbTool.makeIntraRoc(plmo.score,pdb.chain[chainOUT])
+
+
+
+
+
+
+pathfastatrainjoined
+pathPDB = "2VBP.pdb"
+chainIN = "A"
+chainOUT = "A"
+pdb=PdbTool.parsePdb(pathPDB)
+pdb2=PdbTool.parsePdb(pathPDB)
+PdbTool.mapChainToHmm(pdb.chain[chainIN], "hmm_972_1.hmm")
+PdbTool.mapChainToHmm(pdb2.chain[chainOUT], "hmm_972_2.hmm")
+plmo = plmdca_asym(joinpath(pwd(), pathfastatrainjoined), theta = :auto)
+result = makeInterRoc(plmo.score,pdb.chain[chainIN],pdb2.chain[chainOUT])
+
+
+
+pathsample = "sample_972_joined.faa"
+
+plmo = plmdca_asym(joinpath(pwd(),pathsample), theta = :auto)
+result = makeInterRoc(plmo.score,pdb.chain[chainIN],pdb2.chain[chainOUT])
+
+
+pathsample = "sample_972_joined.faa"
+write("temp2.fasta",read(`./Unalign  $pathsample`))
+write("temp1.fasta",read(`hmmalign --outformat a2m hmm_972_joined.hmm temp2.fasta`))
+write("temp2.fasta",read(`./removeInserts temp1.fasta`))
+plmo = plmdca_asym(joinpath(pwd(), "temp2.fasta"), theta = :auto)
+pdb2=PdbTool.parsePdb(pathPDB)
+result = makeInterRoc(plmo.score,pdb.chain[chainIN],pdb2.chain[chainOUT])
+
+
+
+
+pathcontacts = "/home/feinauer/Datasets/DomainsInter/new_training_set_ddi_num_972_PF02785_PF00289.dat"
