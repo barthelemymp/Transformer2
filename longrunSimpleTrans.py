@@ -203,7 +203,7 @@ for i in ilist:
     step_ev = 0
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(device)
-    learning_rate = 1e-5
+    learning_rate = 5e-5
     
     for p in model.parameters():
         if p.dim() > 1:
