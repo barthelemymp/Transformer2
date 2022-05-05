@@ -77,7 +77,7 @@ ilist =[71,1213,1214,132,17,181,192,251,258,304,308,46,504,634,69,972,975,97,980
 save_model = False
 onehot=False
 for i in ilist:# range(1000,1500):
-    modelpath = "TransSimple_fam"+str(i)+".pth.tar"
+    modelpath = "TransSimple2_fam"+str(i)+".pth.tar"
     if os.path.isfile(modelpath):
         num_heads = 1
         num_encoder_layers = 2
