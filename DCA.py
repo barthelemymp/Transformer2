@@ -54,11 +54,12 @@ def PPV_from_pds(pds, pdblist, chain1list, chain2list, hmmRadical, mode ="inter"
 def sampleDataset(model, pds, len_output, multiplicative =1):
     max_len = len_output
     pds_sample = copy.deepcopy(pds)
-    sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-    pds_sample.tensorOUT = sampled.max(dim=2)[1] 
 
     batchIndex = makebatchList(len(pds_sample), 300)
-    for mu in range(multiplicative):
+    for batchI in batchIndex:
+        sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+        pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+    for mu in range(multiplicative-1):
         for batchI in batchIndex:
             sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
             # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
