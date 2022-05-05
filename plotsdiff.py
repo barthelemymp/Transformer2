@@ -165,7 +165,7 @@ for i in ilist:# range(1000,1500):
         model.eval()
         criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
         CE_matrix = evaluateCE_matrix(pds_val, model)
-        print(i, np.mean(CE_matrix))
+        print(i, CE_matrix.mean())
         
         num_heads = 5
         num_encoder_layers = 3
