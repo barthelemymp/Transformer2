@@ -171,7 +171,7 @@ for i in ilist:# range(1000,1500):
         lossesMatching_eval = []
         accuracyVal = 0
         
-        if epoch%1==0:
+        if 1%1==0:
             with  torch.no_grad():
                 for batch_idx, batch in enumerate(val_iterator):
                     inp_data, target= batch[0], batch[1]
