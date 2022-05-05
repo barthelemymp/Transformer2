@@ -20,6 +20,7 @@ from MatchingLoss import *
 from utils import *
 from ardca import *
 import matplotlib.pyplot as plt
+import pandas as pd
 print("import done")
 
 
@@ -41,7 +42,7 @@ def evaluateCE_matrix(pds_val, model):
             score[ 1:, batch] = loss
     return score
 
-
+pdbtracker = pd.read_csv("pdbtracker.csv")
 #torch.functional.one_hot
 pathtoFolder = "/Data/DomainsInter/processed/"
 torch.set_num_threads(12)
@@ -208,20 +209,20 @@ for i in ilist:# range(1000,1500):
         CE_matrix_Ardca = ARDCA_returnCE(pds_train2, pds_val2)
         print("score", i)
         plt.rcParams["figure.figsize"] = 16,12
-
+        famname = pdbtracker[pdbtracker['id'] == fam].iloc[0]['name']
         x = dval2.min(dim=0)[0].cpu().numpy()
         print(np.sum(x==0), x.shape, np.sum(x==0)/x.shape[0])
-        y =CE_matrix.mean(dim=0).cpu().numpy()
-        y2 =CE_matrix_Ardca.mean(axis=0)
-        y3 = CE_matrix_Reyni.mean(dim=0).cpu().numpy()
+        y =np.exp(CE_matrix.mean(dim=0).cpu().numpy())
+        y2 =np.exp(CE_matrix_Ardca.mean(axis=0))
+        #y3 = CE_matrix_Reyni.mean(dim=0).cpu().numpy()
         plt.xlabel("Hamming Distance from Training Set", fontsize=18)
         plt.ylabel("Cross Entropy Loss", fontsize=18)
-        plt.title("Cross Entropy Loss at different distance from trainset for PF03171_PF14226", fontsize=18)
+        plt.title("Perplexity at Different Distance from Training Set for"+famname, fontsize=18)
         plt.scatter(x,y, alpha=0.3, color="blue", label="Transformer")
         plt.scatter(x,y2, alpha=0.3, color="orange", label="ardca")
-        plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
+        #plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
         plt.tick_params(axis='both', labelsize=18)
         plt.legend(fontsize=18)
-        plt.savefig("distanceCE_2compare"+str(i)+".pdf")
+        plt.savefig("distanceCE_compare"+str(i)+".pdf")
         plt.clf()
 
