@@ -78,10 +78,10 @@ def ARDCA(pdsTrain, pdsTest, pdsVal):
     acctrain = float(ttacc[0].split('(')[-1])
     acctest = float(ttacc[1])
     accval = float(ttacc[2].split(')')[0])
-    scoreHungarianVal = np.load(tempScoreH)
-    scoHVal = scipy.optimize.linear_sum_assignment(scoreHungarianVal)
+    # scoreHungarianVal = np.load(tempScoreH)
+    # scoHVal = scipy.optimize.linear_sum_assignment(scoreHungarianVal)
     scoreMatchingVal =0# sum(scoHVal[0]==scoHVal[1])
-    os.remove(tempScoreH)
+    # os.remove(tempScoreH)
     return CEtrain, CEtest, CEval, acctrain, acctest, accval, scoreMatchingVal
     
     
