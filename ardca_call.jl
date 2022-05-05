@@ -139,8 +139,8 @@ CE_ar_test, acctest = computeCrossEntropy(arnet, pathfastatest*"1.faa", pathfast
 
 CE_ar_val, accval = computeCrossEntropy(arnet, pathfastaval*"1.faa", pathfastaval*"2.faa")
 
-scoreHungarian = computeCrossEntropyPairs(arnet, pathfastaval*"1.faa", pathfastaval*"2.faa")
-npzwrite(pathscoreH, scoreHungarian)
+#scoreHungarian = computeCrossEntropyPairs(arnet, pathfastaval*"1.faa", pathfastaval*"2.faa")
+#npzwrite(pathscoreH, scoreHungarian)
 # temp2train = tempname()
 # tempjoinedtrain = tempname()
 # temp2test = tempname()
