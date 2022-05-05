@@ -77,7 +77,7 @@ parameters_dict = {
         },
     
     'dropout': {
-          'values': [0.1, 0.5, 0.8]
+          'values': [0.5, 0.8]
         },
     
     'lr': {
@@ -338,7 +338,7 @@ def train(config=None):
                            title="Custom Y vs X Line Plot"), "epoch":epoch})
 
 
-sweep_id = wandb.sweep(sweep_config, project="HyperNew_D"+str(i))
+sweep_id = wandb.sweep(sweep_config, project="HyperNew"+str(i))
 wandb.agent(sweep_id, train)
 
 
