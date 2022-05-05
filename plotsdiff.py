@@ -84,8 +84,8 @@ for i in ilist:# range(1000,1500):
         num_decoder_layers = 2
         dropout = 0.10
         forward_expansion = 2048
-        src_vocab_size = 25#len(protein.vocab) 
-        trg_vocab_size = 25#len(protein_trans.vocab) 
+        src_vocab_size = 21#len(protein.vocab) 
+        trg_vocab_size = 21#len(protein_trans.vocab) 
         embedding_size = 55
         
         pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
