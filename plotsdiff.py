@@ -209,7 +209,7 @@ for i in ilist:# range(1000,1500):
         CE_matrix_Ardca = ARDCA_returnCE(pds_train2, pds_val2)
         print("score", i)
         plt.rcParams["figure.figsize"] = 16,12
-        famname = pdbtracker[pdbtracker['id'] == fam].iloc[0]['name']
+        famname = pdbtracker[pdbtracker['id'] == i].iloc[0]['name']
         x = dval2.min(dim=0)[0].cpu().numpy()
         print(np.sum(x==0), x.shape, np.sum(x==0)/x.shape[0])
         y =np.exp(CE_matrix.mean(dim=0).cpu().numpy())
