@@ -107,7 +107,7 @@ def train(config=None):
         Unalign = False
         count=0
         if datasettype == "Domains":
-            pathtoFolder = "/home/meynard/Datasets/DomainsInter/processed/"#"/Data/DomainsInter/processed/"#"/home/Datasets/DomainsInter/processed/"##
+            pathtoFolder ="/Data/DomainsInter/processed/"# "/home/meynard/Datasets/DomainsInter/processed/"#"/Data/DomainsInter/processed/"#"/home/Datasets/DomainsInter/processed/"##
             pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
             inputsize, outputsize = getLengthfromCSV(pathTofile)
             os.path.isfile(pathTofile)
