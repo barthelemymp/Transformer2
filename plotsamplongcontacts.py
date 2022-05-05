@@ -30,6 +30,7 @@ from MatchingLoss import *
 from utils import *
 from ardca import *
 from DCA import *
+import pandas as pd
 def buildhmm(hmmout, ali):
     subprocess.run(["hmmbuild", "--symfrac","0.0", hmmout, ali])
 
@@ -157,16 +158,20 @@ for i in family_list:
 
     # sampled = sampleDataset(model, pds_train, len_output, multiplicative =3)
     # ppvS3 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
-        
+    famname = pdbtracker[pdbtracker['id'] == fam].iloc[0]['name']
     sampled = sampleDataset(model, pds_train, len_output, multiplicative =8)
     ppvS8 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
     x = np.array(range(1,len(ppvO)+1))
-    plt.plot(x,ppvO, label="Original")
+    plt.plot(x,ppvO, label="Original Dataset")
     # plt.plot(x,ppvS1, label="sampled*1", alpha=0.5)
     # plt.plot(x,ppvS3, label="sampled*3", alpha=0.5)
-    plt.plot(x,ppvS8, label="sampled*8", alpha=0.5)
-    plt.title("PPV" + str(i))
-    plt.legend()
+    plt.plot(x,ppvS8, label="Sampled Dataset with Transformer", alpha=0.5, fontsize=18)
+    plt.title("Inter-Domain Contact Prediction:" + str(famname), fontsize=18)
+    plt.xlabel("Number of Predicted Pairs",fontsize=18)
+    plt.ylabel("Positive Predicted Value",fontsize=18)
+    plt.yticks(fontsize=18)
+    plt.xticks(fontsize=18)
+    plt.legend(fontsize=18)
     plt.xscale("log")
     plt.savefig("ppvS_paper"+str(i)+".png")
     plt.clf()
