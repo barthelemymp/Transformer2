@@ -165,7 +165,7 @@ for i in family_list:
     plt.plot(x,ppvO, label="Original Dataset")
     # plt.plot(x,ppvS1, label="sampled*1", alpha=0.5)
     # plt.plot(x,ppvS3, label="sampled*3", alpha=0.5)
-    plt.plot(x,ppvS8, label="Sampled Dataset with Transformer", alpha=0.5, fontsize=18)
+    plt.plot(x,ppvS8, label="Sampled Dataset with Transformer", alpha=0.5)
     plt.title("Inter-Domain Contact Prediction:" + str(famname), fontsize=18)
     plt.xlabel("Number of Predicted Pairs",fontsize=18)
     plt.ylabel("Positive Predicted Value",fontsize=18)
