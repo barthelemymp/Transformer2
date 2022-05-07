@@ -257,7 +257,7 @@ for i in ilist:# range(1000,1500):
         print(np.sum(x==0), x.shape, np.sum(x==0)/x.shape[0])
         y =np.exp(CE_matrix.mean(dim=0).cpu().numpy())
         #y2 =np.exp(CE_matrix_Ardca.mean(axis=0))
-        y3 = CE_matrix_Reyni.mean(dim=0).cpu().numpy()
+        y3 = np.exp(CE_matrix_Reyni.mean(dim=0).cpu().numpy())
         plt.xlabel("Hamming Distance from Training Set", fontsize=18)
         plt.ylabel("Cross Entropy Loss", fontsize=18)
         plt.title("Perplexity at Different Distance from Training Set for"+famname, fontsize=18)
