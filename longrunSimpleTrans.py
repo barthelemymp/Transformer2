@@ -81,7 +81,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 if PPI:
     ilist = [1,22,3,5,7,8,9,10,12,16,19,21,2,27,31]
 else:        
-    ilist =  [634, 815, 972, 975 ]#[17, 46, 69, 71,157,160,251, 258, 97,103,132, 192, 197,303,304,308,358,504, 634, 815, 972, 975, 980, 1208, 1213, 1214, 181] #17, 46, 69, 71,157,160,251, 258, 97,103,132,181, 192, 197,303,304,308,358,504,1208, 1213, 1214]# 
+    ilist =  [ 1208, 1213, 1214, 181 ]#[17, 46, 69, 71,157,160,251, 258, 97,103,132, 192, 197,303,304,308,358,504, 634, 815, 972, 975, 980, 1208, 1213, 1214, 181] #17, 46, 69, 71,157,160,251, 258, 97,103,132,181, 192, 197,303,304,308,358,504,1208, 1213, 1214]# 
 save_model = True
 onehot=False
 
@@ -126,9 +126,9 @@ for i in ilist:
     pds_val = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
     
        
-    ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
-    print("score", )
-    print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
+    # ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
+    # print("score", )
+    # print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
 
     # pds_train.shufflePairs()
 # #    pds_test.shufflePairs()
