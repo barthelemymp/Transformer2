@@ -73,7 +73,7 @@ wd=0.0
 device = torch.device("cpu")    
 #             ilist.append(i)
             
-ilist =[71,1213,1214,132,17,181,192,251,258,304,308,46,504,634,69,972,975,97,980]# [17, 46, 69, 258, 97,103,132, 192, 197,972, 980, 1208, 1213, 1214, 71,157,160,251, 303,304,308,358,504, 634, 815, 972, 181] 
+ilist =[17, 71,1213,1214,132,17,181,192,251,258,304,308,46,504,634,69,972,975,97,980]# [17, 46, 69, 258, 97,103,132, 192, 197,972, 980, 1208, 1213, 1214, 71,157,160,251, 303,304,308,358,504, 634, 815, 972, 181] 
 save_model = False
 onehot=False
 for i in ilist:# range(1000,1500):
@@ -190,64 +190,82 @@ for i in ilist:# range(1000,1500):
                 accuracyVal = accuracyVal/nval
         print(mean_lossVal)
 
-        # num_heads = 5
-        # num_encoder_layers = 3
-        # num_decoder_layers = 3
-        # dropout = 0.10
-        # forward_expansion = 2048
-        # src_vocab_size = 21#len(protein.vocab) 
-        # trg_vocab_size = 21#len(protein_trans.vocab) 
-        # embedding_size = 105
-        # src_pad_idx = pds_train.padIndex#pds_train.SymbolMap["<pad>"]#"<pad>"# protein.vocab.stoi["<pad>"] 
-        # src_position_embedding = PositionalEncoding(embedding_size, max_len=len_input,device=device)
-        # trg_position_embedding = PositionalEncoding(embedding_size, max_len=len_output, device=device)
+        num_heads = 5
+        num_encoder_layers = 3
+        num_decoder_layers = 3
+        dropout = 0.10
+        forward_expansion = 2048
+        src_vocab_size = 21#len(protein.vocab) 
+        trg_vocab_size = 21#len(protein_trans.vocab) 
+        embedding_size = 105
+        src_pad_idx = pds_train.padIndex#pds_train.SymbolMap["<pad>"]#"<pad>"# protein.vocab.stoi["<pad>"] 
+        src_position_embedding = PositionalEncoding(embedding_size, max_len=len_input,device=device)
+        trg_position_embedding = PositionalEncoding(embedding_size, max_len=len_output, device=device)
                 
-        # model = Transformer(
-        #     embedding_size,
-        #     src_vocab_size,
-        #     trg_vocab_size,
-        #     src_pad_idx,
-        #     num_heads,
-        #     num_encoder_layers,
-        #     num_decoder_layers,
-        #     forward_expansion,
-        #     dropout,
-        #     src_position_embedding,
-        #     trg_position_embedding,
-        #     device,
-        #     onehot=onehot,
-        # ).to(device)
-        # optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
-        # modelpath = "Renyi_5_fam"+str(i)+"_alpha-0.7.pth.tar"
-        # load_checkpoint(torch.load(modelpath, map_location=torch.device('cpu')), model, optimizer)
+        model = Transformer(
+            embedding_size,
+            src_vocab_size,
+            trg_vocab_size,
+            src_pad_idx,
+            num_heads,
+            num_encoder_layers,
+            num_decoder_layers,
+            forward_expansion,
+            dropout,
+            src_position_embedding,
+            trg_position_embedding,
+            device,
+            onehot=onehot,
+        ).to(device)
+        optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
+        modelpath = "Renyi_5_fam"+str(i)+"_alpha-0.7.pth.tar"
+        load_checkpoint(torch.load(modelpath, map_location=torch.device('cpu')), model, optimizer)
         
-        # criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
-        # model.eval()
-        # criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
-        # CE_matrix_Reyni = evaluateCE_matrix(pds_val, model)
+        criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
+        model.eval()
+        criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
+        CE_matrix_Reyni = evaluateCE_matrix(pds_val, model)
+        if 1%1==0:
+            with  torch.no_grad():
+                for batch_idx, batch in enumerate(val_iterator):
+                    inp_data, target= batch[0], batch[1]
+                    inp_data = inp_data.to(device)
+                    output = model(inp_data, target[:-1, :])
+                    accuracyVal += accuracy(batch, output, onehot=False).item()
+                    output = output.reshape(-1, output.shape[2]) #keep last dimension
+                    if onehot:
+                        _, targets_Original = target.max(dim=2)
+                    else:
+                        targets_Original= target
+                    targets_Original = targets_Original[1:].reshape(-1)
+                    loss_eval = criterion(output, targets_Original)
+                    lossesCE_eval.append(loss_eval.item()) 
+                mean_lossVal = sum(lossesCE_eval) / len(lossesCE_eval)
+                accuracyVal = accuracyVal/nval
+        print("renyi",mean_lossVal)
         # # scoreHungarianVal = HungarianMatchingBS(pds_val, model,100)
         
-        pds_train2 = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
-        pds_test2 = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
-        pds_val2 = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
-        CE_matrix_Ardca = ARDCA_returnCE(pds_train2, pds_val2)
-        print("ardca", i, CE_matrix_Ardca.mean(), CE_matrix_Ardca.shape)
-        print("score", i)
-        plt.rcParams["figure.figsize"] = 16,12
-        famname = pdbtracker[pdbtracker['id'] == i].iloc[0]['name']
-        x = dval2.min(dim=0)[0].cpu().numpy()
-        print(np.sum(x==0), x.shape, np.sum(x==0)/x.shape[0])
-        y =np.exp(CE_matrix.mean(dim=0).cpu().numpy())
-        y2 =np.exp(CE_matrix_Ardca.mean(axis=0))
-        #y3 = CE_matrix_Reyni.mean(dim=0).cpu().numpy()
-        plt.xlabel("Hamming Distance from Training Set", fontsize=18)
-        plt.ylabel("Cross Entropy Loss", fontsize=18)
-        plt.title("Perplexity at Different Distance from Training Set for"+famname, fontsize=18)
-        plt.scatter(x,y, alpha=0.3, color="blue", label="Transformer")
-        plt.scatter(x,y2, alpha=0.3, color="orange", label="ardca")
-        #plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
-        plt.tick_params(axis='both', labelsize=18)
-        plt.legend(fontsize=18)
-        plt.savefig("distancePP_compare"+str(i)+".pdf")
-        plt.clf()
+        # pds_train2 = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        # pds_test2 = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        # pds_val2 = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        # CE_matrix_Ardca = ARDCA_returnCE(pds_train2, pds_val2)
+        # print("ardca", i, CE_matrix_Ardca.mean(), CE_matrix_Ardca.shape)
+        # print("score", i)
+        # plt.rcParams["figure.figsize"] = 16,12
+        # famname = pdbtracker[pdbtracker['id'] == i].iloc[0]['name']
+        # x = dval2.min(dim=0)[0].cpu().numpy()
+        # print(np.sum(x==0), x.shape, np.sum(x==0)/x.shape[0])
+        # y =np.exp(CE_matrix.mean(dim=0).cpu().numpy())
+        # y2 =np.exp(CE_matrix_Ardca.mean(axis=0))
+        # #y3 = CE_matrix_Reyni.mean(dim=0).cpu().numpy()
+        # plt.xlabel("Hamming Distance from Training Set", fontsize=18)
+        # plt.ylabel("Cross Entropy Loss", fontsize=18)
+        # plt.title("Perplexity at Different Distance from Training Set for"+famname, fontsize=18)
+        # plt.scatter(x,y, alpha=0.3, color="blue", label="Transformer")
+        # plt.scatter(x,y2, alpha=0.3, color="orange", label="ardca")
+        # #plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
+        # plt.tick_params(axis='both', labelsize=18)
+        # plt.legend(fontsize=18)
+        # plt.savefig("distancePP_compare"+str(i)+".pdf")
+        # plt.clf()
 
