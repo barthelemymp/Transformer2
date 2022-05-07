@@ -28,7 +28,7 @@ def evaluateCE_matrix(pds_val, model):
     criterion = nn.CrossEntropyLoss(ignore_index=pds_val.padIndex, reduction ='none')
     accuracyTrain = np.zeros(len(pds_val))
     batchlist = makebatchList(len(pds_val), 100)
-    score = torch.zeros((pds_val.outputsize, len(pds_val))).to(model.device)
+    score = torch.zeros((pds_val.outputsize-1, len(pds_val))).to(model.device)
     with torch.no_grad():
         for batch in batchlist:
             inp_data, target, _= pds_val[batch]
@@ -39,7 +39,7 @@ def evaluateCE_matrix(pds_val, model):
             targets_Original = targets_Original[1:].reshape(-1)
             loss = criterion(output, targets_Original).reshape(-1,len(batch))
             print(loss.shape)
-            score[ 1:, batch] = loss
+            score[ :, batch] = loss
     return score
 
 pdbtracker = pd.read_csv("pdbtracker.csv")
@@ -165,7 +165,7 @@ for i in ilist:# range(1000,1500):
         model.eval()
         criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
         CE_matrix = evaluateCE_matrix(pds_val, model)
-        print(i, CE_matrix.mean())
+        print(i, CE_matrix.mean(), CE_matrix.shape)
         model.eval()
         lossesCE_eval = []
         lossesMatching_eval = []
@@ -227,26 +227,27 @@ for i in ilist:# range(1000,1500):
         # CE_matrix_Reyni = evaluateCE_matrix(pds_val, model)
         # # scoreHungarianVal = HungarianMatchingBS(pds_val, model,100)
         
-        # pds_train2 = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
-        # pds_test2 = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
-        # pds_val2 = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
-        # CE_matrix_Ardca = ARDCA_returnCE(pds_train2, pds_val2)
-        # print("score", i)
-        # plt.rcParams["figure.figsize"] = 16,12
-        # famname = pdbtracker[pdbtracker['id'] == i].iloc[0]['name']
-        # x = dval2.min(dim=0)[0].cpu().numpy()
-        # print(np.sum(x==0), x.shape, np.sum(x==0)/x.shape[0])
-        # y =np.exp(CE_matrix.mean(dim=0).cpu().numpy())
-        # y2 =np.exp(CE_matrix_Ardca.mean(axis=0))
-        # #y3 = CE_matrix_Reyni.mean(dim=0).cpu().numpy()
-        # plt.xlabel("Hamming Distance from Training Set", fontsize=18)
-        # plt.ylabel("Cross Entropy Loss", fontsize=18)
-        # plt.title("Perplexity at Different Distance from Training Set for"+famname, fontsize=18)
-        # plt.scatter(x,y, alpha=0.3, color="blue", label="Transformer")
-        # plt.scatter(x,y2, alpha=0.3, color="orange", label="ardca")
-        # #plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
-        # plt.tick_params(axis='both', labelsize=18)
-        # plt.legend(fontsize=18)
-        # plt.savefig("distanceCE_compare"+str(i)+".pdf")
-        # plt.clf()
+        pds_train2 = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        pds_test2 = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        pds_val2 = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        CE_matrix_Ardca = ARDCA_returnCE(pds_train2, pds_val2)
+        print("ardca", i, CE_matrix_Ardca.mean(), CE_matrix_Ardca.shape)
+        print("score", i)
+        plt.rcParams["figure.figsize"] = 16,12
+        famname = pdbtracker[pdbtracker['id'] == i].iloc[0]['name']
+        x = dval2.min(dim=0)[0].cpu().numpy()
+        print(np.sum(x==0), x.shape, np.sum(x==0)/x.shape[0])
+        y =np.exp(CE_matrix.mean(dim=0).cpu().numpy())
+        y2 =np.exp(CE_matrix_Ardca.mean(axis=0))
+        #y3 = CE_matrix_Reyni.mean(dim=0).cpu().numpy()
+        plt.xlabel("Hamming Distance from Training Set", fontsize=18)
+        plt.ylabel("Cross Entropy Loss", fontsize=18)
+        plt.title("Perplexity at Different Distance from Training Set for"+famname, fontsize=18)
+        plt.scatter(x,y, alpha=0.3, color="blue", label="Transformer")
+        plt.scatter(x,y2, alpha=0.3, color="orange", label="ardca")
+        #plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
+        plt.tick_params(axis='both', labelsize=18)
+        plt.legend(fontsize=18)
+        plt.savefig("distancePP_compare"+str(i)+".pdf")
+        plt.clf()
 
