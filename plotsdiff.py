@@ -190,7 +190,7 @@ for i in ilist:# range(1000,1500):
                 accuracyVal = accuracyVal/nval
         print(mean_lossVal)
 
-        num_heads = 5
+        num_heads = 1
         num_encoder_layers = 3
         num_decoder_layers = 3
         dropout = 0.10
@@ -268,4 +268,19 @@ for i in ilist:# range(1000,1500):
         # plt.legend(fontsize=18)
         # plt.savefig("distancePP_compare"+str(i)+".pdf")
         # plt.clf()
-
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
