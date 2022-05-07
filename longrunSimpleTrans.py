@@ -38,7 +38,7 @@ else:
 # torch.set_num_threads(8)
 #pathtoFolder = "/home/Datasets/DomainsInter/processed/"
 count = 0
-torch.set_num_threads(6)
+torch.set_num_threads(3)
 # Model hyperparameters--> CAN BE CHANGED
 batch_size = 32
 num_heads = 1
@@ -81,7 +81,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 if PPI:
     ilist = [1,22,3,5,7,8,9,10,12,16,19,21,2,27,31]
 else:        
-    ilist =  [980, 1208, 1213, 1214, 181]#[17, 46, 69, 71,157,160,251, 258, 97,103,132, 192, 197,303,304,308,358,504, 634, 815, 972, 972, 980, 1208, 1213, 1214, 181] #17, 46, 69, 71,157,160,251, 258, 97,103,132,181, 192, 197,303,304,308,358,504,1208, 1213, 1214]# 
+    ilist =  [634, 815, 972, 975 ]#[17, 46, 69, 71,157,160,251, 258, 97,103,132, 192, 197,303,304,308,358,504, 634, 815, 972, 975, 980, 1208, 1213, 1214, 181] #17, 46, 69, 71,157,160,251, 258, 97,103,132,181, 192, 197,303,304,308,358,504,1208, 1213, 1214]# 
 save_model = True
 onehot=False
 
