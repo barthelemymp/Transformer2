@@ -251,23 +251,23 @@ for i in ilist:# range(1000,1500):
         # CE_matrix_Ardca = ARDCA_returnCE(pds_train2, pds_val2)
         # print("ardca", i, CE_matrix_Ardca.mean(), CE_matrix_Ardca.shape)
         # print("score", i)
-        # plt.rcParams["figure.figsize"] = 16,12
-        # famname = pdbtracker[pdbtracker['id'] == i].iloc[0]['name']
-        # x = dval2.min(dim=0)[0].cpu().numpy()
-        # print(np.sum(x==0), x.shape, np.sum(x==0)/x.shape[0])
-        # y =np.exp(CE_matrix.mean(dim=0).cpu().numpy())
-        # y2 =np.exp(CE_matrix_Ardca.mean(axis=0))
-        # #y3 = CE_matrix_Reyni.mean(dim=0).cpu().numpy()
-        # plt.xlabel("Hamming Distance from Training Set", fontsize=18)
-        # plt.ylabel("Cross Entropy Loss", fontsize=18)
-        # plt.title("Perplexity at Different Distance from Training Set for"+famname, fontsize=18)
-        # plt.scatter(x,y, alpha=0.3, color="blue", label="Transformer")
-        # plt.scatter(x,y2, alpha=0.3, color="orange", label="ardca")
-        # #plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
-        # plt.tick_params(axis='both', labelsize=18)
-        # plt.legend(fontsize=18)
-        # plt.savefig("distancePP_compare"+str(i)+".pdf")
-        # plt.clf()
+        plt.rcParams["figure.figsize"] = 16,12
+        famname = pdbtracker[pdbtracker['id'] == i].iloc[0]['name']
+        x = dval2.min(dim=0)[0].cpu().numpy()
+        print(np.sum(x==0), x.shape, np.sum(x==0)/x.shape[0])
+        y =np.exp(CE_matrix.mean(dim=0).cpu().numpy())
+        #y2 =np.exp(CE_matrix_Ardca.mean(axis=0))
+        y3 = CE_matrix_Reyni.mean(dim=0).cpu().numpy()
+        plt.xlabel("Hamming Distance from Training Set", fontsize=18)
+        plt.ylabel("Cross Entropy Loss", fontsize=18)
+        plt.title("Perplexity at Different Distance from Training Set for"+famname, fontsize=18)
+        plt.scatter(x,y, alpha=0.3, color="blue", label="Transformer")
+        #plt.scatter(x,y2, alpha=0.3, color="orange", label="ardca")
+        plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
+        plt.tick_params(axis='both', labelsize=18)
+        plt.legend(fontsize=18)
+        plt.savefig("distancePPblabla_compare"+str(i)+".pdf")
+        plt.clf()
         
         
         
