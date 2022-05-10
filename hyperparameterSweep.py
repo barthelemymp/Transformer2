@@ -77,7 +77,7 @@ parameters_dict = {
         },
     
     'dropout': {
-          'values': [0.5, 0.8]
+          'values': [0.1]
         },
     
     'lr': {
@@ -85,7 +85,7 @@ parameters_dict = {
         },
     
     'weight_decay': {
-          'values': [0.0]#, 0.3, 0.5, 0.7]
+          'values': [0.0, 0.3, 0.5, 0.7]
         },
     
     'fam': {
@@ -224,26 +224,26 @@ def train(config=None):
         
         
         
-        if plotDCA:
-            tempFile=next(tempfile._get_candidate_names())+".npy"
-            mode = "inter"
-            #### getlist
-            pdbtracker = pd.read_csv("pdbtracker.csv")
-            pdblist, chain1list, chain2list = getlists(pdbtracker, i)
-            np.save("pdblisttemph"+str(i)+".npy", pdblist)
-            np.save("chain1listtemph"+str(i)+".npy", chain1list)
-            np.save("chain2listtemph"+str(i)+".npy", chain2list)
-            hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
-            tempTrainr = writefastafrompds(pds_train)
-            tempTrain=tempTrainr+"joined.faa"
-            output = subprocess.check_output(["stdbuf", "-oL", "julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
-            print(output)
-            ppvO = np.load(tempFile)
-            x_values = np.array(range(1,len(ppvO)+1))
-            data = [[x, y] for (x, y) in zip(x_values, ppvO)]
-            table = wandb.Table(data=data, columns = ["x", "y"])
-            wandb.log({"PPV original" : wandb.plot.line(table, "x", "y",
-                       title="PPV original")})
+        # if plotDCA:
+        #     tempFile=next(tempfile._get_candidate_names())+".npy"
+        #     mode = "inter"
+        #     #### getlist
+        #     pdbtracker = pd.read_csv("pdbtracker.csv")
+        #     pdblist, chain1list, chain2list = getlists(pdbtracker, i)
+        #     np.save("pdblisttemph"+str(i)+".npy", pdblist)
+        #     np.save("chain1listtemph"+str(i)+".npy", chain1list)
+        #     np.save("chain2listtemph"+str(i)+".npy", chain2list)
+        #     hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
+        #     tempTrainr = writefastafrompds(pds_train)
+        #     tempTrain=tempTrainr+"joined.faa"
+        #     output = subprocess.check_output(["stdbuf", "-oL", "julia", "contactPlot_merged.jl", tempTrain, "pdblisttemp.npy", "chain1listtemp.npy", "chain2listtemp.npy", hmmRadical, tempFile, mode])
+        #     print(output)
+        #     ppvO = np.load(tempFile)
+        #     x_values = np.array(range(1,len(ppvO)+1))
+        #     data = [[x, y] for (x, y) in zip(x_values, ppvO)]
+        #     table = wandb.Table(data=data, columns = ["x", "y"])
+        #     wandb.log({"PPV original" : wandb.plot.line(table, "x", "y",
+        #                title="PPV original")})
         
         
         
@@ -316,26 +316,33 @@ def train(config=None):
                 # scoHTrain = scipy.optimize.linear_sum_assignment(scoreHungarianTrain)
                 # scoreMatchingTrain = sum(scoHTrain[0]==scoHTrain[1])
                 wandb.log({ "scoreMatching Val": scoreMatchingVal, "scoreMatchingValClose": scoreMatchingValClose, "scoreMatchingVal Far": scoreMatchingValFar,"epoch":epoch})
+                if epoch%1000==0:
+                    if save_model:
+                        checkpoint = {
+                            "state_dict": model.state_dict(),
+                            "optimizer": optimizer.state_dict(),
+                        }
+                        save_checkpoint(checkpoint, filename="models/LargeL2/Large_fam"+str(i)+"_wd"+str(config.weight_decay)+"_epoch"+str(epoch)+".pth.tar")
+                        print("saved")
+            # if epoch==4000:
+            #     mode = "inter"
+            #     #### getlist
+            #     pdbtracker = pd.read_csv("pdbtracker.csv")
+            #     pdblist, chain1list, chain2list = getlists(pdbtracker, i)
+            #     hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
                 
-            if epoch==4000:
-                mode = "inter"
-                #### getlist
-                pdbtracker = pd.read_csv("pdbtracker.csv")
-                pdblist, chain1list, chain2list = getlists(pdbtracker, i)
-                hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
-                
-                ppvO = PPV_from_pds(pds_train, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
+            #     ppvO = PPV_from_pds(pds_train, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
                 
                 
-                sampled = sampleDataset(model, pds_train, len_output, multiplicative =5)
-                ppv = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
+            #     sampled = sampleDataset(model, pds_train, len_output, multiplicative =5)
+            #     ppv = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
                     
                     
-                x_values = np.array(range(1,len(ppv)+1))
-                data = [[x, y] for (x, y) in zip(x_values, ppv)]
-                table = wandb.Table(data=data, columns = ["x", "y"])
-                wandb.log({"PPV"+str(epoch)+"_"+str(i) : wandb.plot.line(table, "x", "y",
-                           title="Custom Y vs X Line Plot"), "epoch":epoch})
+            #     x_values = np.array(range(1,len(ppv)+1))
+            #     data = [[x, y] for (x, y) in zip(x_values, ppv)]
+            #     table = wandb.Table(data=data, columns = ["x", "y"])
+            #     wandb.log({"PPV"+str(epoch)+"_"+str(i) : wandb.plot.line(table, "x", "y",
+            #                title="Custom Y vs X Line Plot"), "epoch":epoch})
 
 
 sweep_id = wandb.sweep(sweep_config, project="HyperNew"+str(i))
