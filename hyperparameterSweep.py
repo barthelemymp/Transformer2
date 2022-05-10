@@ -32,7 +32,7 @@ datasettype= "Domains"
 plotDCA = False
 import wandb
 wandb.login()
-torch.set_num_threads(8)
+torch.set_num_threads(3)
 sweep_config = {
     'method': 'grid'
     }
