@@ -155,7 +155,7 @@ for i in ilist:# range(1000,1500):
         pds_train2 = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
         pds_test2 = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
         pds_val2 = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
-        ARDCA_saveAllmatrix(pdsTrain, pdsVal, tempScoreH, tempScoreAcc, tempScoreCE)
+        ARDCA_saveAllmatrix(pds_train2, pds_val2, tempScoreH, tempScoreAcc, tempScoreCE)
         print("score", i)
 
         # for siz in range(10, len(pds_val), 10):
