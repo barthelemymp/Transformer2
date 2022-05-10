@@ -30,6 +30,7 @@ family = str(sys.argv[1])
 i = int(family)
 datasettype= "Domains"
 plotDCA = False
+save_model = True
 import wandb
 wandb.login()
 torch.set_num_threads(3)
