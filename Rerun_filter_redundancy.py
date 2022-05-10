@@ -42,7 +42,11 @@ Unalign = False
 onehot=False
 wd=0.0
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-ilist = [ 46,17, 69,71, 97, 192]#, 251,258, 308, 358, 975, 972, 980, 1208, 1213, 1214,]
+#ilist = [ 46,17, 69,71, 97, 192]#, 251,258, 308, 358, 975, 972, 980, 1208, 1213, 1214,]
+ilist = [ 258, 308, 358]
+# ilist = [975, 972, 980, 1208]
+# ilist = [1213, 251,1214]
+
 itodo = [504, 304,634,132,181,103,157,160,197,303, 815,504] 
 save_model = False
 onehot=False
