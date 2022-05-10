@@ -78,9 +78,9 @@ def ARDCA(pdsTrain, pdsTest, pdsVal):
     acctrain = float(ttacc[0].split('(')[-1])
     acctest = float(ttacc[1])
     accval = float(ttacc[2].split(')')[0])
-    # scoreHungarianVal = np.load(tempScoreH)
-    # scoHVal = scipy.optimize.linear_sum_assignment(scoreHungarianVal)
-    scoreMatchingVal =0# sum(scoHVal[0]==scoHVal[1])
+    scoreHungarianVal = np.load(tempScoreH)
+    scoHVal = scipy.optimize.linear_sum_assignment(scoreHungarianVal)
+    scoreMatchingVal = sum(scoHVal[0]==scoHVal[1])
     # os.remove(tempScoreH)
     return CEtrain, CEtest, CEval, acctrain, acctest, accval, scoreMatchingVal
     
@@ -110,6 +110,15 @@ def ARDCA_returnmatrix(pdsTrain, pdsTest, pdsVal):
     os.remove(tempScoreH)
     return scoreHungarianVal
     
+def ARDCA_saveAllmatrix(pdsTrain, pdsVal, tempScoreH, tempScoreAcc, tempScoreCE):
+    tempTrain = writefastafrompds(pdsTrain)
+    tempVal = writefastafrompds(pdsVal)
+    os.system("export JULIA_NUM_THREADS=$(nproc --all)")
+    output = subprocess.check_output(["julia", "ardca_returnM.jl", tempTrain, tempVal, tempScoreH, tempScoreAcc, tempScoreCE])
+    print(output)
+    removetemp(tempTrain)
+    removetemp(tempVal)
+    return 
     
 def ARDCA_timeit(pdsTrain, pdsVal):
     tempTrain = writefastafrompds(pdsTrain)

@@ -16,6 +16,7 @@ function computeCrossEntropy(arnet::ArNet, testProt::String, testTrans::String)
 	@show size(Z_Prot)[2], size(Z_Trans)[2]
 	@assert size(Z_Prot)[2] == size(Z_Trans)[2]
 	CE_mat = zeros(size(Z_Trans)[1]-1, size(Z_Trans)[2])  #sequence_length * nsequences
+	Acc_mat = zeros(size(Z_Trans)[1]-1, size(Z_Trans)[2])
 	accerror = zeros(size(Z_Prot)[2])
     @threads for m in 1:size(Z_Trans)[2] # For every proteins
 		inputProt = Z_Prot[:,m]
@@ -37,11 +38,13 @@ function computeCrossEntropy(arnet::ArNet, testProt::String, testTrans::String)
 			pred = argmax(p)
 			if pred != TotalProt[site+1]
 				accerror[m]+=1
+				Acc_mat[transpos ,m] = 1
 			end
 			CE_mat[transpos ,m] = - log(p[TotalProt[site+1]])
+			
 		end
 	end
-	return CE_mat, sum(accerror)/size(Z_Prot)[2]
+	return CE_mat, Acc_mat, sum(accerror)/size(Z_Prot)[2]
 end
 
 function computeCrossEntropyPairs(arnet::ArNet, testProt::String, testTrans::String)
@@ -87,10 +90,6 @@ function parse_commandline()
 		arg_type = String
         required = true
 
-	"pathfastatest"
-        help = "PDB path"
-		arg_type = String
-        required = true
 
 	"pathfastaval"
         help = "PDB chain ID"
@@ -100,6 +99,16 @@ function parse_commandline()
 	"pathscoreH"
         help = "score Hungarian"
 		arg_type = String
+        required = true
+        
+   	"pathscoreAcc"
+        help = "score Hungarian"
+   		arg_type = String
+        required = true
+           
+   	"pathscoreCE"
+        help = "score Hungarian"
+   		arg_type = String
         required = true
     end
     return parse_args(s)
@@ -112,10 +121,10 @@ for (arg,val) in parsed_args
 end
 
 pathfastatrain = parsed_args["pathfastatrain"]
-pathfastatest = parsed_args["pathfastatest"]
 pathfastaval = parsed_args["pathfastaval"]
 pathscoreH = parsed_args["pathscoreH"]
-
+pathscoreCE = parsed_args["pathscoreCE"]
+pathscoreAcc = parsed_args["pathscoreAcc"]
 
 
 # pathfastatrain = "/home/Datasets/DomainsInter/processed/combined_MSA_ddi_$(k)_joined_train_"
@@ -133,14 +142,16 @@ pathscoreH = parsed_args["pathscoreH"]
 #arnet,arvar=ardca(pathfastatrain*"joined.faa", verbose=false, lambdaJ=0.02,lambdaH=0.001; permorder=:NATURAL)
 arnet,arvar=ardca(pathfastatrain*"joined.faa", verbose=false, lambdaJ=0.0001,lambdaH=0.0001; permorder=:NATURAL)
 
-CE_ar_train, acctrain = computeCrossEntropy(arnet, pathfastatrain*"1.faa", pathfastatrain*"2.faa")
+#CE_ar_train, acctrain = computeCrossEntropy(arnet, pathfastatrain*"1.faa", pathfastatrain*"2.faa")
+#CE_ar_test, acctest = computeCrossEntropy(arnet, pathfastatest*"1.faa", pathfastatest*"2.faa")
 
-CE_ar_test, acctest = computeCrossEntropy(arnet, pathfastatest*"1.faa", pathfastatest*"2.faa")
-
-CE_ar_val, accval = computeCrossEntropy(arnet, pathfastaval*"1.faa", pathfastaval*"2.faa")
+CE_ar_val, Acc_mat, accval = computeCrossEntropy(arnet, pathfastaval*"1.faa", pathfastaval*"2.faa")
 
 scoreHungarian = computeCrossEntropyPairs(arnet, pathfastaval*"1.faa", pathfastaval*"2.faa")
+npzwrite(pathscoreCE, CE_ar_val)
 npzwrite(pathscoreH, scoreHungarian)
+npzwrite(pathscoreAcc, Acc_mat)
+
 # temp2train = tempname()
 # tempjoinedtrain = tempname()
 # temp2test = tempname()
@@ -157,6 +168,6 @@ npzwrite(pathscoreH, scoreHungarian)
 # CE_ar_val_R = computeCrossEntropy(arnetr, pathfastaval*"1.faa", temp2val)
 
 # @show (ceprofileTrain, ceprofileTest, ceprofileVal)
-@show (mean(CE_ar_train), mean(CE_ar_test), mean(CE_ar_val))
-@show (acctrain, acctest, accval)
+#@show (mean(CE_ar_train), mean(CE_ar_test), mean(CE_ar_val))
+#@show (acctrain, acctest, accval)
 # @show (mean(CE_ar_train_R), mean(CE_ar_test_R), mean(CE_ar_val_R))
