@@ -115,13 +115,8 @@ test_path = pathtoFolder + name +'_test.csv'
 #            title="PPV original")})
 
 
-
-
-
-
-
 ####### REG
-alpha = -0.7
+alpha = -0.85
 wd = 0.0
 ##### Training simple 
 pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
@@ -183,7 +178,7 @@ model = Transformer(
 ).to(device)
 
 #whyyy 'cpu?'
-wandb.init(project="New Reyni", entity="barthelemymp")
+wandb.init(project="New Reyni 2", entity="barthelemymp")
 config_dict = {
   "num_layers": num_encoder_layers,
   "embedding":embedding_size,
@@ -317,44 +312,46 @@ for epoch in range(restartepoch, num_epochs+1):
     
     
     if epoch%200==0:
-        criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex,reduction='none')#ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
-        model.eval()
-        criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex,reduction='none')#ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
-        scoreHungarianVal = HungarianMatchingBS(pds_val, model,100)
-        scoHVal = scipy.optimize.linear_sum_assignment(scoreHungarianVal)
-        scoreMatchingVal = sum(scoHVal[0]==scoHVal[1])
-        scoreMatchingValClose = sum((scoHVal[0]==scoHVal[1])[maskValclose])
-        scoreMatchingValFar = sum((scoHVal[0]==scoHVal[1])[maskValfar])
-        # scoreHungarianTrain = HungarianMatchingBS(pds_train, model,100)
-        # scoHTrain = scipy.optimize.linear_sum_assignment(scoreHungarianTrain)
-        # scoreMatchingTrain = sum(scoHTrain[0]==scoHTrain[1])
-        wandb.log({ "scoreMatching Val": scoreMatchingVal, "scoreMatchingValClose": scoreMatchingValClose, "scoreMatchingVal Far": scoreMatchingValFar,"epoch":epoch})
-        if save_model:
-            checkpoint = {
-                "state_dict": model.state_dict(),
-                "optimizer": optimizer.state_dict(),
-            }
-            save_checkpoint(checkpoint, filename="Renyi_"+str(ncontrastive)+"_fam"+str(i)+"_alpha"+str(alpha)+".pth.tar")
-            print("saved")
+        if epoch>1:
+            criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex,reduction='none')#ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
+            model.eval()
+            criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex,reduction='none')#ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
+            scoreHungarianVal = HungarianMatchingBS(pds_val, model,100)
+            scoHVal = scipy.optimize.linear_sum_assignment(scoreHungarianVal)
+            scoreMatchingVal = sum(scoHVal[0]==scoHVal[1])
+            scoreMatchingValClose = sum((scoHVal[0]==scoHVal[1])[maskValclose])
+            scoreMatchingValFar = sum((scoHVal[0]==scoHVal[1])[maskValfar])
+            # scoreHungarianTrain = HungarianMatchingBS(pds_train, model,100)
+            # scoHTrain = scipy.optimize.linear_sum_assignment(scoreHungarianTrain)
+            # scoreMatchingTrain = sum(scoHTrain[0]==scoHTrain[1])
+            wandb.log({ "scoreMatching Val": scoreMatchingVal, "scoreMatchingValClose": scoreMatchingValClose, "scoreMatchingVal Far": scoreMatchingValFar,"epoch":epoch})
+            if epoch%1000==0:
+                if save_model:
+                    checkpoint = {
+                        "state_dict": model.state_dict(),
+                        "optimizer": optimizer.state_dict(),
+                    }
+                    save_checkpoint(checkpoint, filename="models/Renyi/Renyi_"+str(ncontrastive)+"_fam"+str(i)+"_alpha"+str(alpha)+"_epoch"+str(epoch)+".pth.tar")
+                    print("saved")
 
-    if epoch==4000:
-        mode = "inter"
-        #### getlist
-        pdbtracker = pd.read_csv("pdbtracker.csv")
-        pdblist, chain1list, chain2list = getlists(pdbtracker, i)
-        hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
+    # if epoch==4000:
+    #     mode = "inter"
+    #     #### getlist
+    #     pdbtracker = pd.read_csv("pdbtracker.csv")
+    #     pdblist, chain1list, chain2list = getlists(pdbtracker, i)
+    #     hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
     
-        ppvO = PPV_from_pds(pds_train, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
+    #     ppvO = PPV_from_pds(pds_train, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
         
-        sampled = sampleDataset(model, pds_train, len_output, multiplicative =5)
-        ppv = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
+    #     sampled = sampleDataset(model, pds_train, len_output, multiplicative =5)
+    #     ppv = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
             
             
-        x_values = np.array(range(1,len(ppv)+1))
-        data = [[x, y] for (x, y) in zip(x_values, ppv)]
-        table = wandb.Table(data=data, columns = ["x", "y"])
-        wandb.log({"PPV"+str(epoch)+"_"+str(i) : wandb.plot.line(table, "x", "y",
-                   title="Custom Y vs X Line Plot"), "epoch":epoch})
+    #     x_values = np.array(range(1,len(ppv)+1))
+    #     data = [[x, y] for (x, y) in zip(x_values, ppv)]
+    #     table = wandb.Table(data=data, columns = ["x", "y"])
+    #     wandb.log({"PPV"+str(epoch)+"_"+str(i) : wandb.plot.line(table, "x", "y",
+    #                title="Custom Y vs X Line Plot"), "epoch":epoch})
     
         
     
