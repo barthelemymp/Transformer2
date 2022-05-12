@@ -256,8 +256,8 @@ for i in ilist:# range(1000,1500):
         x = dval2.min(dim=0)[0].cpu().numpy()
         print(np.sum(x==0), x.shape, np.sum(x==0)/x.shape[0])
         y =np.exp(CE_matrix.mean(dim=0).cpu().numpy())
-        #y2 =np.exp(CE_matrix_Ardca.mean(axis=0))
-        y3 = np.exp(CE_matrix_Reyni.mean(dim=0).cpu().numpy())
+        y2 =np.exp(CE_matrix_Ardca.mean(axis=0))
+        #y3 = np.exp(CE_matrix_Reyni.mean(dim=0).cpu().numpy())
         plt.xlabel("Hamming Distance from Training Set", fontsize=18)
         plt.ylabel("Cross Entropy Loss", fontsize=18)
         plt.title("Perplexity at Different Distance from Training Set for"+famname, fontsize=18)
@@ -266,7 +266,10 @@ for i in ilist:# range(1000,1500):
         #plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
         plt.tick_params(axis='both', labelsize=18)
         plt.legend(fontsize=18)
-        plt.savefig("distancePPblabla_compare"+str(i)+".pdf")
+        plt.savefig("distance_compare"+str(i)+".pdf")
+        # plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
+        # plt.legend(fontsize=18)
+        # plt.savefig("distance_compare_R"+str(i)+".pdf")
         plt.clf()
         
         
