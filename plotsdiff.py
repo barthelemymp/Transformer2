@@ -266,7 +266,7 @@ for i in ilist:# range(1000,1500):
         #plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
         plt.tick_params(axis='both', labelsize=18)
         plt.legend(fontsize=18)
-        plt.savefig("distance_compare"+str(i)+".pdf")
+        plt.savefig("distance_compare"+str(i)+".pdf",bbox_inches='tight')
         # plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
         # plt.legend(fontsize=18)
         # plt.savefig("distance_compare_R"+str(i)+".pdf")

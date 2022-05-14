@@ -173,7 +173,7 @@ for i in family_list:
     plt.xticks(fontsize=18)
     plt.legend(fontsize=18)
     plt.xscale("log")
-    plt.savefig("ppvS_paper"+str(i)+".png")
+    plt.savefig("ppvS_paper"+str(i)+".png",bbox_inches='tight')
     plt.clf()
 
 
