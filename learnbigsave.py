@@ -138,25 +138,25 @@ for downsamples in downsampleslist:
     }
     wandb.config.update(config_dict) 
     
-    tempFile=next(tempfile._get_candidate_names())+".npy"
-    mode = "inter"
-    #### getlist
-    pdbtracker = pd.read_csv("pdbtracker.csv")
-    pdblist, chain1list, chain2list = getlists(pdbtracker, i)
-    np.save("pdblisttemph"+str(i)+".npy", pdblist)
-    np.save("chain1listtemph"+str(i)+".npy", chain1list)
-    np.save("chain2listtemph"+str(i)+".npy", chain2list)
-    hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
-    tempTrainr = writefastafrompds(pds_train)
-    tempTrain=tempTrainr+"joined.faa"
-    output = subprocess.check_output(["stdbuf", "-oL", "julia", "contactPlot_merged.jl", tempTrain, "pdblisttemph"+str(i)+".npy", "chain1listtemph"+str(i)+".npy", "chain2listtemph"+str(i)+".npy", hmmRadical, tempFile, mode])
-    print(output)
-    ppvO = np.load(tempFile)
-    x_values = np.array(range(1,len(ppvO)+1))
-    data = [[x, y] for (x, y) in zip(x_values, ppvO)]
-    table = wandb.Table(data=data, columns = ["x", "y"])
-    wandb.log({"PPV original" : wandb.plot.line(table, "x", "y",
-               title="PPV original")})
+    # tempFile=next(tempfile._get_candidate_names())+".npy"
+    # mode = "inter"
+    # #### getlist
+    # pdbtracker = pd.read_csv("pdbtracker.csv")
+    # pdblist, chain1list, chain2list = getlists(pdbtracker, i)
+    # np.save("pdblisttemph"+str(i)+".npy", pdblist)
+    # np.save("chain1listtemph"+str(i)+".npy", chain1list)
+    # np.save("chain2listtemph"+str(i)+".npy", chain2list)
+    # hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
+    # tempTrainr = writefastafrompds(pds_train)
+    # tempTrain=tempTrainr+"joined.faa"
+    # output = subprocess.check_output(["stdbuf", "-oL", "julia", "contactPlot_merged.jl", tempTrain, "pdblisttemph"+str(i)+".npy", "chain1listtemph"+str(i)+".npy", "chain2listtemph"+str(i)+".npy", hmmRadical, tempFile, mode])
+    # print(output)
+    # ppvO = np.load(tempFile)
+    # x_values = np.array(range(1,len(ppvO)+1))
+    # data = [[x, y] for (x, y) in zip(x_values, ppvO)]
+    # table = wandb.Table(data=data, columns = ["x", "y"])
+    # wandb.log({"PPV original" : wandb.plot.line(table, "x", "y",
+    #            title="PPV original")})
     
     step = 0
     step_ev = 0
@@ -172,7 +172,7 @@ for downsamples in downsampleslist:
         
     optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=wd)
     pad_idx = "<pad>"#protein.vocab.stoi["<pad>"]
-    criterion = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"])
+    criterion = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex)
     
     for epoch in range(num_epochs+1):
         print(f"[Epoch {epoch} / {num_epochs}]")
@@ -254,9 +254,9 @@ for downsamples in downsampleslist:
         
         
         if epoch%200==0:
-            criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
+            criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
             model.eval()
-            criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.SymbolMap["<pad>"], reduction='none')
+            criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
             scoreHungarianVal = HungarianMatchingBS(pds_val, model,100)
             scoHVal = scipy.optimize.linear_sum_assignment(scoreHungarianVal)
             scoreMatchingVal = sum(scoHVal[0]==scoHVal[1])
