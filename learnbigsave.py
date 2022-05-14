@@ -43,7 +43,7 @@ forward_expansion = 2048
 num_epochs= 7000
 src_vocab_size = 25
 trg_vocab_size = 25
-dropout = 0.2
+dropout = 0.3
 wd = 0.0
 alpha = 0.0
 ##### Training simple 
@@ -97,7 +97,7 @@ for downsamples in downsampleslist:
     
     # Model hyperparameters
     
-    src_pad_idx = pds_train.SymbolMap["<pad>"]#"<pad>"# protein.vocab.stoi["<pad>"] 
+    src_pad_idx =  pds_train.padIndex#"<pad>"# protein.vocab.stoi["<pad>"] 
     src_position_embedding = PositionalEncoding(embedding_size, max_len=len_input,device=device)
     trg_position_embedding = PositionalEncoding(embedding_size, max_len=len_output, device=device)
             
