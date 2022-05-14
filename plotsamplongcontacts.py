@@ -162,6 +162,7 @@ for i in family_list:
     sampled = sampleDataset(model, pds_train, len_output, multiplicative =8)
     ppvS8 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
     x = np.array(range(1,len(ppvO)+1))
+    plt.rcParams["figure.figsize"] = 16,12
     plt.plot(x,ppvO, label="Original Dataset")
     # plt.plot(x,ppvS1, label="sampled*1", alpha=0.5)
     # plt.plot(x,ppvS3, label="sampled*3", alpha=0.5)
