@@ -81,7 +81,7 @@ onehot=False
 
 for i in family_list:
     
-    modelpath = "TransSimple_fam"+str(i)+".pth.tar"
+    modelpath = "TransSimple2_fam"+str(i)+".pth.tar"
     
     pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
     inputsize, outputsize = getLengthfromCSV(pathTofile)
