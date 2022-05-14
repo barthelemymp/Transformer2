@@ -43,8 +43,8 @@ forward_expansion = 2048
 num_epochs= 7000
 src_vocab_size = 25
 trg_vocab_size = 25
-dropout = 0.10
-wd = 0.01
+dropout = 0.2
+wd = 0.0
 alpha = 0.0
 ##### Training simple 
 # pathtoFolder = "/home/Datasets/DomainsInter/processed/"#"/home/feinauer/Datasets/DomainsInter/processed/"
