@@ -86,7 +86,7 @@ parameters_dict = {
         },
     
     'weight_decay': {
-          'values': [0.5, 0.7]
+          'values': [0.7]
         },
     
     'fam': {
