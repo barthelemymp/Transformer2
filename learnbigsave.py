@@ -43,7 +43,7 @@ forward_expansion = 2048
 num_epochs= 7000
 src_vocab_size = 25
 trg_vocab_size = 25
-dropout = 0.7
+dropout = 0.3
 wd = 0.0
 alpha = 0.0
 ##### Training simple 
@@ -74,7 +74,7 @@ maskValclose = (dval1+dval2).min(dim=0)[0]<(dval1+dval2).min(dim=0)[0].median()
 maskValclose = maskValclose.cpu().numpy()
 maskValfar = (dval1+dval2).min(dim=0)[0]>=(dval1+dval2).min(dim=0)[0].median()
 maskValfar = maskValfar.cpu().numpy()
-downsampleslist = [100, 500, 1000, 2000, 3000, 4000, 5000] #
+downsampleslist = [500, 1000, 2000, 3000, 4000, 5000] #
 # ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH = ARDCA(pds_train, pds_test, pds_val)
 # print("score", i)
 # print(i, ardcaTrain, ardcaTest, ardcaVal, acctrain, acctest, accval, ardcascoreH)
@@ -82,12 +82,6 @@ for downsamples in downsampleslist:
     pds_train = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
     pds_train.downsample(downsamples)
 
-
-    
-    
-    
-    
-    
     train_iterator = DataLoader(pds_train, batch_size=batch_size,
                     shuffle=True, num_workers=0, collate_fn=default_collate)
     test_iterator = DataLoader(pds_test, batch_size=batch_size,
@@ -266,43 +260,43 @@ for downsamples in downsampleslist:
             # scoHTrain = scipy.optimize.linear_sum_assignment(scoreHungarianTrain)
             # scoreMatchingTrain = sum(scoHTrain[0]==scoHTrain[1])
             wandb.log({ "scoreMatching Val": scoreMatchingVal, "scoreMatchingValClose": scoreMatchingValClose, "scoreMatchingVal Far": scoreMatchingValFar,"epoch":epoch})
-        if epoch%7000==6999:
+        # if epoch%7000==6999:
 
-            max_len = len_output
-            pds_sample = copy.deepcopy(pds_train)
-            batchIndex = makebatchList(len(pds_sample), 300)
-            for batchI in batchIndex:
-                sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-                # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-                pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-                pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-            for batchI in batchIndex:
-                sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-                # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-                pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-                pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-            for batchI in batchIndex:
-                sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-                # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-                pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-                pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
-            for batchI in batchIndex:
-                sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
-                # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
-                pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
-                pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
+        #     max_len = len_output
+        #     pds_sample = copy.deepcopy(pds_train)
+        #     batchIndex = makebatchList(len(pds_sample), 300)
+        #     for batchI in batchIndex:
+        #         sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+        #         # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+        #         pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
+        #         pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
+        #     for batchI in batchIndex:
+        #         sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+        #         # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+        #         pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
+        #         pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
+        #     for batchI in batchIndex:
+        #         sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+        #         # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+        #         pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
+        #         pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
+        #     for batchI in batchIndex:
+        #         sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
+        #         # pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
+        #         pds_sample.tensorOUT=torch.cat([pds_sample.tensorOUT,sampled.max(dim=2)[1] ],dim=1)
+        #         pds_sample.tensorIN=torch.cat([pds_sample.tensorIN,pds_sample.tensorIN[:,batchI] ], dim=1)
                 
                 
-            tempTrainr = writefastafrompds(pds_sample)
-            tempTrain=tempTrainr+"joined.faa"
-            output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemph"+str(i)+".npy", "chain1listtemph"+str(i)+".npy", "chain2listtemph"+str(i)+".npy", hmmRadical, tempFile, mode])
-            print(output)
-            ppv = np.load(tempFile)
-            x_values = np.array(range(1,len(ppv)+1))
-            data = [[x, y] for (x, y) in zip(x_values, ppv)]
-            table = wandb.Table(data=data, columns = ["x", "y"])
-            wandb.log({"PPV"+str(epoch) : wandb.plot.line(table, "x", "y",
-                       title="Custom Y vs X Line Plot"), "epoch":epoch})
+        #     tempTrainr = writefastafrompds(pds_sample)
+        #     tempTrain=tempTrainr+"joined.faa"
+        #     output = subprocess.check_output(["julia", "contactPlot_merged.jl", tempTrain, "pdblisttemph"+str(i)+".npy", "chain1listtemph"+str(i)+".npy", "chain2listtemph"+str(i)+".npy", hmmRadical, tempFile, mode])
+        #     print(output)
+        #     ppv = np.load(tempFile)
+        #     x_values = np.array(range(1,len(ppv)+1))
+        #     data = [[x, y] for (x, y) in zip(x_values, ppv)]
+        #     table = wandb.Table(data=data, columns = ["x", "y"])
+        #     wandb.log({"PPV"+str(epoch) : wandb.plot.line(table, "x", "y",
+        #                title="Custom Y vs X Line Plot"), "epoch":epoch})
     
         
     
