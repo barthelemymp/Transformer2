@@ -23,7 +23,7 @@ print("import done")
 #torch.functional.one_hot
 #pathtoFolder = "/home/feinauer/Datasets/DomainsInter/processed/"
 torch.set_num_threads(4)
-pathtoFolder = "/home/Datasets/DomainsInter/processed/"
+pathtoFolder = "/Data/DomainsInter/processed/"
 count = 0
 # Model hyperparameters--> CAN BE CHANGED
 batch_size = 32
@@ -32,8 +32,8 @@ num_encoder_layers = 2
 num_decoder_layers = 2
 dropout = 0.10
 forward_expansion = 2048
-src_vocab_size = 25#len(protein.vocab) 
-trg_vocab_size = 25#len(protein_trans.vocab) 
+src_vocab_size = 21#len(protein.vocab) 
+trg_vocab_size = 21#len(protein_trans.vocab) 
 embedding_size = 55#len(protein.vocab) #it should be 25. 21 amino, 2 start and end sequence, 1 for pad, and 1 for unknown token
 
 repartition = [0.7, 0.15, 0.15]
@@ -50,11 +50,11 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
 #             ilist.append(i)
             
-ilist = [17, 46, 69, 258, 97,103,132, 192, 197,972, 980, 1208, 1213, 1214, 71,157,160,251, 303,304,308,358,504, 634, 815, 972, 972, 980,181] 
+ilist = [17, 46, 69, 258, 97,103,132, 192, 197,972, 980, 1208, 1213, 1214, 71,157,160,251, 303,304,308,358,504, 634, 815, 972, 181] 
 save_model = False
 onehot=False
 for i in ilist:# range(1000,1500):
-    modelpath = "TransSimple_fam"+str(i)+".pth.tar"
+    modelpath = "TransSimple2_fam"+str(i)+".pth.tar"
     if os.path.isfile(modelpath):
         
         
@@ -115,7 +115,7 @@ for i in ilist:# range(1000,1500):
         ).to(device)
         
         #whyyy 'cpu?'
-        wandb.init(project="Trans Matching 2", entity="barthelemymp")
+        wandb.init(project="Trans Matching 3", entity="barthelemymp")
         config_dict = {
           "num_layers": num_encoder_layers,
           "embedding":embedding_size,
@@ -155,12 +155,14 @@ for i in ilist:# range(1000,1500):
         scoreHungarianVal = HungarianMatchingBS(pds_val, model,100)
         
 
-        pds_train2 = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
-        pds_test2 = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
-        pds_val2 = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
-        scoreHungarianVal_Ardca = ARDCA_returnmatrix(pds_train2, pds_test2, pds_val2)
+        # pds_train2 = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        # pds_test2 = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        # pds_val2 = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        scoreHungarianVal_Ardca = np.load("/Data/Transformer2/savedScore/ardcaHungarian_"+str(i)+".npy")#ARDCA_returnmatrix(pds_train2, pds_test2, pds_val2)
         print("score", i)
-
+        listdim = list(range(10, len(pds_val), 10))
+        if listdim[-1] != len(pds_val):
+            listdim.append(len(pds_val))
         for siz in range(10, len(pds_val), 10):
             subscoreH = scoreHungarianVal[:siz, :siz]
             scoHVal = scipy.optimize.linear_sum_assignment(subscoreH)
