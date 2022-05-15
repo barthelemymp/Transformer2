@@ -71,7 +71,7 @@ Unalign = False
 onehot=False
 wd=0.0
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device =  torch.device("cpu")# torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
 #             ilist.append(i)
             
@@ -88,7 +88,7 @@ for i in family_list:
     os.path.isfile(pathTofile)
     print("ddi", i, " is running")
     name = "combined_MSA_ddi_" +str(i)+"_joined"
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device =torch.device("cpu")#torch.device("cuda" if torch.cuda.is_available() else "cpu")
     #Dataset
     train_path = pathtoFolder + name +'_train.csv'
     val_path = pathtoFolder + name +'_val.csv'
@@ -129,7 +129,7 @@ for i in family_list:
         onehot=onehot,
     ).to(device)
     
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cpu")#torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(device)
     learning_rate = 5e-5
     
