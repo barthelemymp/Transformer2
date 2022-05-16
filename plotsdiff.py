@@ -278,7 +278,7 @@ for i in ilist:# range(1000,1500):
         # print("score", i)
         plt.rcParams["figure.figsize"] = 16,12
         fig, ax1 = plt.subplots()
-        # ax2 = ax1.twinx()
+        ax2 = ax1.twinx()
         
         famname = pdbtracker[pdbtracker['id'] == i].iloc[0]['name']
         x = dval2.min(dim=0)[0].cpu().numpy()
