@@ -278,7 +278,7 @@ for i in ilist:# range(1000,1500):
         # print("score", i)
         plt.rcParams["figure.figsize"] = 16,12
         fig, ax1 = plt.subplots()
-        ax2 = ax1.twinx()
+        # ax2 = ax1.twinx()
         
         famname = pdbtracker[pdbtracker['id'] == i].iloc[0]['name']
         x = dval2.min(dim=0)[0].cpu().numpy()
@@ -293,30 +293,30 @@ for i in ilist:# range(1000,1500):
 
         l1 = ax1.scatter(x,yce, alpha=0.3, color="blue", label="$\mathcal{PP}$ Transformer")
         l2 = ax1.scatter(x,y2ce, alpha=0.3, color="orange", label="$\mathcal{PP}$ arDCA")
-        ax2.set_ylim(0,1)
-        l3 = ax2.scatter(x,yacc, alpha=0.3, color="c", marker=",", label="$\mathcal{A}$ Transformer")
-        l4 = ax2.scatter(x,y2acc, alpha=0.3, color="r",marker=",", label="$\mathcal{A}$ arDCA")
+        # ax2.set_ylim(0,1)
+        # l3 = ax2.scatter(x,yacc, alpha=0.3, color="c", marker=",", label="$\mathcal{A}$ Transformer")
+        # l4 = ax2.scatter(x,y2acc, alpha=0.3, color="r",marker=",", label="$\mathcal{A}$ arDCA")
         
         
-        lns = (l1,l2 ,l3 ,l4)
-        labs = [l.get_label() for l in lns]
+        # lns = (l1,l2 ,l3 ,l4)
+        # labs = [l.get_label() for l in lns]
 
         # plt.xlabel("Hamming Distance from Training Set", fontsize=18)
         ax1.set_ylabel("$\mathcal{PP}$ - Perplexity", fontsize=18)
         # plt.title("Perplexity at Different Distance-  from Training Set for"+famname, fontsize=18)
         ax1.set_xlabel("Hamming Distance from Training Set", fontsize=18)
-        ax2.set_ylabel("$\mathcal{A}$ - Accuracy", fontsize=18)
-        plt.title("Accuracy and Perplexity at Different Distance from Training Set for"+famname, fontsize=18)
+        #ax2.set_ylabel("$\mathcal{A}$ - Accuracy", fontsize=18)
+        plt.title("Perplexity at Different Distance from Training Set for"+famname, fontsize=18)
 
         
         
         #plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
         ax1.tick_params(axis='both', labelsize=18)
         ax2.tick_params(axis='both', labelsize=18)
-        ax1.legend(lns, labs,fontsize=18, loc=6)
-        #ax2.legend(fontsize=18)
+        #ax1.legend(lns, labs,fontsize=18, loc=6)
+        ax1.legend(fontsize=18)
         #plt.savefig("distance_compareAcc"+str(i)+".pdf",bbox_inches='tight')
-        plt.savefig("distance_compareMerged"+str(i)+".pdf",bbox_inches='tight')
+        plt.savefig("distance_comparePP"+str(i)+".pdf",bbox_inches='tight')
         # plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
         # plt.legend(fontsize=18)
         # plt.savefig("distance_compare_R"+str(i)+".pdf")
