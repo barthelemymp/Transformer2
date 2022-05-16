@@ -35,8 +35,6 @@ def buildhmm(hmmout, ali):
     subprocess.run(["hmmbuild", "--symfrac","0.0", hmmout, ali])
 
 
-
-
 def getlists(df, fam):
     pdblist = list(df[df["id"]==fam]["pdb"])
     chain1list = list(df[df["id"]==fam]["chain1"])
@@ -45,7 +43,7 @@ def getlists(df, fam):
 
 
 # 17, 46, 69, 71,157,160,251, 258, 97,103,132,181, 192, 197,303,304,308,358,504,
-family_list = [17, 46, 69, 71, 97,103,132,157,160,181, 192, 197,251, 258,303,304,308,358,504,634, 815, 972,975, 980, 1208, 1213, 1214] 
+family_list = [17, 46, 69, 71, 97,103,132,157,160,181, 192, 197,251, 258,303,304,308,358,504, 815, 972,975, 980, 1208, 1213, 1214,634] 
 pdbtracker = pd.read_csv("pdbtracker.csv")
 
 
@@ -166,7 +164,7 @@ for i in family_list:
     plt.plot(x,ppvO, label="Original Dataset")
     # plt.plot(x,ppvS1, label="sampled*1", alpha=0.5)
     # plt.plot(x,ppvS3, label="sampled*3", alpha=0.5)
-    plt.plot(x,ppvS8, label="Sampled Dataset with Transformer", alpha=0.5)
+    plt.plot(x,ppvS8, label="Sampled Dataset with Transformer")
     np.save("ppvo_"+str(i)+"npy",ppvO )
     np.save("ppv8_"+str(i)+"npy",ppvS8 )
     plt.title("Inter-Domain Contact Prediction:" + str(famname), fontsize=25)
