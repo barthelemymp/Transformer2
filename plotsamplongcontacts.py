@@ -45,7 +45,7 @@ def getlists(df, fam):
 
 
 # 17, 46, 69, 71,157,160,251, 258, 97,103,132,181, 192, 197,303,304,308,358,504,
-family_list = [634] 
+family_list = [17, 46, 69, 71, 97,103,132,157,160,181, 192, 197,251, 258,303,304,308,358,504,634, 815, 972,975, 980, 1208, 1213, 1214] 
 pdbtracker = pd.read_csv("pdbtracker.csv")
 
 
@@ -167,12 +167,14 @@ for i in family_list:
     # plt.plot(x,ppvS1, label="sampled*1", alpha=0.5)
     # plt.plot(x,ppvS3, label="sampled*3", alpha=0.5)
     plt.plot(x,ppvS8, label="Sampled Dataset with Transformer", alpha=0.5)
-    plt.title("Inter-Domain Contact Prediction:" + str(famname), fontsize=18)
-    plt.xlabel("Number of Predicted Pairs",fontsize=18)
-    plt.ylabel("Positive Predicted Value",fontsize=18)
-    plt.yticks(fontsize=18)
-    plt.xticks(fontsize=18)
-    plt.legend(fontsize=18)
+    np.save("ppvo_"+str(i)+"npy",ppvO )
+    np.save("ppv8_"+str(i)+"npy",ppvS8 )
+    plt.title("Inter-Domain Contact Prediction:" + str(famname), fontsize=25)
+    plt.xlabel("Number of Predicted Pairs",fontsize=25)
+    plt.ylabel("Positive Predicted Value",fontsize=25)
+    plt.yticks(fontsize=25)
+    plt.xticks(fontsize=25)
+    plt.legend(fontsize=25)
     plt.xscale("log")
     plt.savefig("ppvS_paper"+str(i)+".png",bbox_inches='tight')
     plt.clf()
