@@ -298,10 +298,10 @@ for i in ilist:# range(1000,1500):
         l4 = ax2.scatter(x,y2acc, alpha=0.3, color="orange",marker=",", label="$\mathcal{A}$ arDCA")
         
         # plt.xlabel("Hamming Distance from Training Set", fontsize=18)
-        ax1.ylabel("$\mathcal{PP}$ - Perplexity", fontsize=18)
+        ax1.set_ylabel("$\mathcal{PP}$ - Perplexity", fontsize=18)
         # plt.title("Perplexity at Different Distance-  from Training Set for"+famname, fontsize=18)
-        ax1.xlabel("Hamming Distance from Training Set", fontsize=18)
-        ax2.ylabel("$\mathcal{A}$ - Accuracy", fontsize=18)
+        ax1.set_xlabel("Hamming Distance from Training Set", fontsize=18)
+        ax2.set_ylabel("$\mathcal{A}$ - Accuracy", fontsize=18)
         plt.title("Accuracy and Perplexity at Different Distance from Training Set for"+famname, fontsize=18)
 
         
