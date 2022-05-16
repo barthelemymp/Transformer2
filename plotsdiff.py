@@ -272,7 +272,7 @@ for i in ilist:# range(1000,1500):
         # pds_test2 = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
         # pds_val2 = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
         # CE_matrix_Ardca = ARDCA_returnCE(pds_train2, pds_val2)
-        # CE_matrix_Ardca = np.load("/Data/Transformer2/savedScore/ardcaCE_"+str(i)+".npy")
+        CE_matrix_Ardca = np.load("/Data/Transformer2/savedScore/ardcaCE_"+str(i)+".npy")
         Acc_matrix_ardca = np.load("/Data/Transformer2/savedScore/ardcaAcc_"+str(i)+".npy")
         # print("ardca", i, CE_matrix_Ardca.mean(), CE_matrix_Ardca.shape)
         # print("score", i)
@@ -283,8 +283,8 @@ for i in ilist:# range(1000,1500):
         famname = pdbtracker[pdbtracker['id'] == i].iloc[0]['name']
         x = dval2.min(dim=0)[0].cpu().numpy()
         print(np.sum(x==0), x.shape, np.sum(x==0)/x.shape[0])
-        # yce =np.exp(CE_matrix.mean(dim=0).cpu().numpy())
-        # y2ce =np.exp(CE_matrix_Ardca.mean(axis=0))
+        yce =np.exp(CE_matrix.mean(dim=0).cpu().numpy())
+        y2ce =np.exp(CE_matrix_Ardca.mean(axis=0))
         yacc = 1 - Acc_matrix.cpu().numpy()
         y2acc = (1-Acc_matrix_ardca.mean(axis=0))
         
