@@ -42,6 +42,26 @@ def evaluateCE_matrix(pds_val, model):
             score[ :, batch] = loss
     return score
 
+
+
+def evaluateAcc_matrix(pds_val, model):
+    criterion = nn.CrossEntropyLoss(ignore_index=pds_val.padIndex, reduction ='none')
+    accuracyTrain = np.zeros(len(pds_val))
+    batchlist = makebatchList(len(pds_val), 100)
+    score = torch.zeros(len(pds_val)).to(model.device)
+    with torch.no_grad():
+        for batch in batchlist:
+            inp_data, target, _= pds_val[batch]
+            output = model(inp_data, target[:-1, :])
+            accuracyTrain[batch] += accuracy(pds_val[batch], output, onehot=False).item()
+            output = output.reshape(-1, output.shape[2])#keep last dimension
+            targets_Original= target
+            targets_Original = targets_Original[1:].reshape(-1)
+            loss = criterion(output, targets_Original).reshape(-1,len(batch))
+            print(loss.shape)
+            score[batch] = accuracyMatrix(pds_val[batch], output, onehot=False).item()
+    return score
+
 pdbtracker = pd.read_csv("pdbtracker.csv")
 #torch.functional.one_hot
 pathtoFolder = "/Data/DomainsInter/processed/"
@@ -165,19 +185,21 @@ for i in ilist:# range(1000,1500):
         model.eval()
         criterionE = nn.CrossEntropyLoss(ignore_index=pds_train.padIndex, reduction='none')
         CE_matrix = evaluateCE_matrix(pds_val, model)
-        print(i, CE_matrix.mean(), CE_matrix.shape)
+        
+        Acc_matrix = evaluateAcc_matrix(pds_val, model)
+        # print(i, CE_matrix.mean(), CE_matrix.shape)
         model.eval()
         lossesCE_eval = []
         lossesMatching_eval = []
         accuracyVal = 0
-        
+
         if 1%1==0:
             with  torch.no_grad():
                 for batch_idx, batch in enumerate(val_iterator):
                     inp_data, target= batch[0], batch[1]
                     inp_data = inp_data.to(device)
                     output = model(inp_data, target[:-1, :])
-                    accuracyVal += accuracy(batch, output, onehot=False).item()
+                    accuracyVal += accuracyMatrix(batch, output, onehot=False).item()
                     output = output.reshape(-1, output.shape[2]) #keep last dimension
                     if onehot:
                         _, targets_Original = target.max(dim=2)
@@ -245,28 +267,42 @@ for i in ilist:# range(1000,1500):
         # print("renyi",mean_lossVal)
         # # scoreHungarianVal = HungarianMatchingBS(pds_val, model,100)
         
-        pds_train2 = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
-        pds_test2 = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
-        pds_val2 = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
-        CE_matrix_Ardca = ARDCA_returnCE(pds_train2, pds_val2)
+        # pds_train2 = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        # pds_test2 = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        # pds_val2 = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
+        # CE_matrix_Ardca = ARDCA_returnCE(pds_train2, pds_val2)
+        Acc_matrix_ardca = np.load("/Data/Transformer2/savedScore/ardcaAcc_"+str(i)+".npy")
         # print("ardca", i, CE_matrix_Ardca.mean(), CE_matrix_Ardca.shape)
         # print("score", i)
         plt.rcParams["figure.figsize"] = 16,12
         famname = pdbtracker[pdbtracker['id'] == i].iloc[0]['name']
         x = dval2.min(dim=0)[0].cpu().numpy()
         print(np.sum(x==0), x.shape, np.sum(x==0)/x.shape[0])
-        y =np.exp(CE_matrix.mean(dim=0).cpu().numpy())
-        y2 =np.exp(CE_matrix_Ardca.mean(axis=0))
+        # y =np.exp(CE_matrix.mean(dim=0).cpu().numpy())
+        # y2 =np.exp(CE_matrix_Ardca.mean(axis=0))
+        y = 1 - Acc_matrix.cpu().numpy()
+        y2 = (1-Acc_matrix_ardca.mean(axis=0))
+        
+        
         #y3 = np.exp(CE_matrix_Reyni.mean(dim=0).cpu().numpy())
+        # plt.xlabel("Hamming Distance from Training Set", fontsize=18)
+        # plt.ylabel("Cross Entropy Loss", fontsize=18)
+        # plt.title("Perplexity at Different Distance from Training Set for"+famname, fontsize=18)
+        # plt.scatter(x,y, alpha=0.3, color="blue", label="Transformer")
+        # plt.scatter(x,y2, alpha=0.3, color="orange", label="arDCA")
+        
+        
         plt.xlabel("Hamming Distance from Training Set", fontsize=18)
-        plt.ylabel("Cross Entropy Loss", fontsize=18)
-        plt.title("Perplexity at Different Distance from Training Set for"+famname, fontsize=18)
+        plt.ylabel("$\mathcal{A}$ - Accuracy", fontsize=18)
+        plt.title("Accuracy at Different Distance from Training Set for"+famname, fontsize=18)
         plt.scatter(x,y, alpha=0.3, color="blue", label="Transformer")
         plt.scatter(x,y2, alpha=0.3, color="orange", label="arDCA")
+        
+        
         #plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
         plt.tick_params(axis='both', labelsize=18)
         plt.legend(fontsize=18)
-        plt.savefig("distance_compare"+str(i)+".pdf",bbox_inches='tight')
+        plt.savefig("distance_compareAcc"+str(i)+".pdf",bbox_inches='tight')
         # plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
         # plt.legend(fontsize=18)
         # plt.savefig("distance_compare_R"+str(i)+".pdf")
