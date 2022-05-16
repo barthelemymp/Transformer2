@@ -302,7 +302,7 @@ for i in ilist:# range(1000,1500):
         labs = [l.get_label() for l in lns]
 
         # plt.xlabel("Hamming Distance from Training Set", fontsize=18)
-        ax1.set_ylabel("$$\mathcal{PP}$ - Perplexity", fontsize=18)
+        ax1.set_ylabel("$\mathcal{PP}$ - Perplexity", fontsize=18)
         # plt.title("Perplexity at Different Distance-  from Training Set for"+famname, fontsize=18)
         ax1.set_xlabel("Hamming Distance from Training Set", fontsize=18)
         ax2.set_ylabel("$\mathcal{A}$ - Accuracy", fontsize=18)
@@ -313,7 +313,7 @@ for i in ilist:# range(1000,1500):
         #plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
         ax1.tick_params(axis='both', labelsize=18)
         ax2.tick_params(axis='both', labelsize=18)
-        ax1.legend(lns, labs,fontsize=18)
+        ax1.legend(lns, labs,fontsize=18, loc=6)
         #ax2.legend(fontsize=18)
         #plt.savefig("distance_compareAcc"+str(i)+".pdf",bbox_inches='tight')
         plt.savefig("distance_compareMerged"+str(i)+".pdf",bbox_inches='tight')
