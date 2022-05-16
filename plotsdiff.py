@@ -200,7 +200,7 @@ for i in ilist:# range(1000,1500):
                     inp_data, target= batch[0], batch[1]
                     inp_data = inp_data.to(device)
                     output = model(inp_data, target[:-1, :])
-                    accuracyVal += accuracyMatrix(batch, output, onehot=False).item()
+                    accuracyVal += accuracy(batch, output, onehot=False).item()
                     output = output.reshape(-1, output.shape[2]) #keep last dimension
                     if onehot:
                         _, targets_Original = target.max(dim=2)
