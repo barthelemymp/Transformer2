@@ -298,8 +298,9 @@ for i in ilist:# range(1000,1500):
         l4 = ax2.scatter(x,y2acc, alpha=0.3, color="r",marker=",", label="$\mathcal{A}$ arDCA")
         
         
-        lns = l1+l2 +l3 + l4
+        lns = (l1,l2 ,l3 ,l4)
         labs = [l.get_label() for l in lns]
+
         # plt.xlabel("Hamming Distance from Training Set", fontsize=18)
         ax1.set_ylabel("$$\mathcal{PP}$ - Perplexity", fontsize=18)
         # plt.title("Perplexity at Different Distance-  from Training Set for"+famname, fontsize=18)
