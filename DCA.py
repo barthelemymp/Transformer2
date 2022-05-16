@@ -55,7 +55,7 @@ def sampleDataset(model, pds, len_output, multiplicative =1):
     max_len = len_output
     pds_sample = copy.deepcopy(pds)
 
-    batchIndex = makebatchList(len(pds_sample), 300)
+    batchIndex = makebatchList(len(pds_sample), 100)
     for batchI in batchIndex:
         sampled = model.sample(pds_sample[batchI][0], max_len, nsample=1, method="simple")
         pds_sample.tensorOUT[:,batchI]=sampled.max(dim=2)[1]
