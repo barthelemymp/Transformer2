@@ -301,24 +301,24 @@ for i in ilist:# range(1000,1500):
         # lns = (l1,l2 ,l3 ,l4)
         # labs = [l.get_label() for l in lns]
 
-        # plt.xlabel("Hamming Distance from Training Set", fontsize=18)
-        ax1.set_ylabel("$\mathcal{PP}$ - Perplexity", fontsize=18)
-        # plt.title("Perplexity at Different Distance-  from Training Set for"+famname, fontsize=18)
-        ax1.set_xlabel("Hamming Distance from Training Set", fontsize=18)
+        # plt.xlabel("Hamming Distance from Training Set", fontsize=25)
+        ax1.set_ylabel("$\mathcal{PP}$ - Perplexity", fontsize=25)
+        # plt.title("Perplexity at Different Distance-  from Training Set for"+famname, fontsize=25)
+        ax1.set_xlabel("Hamming Distance from Training Set", fontsize=25)
         #ax2.set_ylabel("$\mathcal{A}$ - Accuracy", fontsize=18)
-        plt.title("Perplexity at Different Distance from Training Set for"+famname, fontsize=18)
+        plt.title("Perplexity at Different Distance from Training Set for"+famname, fontsize=25)
 
         
         
         #plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
-        ax1.tick_params(axis='both', labelsize=18)
-        #ax2.tick_params(axis='both', labelsize=18)
+        ax1.tick_params(axis='both', labelsize=25)
+        #ax2.tick_params(axis='both', labelsize=25)
         #ax1.legend(lns, labs,fontsize=18, loc=6)
-        ax1.legend(fontsize=18)
+        ax1.legend(fontsize=25)
         #plt.savefig("distance_compareAcc"+str(i)+".pdf",bbox_inches='tight')
         plt.savefig("distance_comparePP"+str(i)+".pdf",bbox_inches='tight')
         # plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
-        # plt.legend(fontsize=18)
+        # plt.legend(fontsize=25)
         # plt.savefig("distance_compare_R"+str(i)+".pdf")
         plt.clf()
         
