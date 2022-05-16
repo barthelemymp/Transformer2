@@ -54,7 +54,7 @@ def evaluateAcc_matrix(pds_val, model):
             inp_data, target, _= pds_val[batch]
             output = model(inp_data, target[:-1, :])
             #accuracyTrain[batch] += accuracy(pds_val[batch], output, onehot=False).item()
-            score[batch] = accuracyMatrix(pds_val[batch], output, onehot=False)
+            score[batch] = accuracyMatrix(pds_val[batch], output, onehot=False)/pds_val.outputsize
             output = output.reshape(-1, output.shape[2])#keep last dimension
             targets_Original= target
             targets_Original = targets_Original[1:].reshape(-1)
@@ -272,32 +272,37 @@ for i in ilist:# range(1000,1500):
         # pds_test2 = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
         # pds_val2 = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=True)
         # CE_matrix_Ardca = ARDCA_returnCE(pds_train2, pds_val2)
+        # CE_matrix_Ardca = np.load("/Data/Transformer2/savedScore/ardcaCE_"+str(i)+".npy")
         Acc_matrix_ardca = np.load("/Data/Transformer2/savedScore/ardcaAcc_"+str(i)+".npy")
         # print("ardca", i, CE_matrix_Ardca.mean(), CE_matrix_Ardca.shape)
         # print("score", i)
         plt.rcParams["figure.figsize"] = 16,12
+        fig, ax1 = plt.subplots()
+        ax2 = ax1.twinx()
+        
         famname = pdbtracker[pdbtracker['id'] == i].iloc[0]['name']
         x = dval2.min(dim=0)[0].cpu().numpy()
         print(np.sum(x==0), x.shape, np.sum(x==0)/x.shape[0])
-        # y =np.exp(CE_matrix.mean(dim=0).cpu().numpy())
-        # y2 =np.exp(CE_matrix_Ardca.mean(axis=0))
-        y = 1 - Acc_matrix.cpu().numpy()
-        y2 = (1-Acc_matrix_ardca.mean(axis=0))
+        # yce =np.exp(CE_matrix.mean(dim=0).cpu().numpy())
+        # y2ce =np.exp(CE_matrix_Ardca.mean(axis=0))
+        yacc = 1 - Acc_matrix.cpu().numpy()
+        y2acc = (1-Acc_matrix_ardca.mean(axis=0))
         
         
         #y3 = np.exp(CE_matrix_Reyni.mean(dim=0).cpu().numpy())
+
+        # plt.scatter(x,yce, alpha=0.3, color="blue", label="$\mathcal{PP}$ Transformer")
+        # plt.scatter(x,y2ce, alpha=0.3, color="orange", label="\mathcal{PP}$ arDCA")
+        plt.scatter(x,yacc, alpha=0.3, color="blue", marker=",", label="\mathcal{A}$ Transformer")
+        plt.scatter(x,y2acc, alpha=0.3, color="orange",marker=",", label="\mathcal{A}$ arDCA")
+        
         # plt.xlabel("Hamming Distance from Training Set", fontsize=18)
         # plt.ylabel("Cross Entropy Loss", fontsize=18)
         # plt.title("Perplexity at Different Distance from Training Set for"+famname, fontsize=18)
-        # plt.scatter(x,y, alpha=0.3, color="blue", label="Transformer")
-        # plt.scatter(x,y2, alpha=0.3, color="orange", label="arDCA")
-        
-        
         plt.xlabel("Hamming Distance from Training Set", fontsize=18)
         plt.ylabel("$\mathcal{A}$ - Accuracy", fontsize=18)
         plt.title("Accuracy at Different Distance from Training Set for"+famname, fontsize=18)
-        plt.scatter(x,y, alpha=0.3, color="blue", label="Transformer")
-        plt.scatter(x,y2, alpha=0.3, color="orange", label="arDCA")
+
         
         
         #plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
