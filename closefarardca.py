@@ -78,12 +78,12 @@ for i in ilist:# range(1000,1500):
         nval = len(pds_val)
         ntest = len(pds_test)
         dval1,dval2 = distanceTrainVal(pds_train, pds_val)
-        print("median", (dval1+dval2).min(dim=0)[0].median())
+        
         maskValclose = (dval1+dval2).min(dim=0)[0]<(dval1+dval2).min(dim=0)[0].median()
         maskValclose = maskValclose.cpu().numpy()
         maskValfar = (dval1+dval2).min(dim=0)[0]>=(dval1+dval2).min(dim=0)[0].median()
         maskValfar = maskValfar.cpu().numpy()
-
+        print("median", (dval1+dval2).min(dim=0)[0].median(), len(maskValclose), len(maskValfar))
         train_iterator = DataLoader(pds_train, batch_size=batch_size,
                         shuffle=True, num_workers=0, collate_fn=default_collate)
         test_iterator = DataLoader(pds_test, batch_size=batch_size,
