@@ -148,7 +148,7 @@ for i in ilist:# range(1000,1500):
         scoreMatchingVal = sum(scoHVal[0]==scoHVal[1])
         scoreMatchingValClose = sum((scoHVal[0]==scoHVal[1])[maskValclose])
         scoreMatchingValFar = sum((scoHVal[0]==scoHVal[1])[maskValfar])
-        print(i, (dval1+dval2).min(dim=0)[0].median(), scoreMatchingVal, scoreMatchingValClose/len(maskValclose), scoreMatchingValFar/len(maskValfar))
+        print(i, (dval1+dval2).min(dim=0)[0].median(), scoreMatchingVal, scoreMatchingValClose, scoreMatchingValFar)
         # listdim = list(range(10, len(pds_val), 10))
         # if listdim[-1] != len(pds_val):
         #     listdim.append(len(pds_val))
