@@ -293,8 +293,8 @@ for i in ilist:# range(1000,1500):
 
         # plt.scatter(x,yce, alpha=0.3, color="blue", label="$\mathcal{PP}$ Transformer")
         # plt.scatter(x,y2ce, alpha=0.3, color="orange", label="\mathcal{PP}$ arDCA")
-        plt.scatter(x,yacc, alpha=0.3, color="blue", marker=",", label="\mathcal{A}$ Transformer")
-        plt.scatter(x,y2acc, alpha=0.3, color="orange",marker=",", label="\mathcal{A}$ arDCA")
+        plt.scatter(x,yacc, alpha=0.3, color="blue", marker=",", label="$\mathcal{A}$ Transformer")
+        plt.scatter(x,y2acc, alpha=0.3, color="orange",marker=",", label="$\mathcal{A}$ arDCA")
         
         # plt.xlabel("Hamming Distance from Training Set", fontsize=18)
         # plt.ylabel("Cross Entropy Loss", fontsize=18)
