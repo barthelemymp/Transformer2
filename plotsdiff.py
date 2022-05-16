@@ -54,7 +54,7 @@ def evaluateAcc_matrix(pds_val, model):
             inp_data, target, _= pds_val[batch]
             output = model(inp_data, target[:-1, :])
             #accuracyTrain[batch] += accuracy(pds_val[batch], output, onehot=False).item()
-            score[batch] = accuracyMatrix(pds_val[batch], output, onehot=False).item()
+            score[batch] = accuracyMatrix(pds_val[batch], output, onehot=False)
             output = output.reshape(-1, output.shape[2])#keep last dimension
             targets_Original= target
             targets_Original = targets_Original[1:].reshape(-1)
