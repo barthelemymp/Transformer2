@@ -162,6 +162,6 @@ for i in ilist:# range(1000,1500):
         #     scoreMatchingVal_Ardca = sum(scoHVal[0]==scoHVal[1])
             
             # b = a/a.mean(axis=1)
-            wandb.log({"siz": siz, "scoreMatchingVal Trans":scoreMatchingVal, "scoreMatchingVal Ardca":scoreMatchingVal_Ardca})
+            #wandb.log({"siz": siz, "scoreMatchingVal Trans":scoreMatchingVal, "scoreMatchingVal Ardca":scoreMatchingVal_Ardca})
         wandb.finish()
         # In c
