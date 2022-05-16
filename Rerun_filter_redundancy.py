@@ -49,7 +49,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 #ilist = [504, 304,634,132]
 #ilist = [103,157,160]
 
-ilist = [197,303, 815] 
+ilist = [181] 
 save_model = False
 onehot=False
 
