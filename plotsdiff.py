@@ -53,13 +53,14 @@ def evaluateAcc_matrix(pds_val, model):
         for batch in batchlist:
             inp_data, target, _= pds_val[batch]
             output = model(inp_data, target[:-1, :])
-            accuracyTrain[batch] += accuracy(pds_val[batch], output, onehot=False).item()
+            #accuracyTrain[batch] += accuracy(pds_val[batch], output, onehot=False).item()
+            score[batch] = accuracyMatrix(pds_val[batch], output, onehot=False).item()
             output = output.reshape(-1, output.shape[2])#keep last dimension
             targets_Original= target
             targets_Original = targets_Original[1:].reshape(-1)
             loss = criterion(output, targets_Original).reshape(-1,len(batch))
             print(loss.shape)
-            score[batch] = accuracyMatrix(pds_val[batch], output, onehot=False).item()
+            
     return score
 
 pdbtracker = pd.read_csv("pdbtracker.csv")
