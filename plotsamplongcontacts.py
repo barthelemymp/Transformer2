@@ -45,7 +45,7 @@ def getlists(df, fam):
 
 
 # 17, 46, 69, 71,157,160,251, 258, 97,103,132,181, 192, 197,303,304,308,358,504,
-family_list = [ 815, 972, 975, 980, 1208, 1213, 634, 1214] 
+family_list = [1214, 634] 
 pdbtracker = pd.read_csv("pdbtracker.csv")
 
 
