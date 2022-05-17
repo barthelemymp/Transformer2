@@ -313,7 +313,7 @@ for i in ilist:# range(1000,1500):
         #plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
         ax1.tick_params(axis='both', labelsize=35)
         ax2.tick_params(axis='both', labelsize=35)
-        ax1.legend(lns, labs,fontsize=35, loc=6)
+        ax1.legend(lns, labs,fontsize=35, loc=(0.01,0.3))
         # ax1.legend(fontsize=25)
         plt.savefig("distance_compareMerged"+str(i)+".pdf",bbox_inches='tight')
         #plt.savefig("distance_comparePP"+str(i)+".pdf",bbox_inches='tight')
