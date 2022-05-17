@@ -79,73 +79,73 @@ onehot=False
 
 for i in family_list:
     
-    modelpath = "TransSimple2_fam"+str(i)+".pth.tar"
+    # modelpath = "TransSimple2_fam"+str(i)+".pth.tar"
     
-    pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
-    inputsize, outputsize = getLengthfromCSV(pathTofile)
-    os.path.isfile(pathTofile)
-    print("ddi", i, " is running")
-    name = "combined_MSA_ddi_" +str(i)+"_joined"
-    device =torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    #Dataset
-    train_path = pathtoFolder + name +'_train.csv'
-    val_path = pathtoFolder + name +'_val.csv'
-    test_path = pathtoFolder + name +'_test.csv'
-    #add 2 for start and end token 
-    len_input = inputsize + 2
-    len_output =outputsize + 2
-    pds_train = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
-    pds_test = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
-    pds_val = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
+    # pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
+    # inputsize, outputsize = getLengthfromCSV(pathTofile)
+    # os.path.isfile(pathTofile)
+    # print("ddi", i, " is running")
+    # name = "combined_MSA_ddi_" +str(i)+"_joined"
+    # device =torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # #Dataset
+    # train_path = pathtoFolder + name +'_train.csv'
+    # val_path = pathtoFolder + name +'_val.csv'
+    # test_path = pathtoFolder + name +'_test.csv'
+    # #add 2 for start and end token 
+    # len_input = inputsize + 2
+    # len_output =outputsize + 2
+    # pds_train = ProteinTranslationDataset(train_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
+    # pds_test = ProteinTranslationDataset(test_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
+    # pds_val = ProteinTranslationDataset(val_path, device=device, Unalign=Unalign,filteringOption='and', returnIndex=True,onehot=onehot)
 
-    train_iterator = DataLoader(pds_train, batch_size=batch_size,
-                    shuffle=True, num_workers=0, collate_fn=default_collate)
-    test_iterator = DataLoader(pds_test, batch_size=batch_size,
-                    shuffle=True, num_workers=0, collate_fn=default_collate)
-    val_iterator = DataLoader(pds_val, batch_size=batch_size,
-                    shuffle=True, num_workers=0, collate_fn=default_collate)
+    # train_iterator = DataLoader(pds_train, batch_size=batch_size,
+    #                 shuffle=True, num_workers=0, collate_fn=default_collate)
+    # test_iterator = DataLoader(pds_test, batch_size=batch_size,
+    #                 shuffle=True, num_workers=0, collate_fn=default_collate)
+    # val_iterator = DataLoader(pds_val, batch_size=batch_size,
+    #                 shuffle=True, num_workers=0, collate_fn=default_collate)
     
     
-    # Model hyperparameters
-    src_pad_idx = pds_train.padIndex#"<pad>"# protein.vocab.stoi["<pad>"] 
-    src_position_embedding = PositionalEncoding(embedding_size, max_len=len_input,device=device)
-    trg_position_embedding = PositionalEncoding(embedding_size, max_len=len_output, device=device)
+    # # Model hyperparameters
+    # src_pad_idx = pds_train.padIndex#"<pad>"# protein.vocab.stoi["<pad>"] 
+    # src_position_embedding = PositionalEncoding(embedding_size, max_len=len_input,device=device)
+    # trg_position_embedding = PositionalEncoding(embedding_size, max_len=len_output, device=device)
             
-    model = Transformer(
-        embedding_size,
-        src_vocab_size,
-        trg_vocab_size,
-        src_pad_idx,
-        num_heads,
-        num_encoder_layers,
-        num_decoder_layers,
-        forward_expansion,
-        dropout,
-        src_position_embedding,
-        trg_position_embedding,
-        device,
-        onehot=onehot,
-    ).to(device)
+    # model = Transformer(
+    #     embedding_size,
+    #     src_vocab_size,
+    #     trg_vocab_size,
+    #     src_pad_idx,
+    #     num_heads,
+    #     num_encoder_layers,
+    #     num_decoder_layers,
+    #     forward_expansion,
+    #     dropout,
+    #     src_position_embedding,
+    #     trg_position_embedding,
+    #     device,
+    #     onehot=onehot,
+    # ).to(device)
     
-    device =torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(device)
-    learning_rate = 5e-5
+    # device =torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # print(device)
+    # learning_rate = 5e-5
     
-    for p in model.parameters():
-        if p.dim() > 1:
-            nn.init.xavier_normal_(p)
+    # for p in model.parameters():
+    #     if p.dim() > 1:
+    #         nn.init.xavier_normal_(p)
             
-    optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
-    load_checkpoint(torch.load(modelpath), model, optimizer)
+    # optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=0.0)
+    # load_checkpoint(torch.load(modelpath), model, optimizer)
 
 
-    ### Create tempfiles
-    tempFile=next(tempfile._get_candidate_names())+".npy"
-    mode = "inter"
+    # ### Create tempfiles
+    # tempFile=next(tempfile._get_candidate_names())+".npy"
+    # mode = "inter"
     #### getlist
     pdbtracker = pd.read_csv("pdbtracker.csv")
     pdblist, chain1list, chain2list = getlists(pdbtracker, i)
-    hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
+    # hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
 
     # ppvO = PPV_from_pds(pds_train, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
     
@@ -159,8 +159,8 @@ for i in family_list:
     famname = pdbtracker[pdbtracker['id'] == i].iloc[0]['name']
     # sampled = sampleDataset(model, pds_train, len_output, multiplicative =8)
     # ppvS8 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
-    ppvS8 = np.load("ppv8_"+str(i)+"npy" )
-    ppvO =np.load("ppvo_"+str(i)+"npy" )
+    ppvS8 = np.load("ppv8_"+str(i)+"npy.npy" )
+    ppvO =np.load("ppvo_"+str(i)+"npy.npy" )
     x = np.array(range(1,len(ppvO)+1))
     plt.rcParams["figure.figsize"] = 16,12
     plt.plot(x,ppvO, label="Original Dataset")
