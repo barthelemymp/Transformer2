@@ -306,7 +306,7 @@ for i in ilist:# range(1000,1500):
         # plt.title("Perplexity at Different Distance-  from Training Set for"+famname, fontsize=25)
         ax1.set_xlabel("Hamming Distance from Training Set", fontsize=35)
         ax2.set_ylabel("$\mathcal{A}$ - Accuracy", fontsize=35)
-        plt.title("$\mathcal{PP}$ and $\mathcal{A}$ wrt Distance from Training Set "+famname, fontsize=35)
+        plt.title("$\mathcal{PP}$ & $\mathcal{A}$ wrt Distance from Training "+famname, fontsize=35)
 
         
         
