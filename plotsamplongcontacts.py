@@ -147,7 +147,7 @@ for i in family_list:
     pdblist, chain1list, chain2list = getlists(pdbtracker, i)
     hmmRadical =pathtoFolder+"hmm_"+str(i)+"_"
 
-    ppvO = PPV_from_pds(pds_train, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
+    # ppvO = PPV_from_pds(pds_train, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
     
     
     # sampled = sampleDataset(model, pds_train, len_output, multiplicative =1)
@@ -157,22 +157,24 @@ for i in family_list:
     # sampled = sampleDataset(model, pds_train, len_output, multiplicative =3)
     # ppvS3 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
     famname = pdbtracker[pdbtracker['id'] == i].iloc[0]['name']
-    sampled = sampleDataset(model, pds_train, len_output, multiplicative =8)
-    ppvS8 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
+    # sampled = sampleDataset(model, pds_train, len_output, multiplicative =8)
+    # ppvS8 = PPV_from_pds(sampled, pdblist, chain1list, chain2list, hmmRadical, mode ="inter")
+    ppvS8 = np.load("ppv8_"+str(i)+"npy" )
+    ppvO =np.load("ppvo_"+str(i)+"npy" )
     x = np.array(range(1,len(ppvO)+1))
     plt.rcParams["figure.figsize"] = 16,12
     plt.plot(x,ppvO, label="Original Dataset")
     # plt.plot(x,ppvS1, label="sampled*1", alpha=0.5)
     # plt.plot(x,ppvS3, label="sampled*3", alpha=0.5)
     plt.plot(x,ppvS8, label="Sampled Dataset with Transformer")
-    np.save("ppvo_"+str(i)+"npy",ppvO )
-    np.save("ppv8_"+str(i)+"npy",ppvS8 )
-    plt.title("Inter-Domain Contact Prediction:" + str(famname), fontsize=35)
-    plt.xlabel("Number of Predicted Pairs",fontsize=35)
-    plt.ylabel("Positive Predictive Value",fontsize=35)
-    plt.yticks(fontsize=35)
-    plt.xticks(fontsize=35)
-    plt.legend(fontsize=35)
+    # np.save("ppvo_"+str(i)+"npy",ppvO )
+    # np.save("ppv8_"+str(i)+"npy",ppvS8 )
+    plt.title("Inter-Domain Contact Prediction:" + str(famname), fontsize=30)
+    plt.xlabel("Number of Predicted Pairs",fontsize=30)
+    plt.ylabel("Positive Predictive Value",fontsize=30)
+    plt.yticks(fontsize=30)
+    plt.xticks(fontsize=30)
+    plt.legend(fontsize=30)
     plt.xscale("log")
     plt.savefig("ppvS_paper"+str(i)+".png",bbox_inches='tight')
     plt.clf()
