@@ -84,7 +84,7 @@ for i in family_list:
     # pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
     # inputsize, outputsize = getLengthfromCSV(pathTofile)
     # os.path.isfile(pathTofile)
-    # print("ddi", i, " is running")
+    print("ddi", i, " is running")
     # name = "combined_MSA_ddi_" +str(i)+"_joined"
     # device =torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # #Dataset
