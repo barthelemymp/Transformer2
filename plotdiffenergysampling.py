@@ -56,8 +56,8 @@ num_encoder_layers = 2
 num_decoder_layers = 2
 dropout = 0.10
 forward_expansion = 2048
-src_vocab_size = 25#len(protein.vocab) 
-trg_vocab_size = 25#len(protein_trans.vocab) 
+src_vocab_size = 21#len(protein.vocab) 
+trg_vocab_size = 21#len(protein_trans.vocab) 
 embedding_size = 55#len(protein.vocab) #it should be 25. 21 amino, 2 start and end sequence, 1 for pad, and 1 for unknown token
 
 repartition = [0.7, 0.15, 0.15]
