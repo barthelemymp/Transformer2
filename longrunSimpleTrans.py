@@ -181,7 +181,7 @@ for i in ilist:
     else:
         famname = "DDI"+str(i)
     #whyyy 'cpu?'
-    wandb.init(project="Transformer Simple 3", entity="barthelemymp")
+    wandb.init(project="Transformer Large 2", entity="barthelemymp")
     config_dict = {
       "num_layers": num_encoder_layers,
       "embedding":embedding_size,
