@@ -81,7 +81,7 @@ onehot=False
 
 
 
-modelpath = "models/LargeL2/Large_fam"+str(i)+"_wd0_epoch"+str(4000)+".pth.tar"
+modelpath = "Renyi_5_fam304_alpha-0.7.pth.tar"#"models/LargeL2/Large_fam"+str(i)+"_wd0_epoch"+str(4000)+".pth.tar"
 
 pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
 inputsize, outputsize = getLengthfromCSV(pathTofile)
@@ -102,8 +102,8 @@ num_encoder_layers = 3
 num_decoder_layers = 3
 dropout = 0.10
 forward_expansion = 2048
-src_vocab_size = 25#len(protein.vocab) 
-trg_vocab_size = 25#len(protein_trans.vocab) 
+src_vocab_size = 21#len(protein.vocab) 
+trg_vocab_size = 21#len(protein_trans.vocab) 
 embedding_size = 105
 
 
@@ -199,4 +199,4 @@ plt.scatter(x,y2, alpha=0.8, color="red", label="Sampled Points")
 #plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
 plt.tick_params(axis='both', labelsize=18)
 plt.legend(fontsize=18)
-plt.savefig("energy"+str(i)+".pdf")
+plt.savefig("energyR"+str(i)+".pdf")
