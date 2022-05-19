@@ -20,6 +20,7 @@ from ProteinsDataset import *
 from MatchingLoss import *
 from utils import *
 from ardca import *
+from DCA import *
 import matplotlib.pyplot as plt
 import pandas as pd
 print("import done")
