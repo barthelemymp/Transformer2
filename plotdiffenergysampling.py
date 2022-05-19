@@ -192,10 +192,11 @@ y = CEtrain[order]
 y2 = CEsample[order]
 
 plt.xlabel("Training Points", fontsize=18)
-plt.ylabel("Probability", fontsize=18)
-plt.title("Landscape" , fontsize=18)
-plt.scatter(x,y, alpha=0.8, color="blue", label="Training Points")
-plt.scatter(x,y2, alpha=0.8, color="red", label="Sampled Points")
+plt.ylabel("Negative Log-Likelihood", fontsize=18)
+plt.title("Training Energy & Sampled Energy" , fontsize=18)
+plt.ylim(0,300)
+plt.scatter(x,y2, alpha=0.1, color="red", label="Sampled Points")
+plt.scatter(x,y, alpha=0.1, color="blue", label="Training Points")
 #plt.scatter(x,y3, alpha=0.3, color="green", label="Reyni")
 plt.tick_params(axis='both', labelsize=18)
 plt.legend(fontsize=18)
