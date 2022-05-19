@@ -80,7 +80,7 @@ onehot=False
 
 
 
-modelpath = "models/LargeL2/Large_fam"+str(i)+"_wd"+str(wd)+"_epoch"+str(4000)+".pth.tar"
+modelpath = "models/LargeL2/Large_fam"+str(i)+"_wd0_epoch"+str(4000)+".pth.tar"
 
 pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
 inputsize, outputsize = getLengthfromCSV(pathTofile)
