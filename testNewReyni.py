@@ -116,7 +116,7 @@ test_path = pathtoFolder + name +'_test.csv'
 
 
 ####### REG
-alpha = -0.85
+alpha = -0.7
 wd = 0.0
 ##### Training simple 
 pathTofile = pathtoFolder+ "combined_MSA_ddi_" +str(i)+"_joined.csv"
